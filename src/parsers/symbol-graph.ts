@@ -292,14 +292,12 @@ export class SymbolGraphBuilder {
     // Walk the AST and extract symbols
     const walk = (node: Parser.SyntaxNode, scope: string = 'global') => {
       const nodeType = node.type;
-      console.error(`[SYMBOL][DEBUG] Visiting node type: ${nodeType} at ${filePath}:${node.startPosition.row + 1}`);
       // Extract different types of symbols based on language
       switch (language) {
         case 'javascript':
         case 'typescript': {
           const jsSymbols = this.extractJavaScriptSymbols(node, filePath, source, rootPath, scope);
           if (jsSymbols.length > 0) {
-            console.error(`[SYMBOL][DEBUG] JS symbols extracted:`, jsSymbols.map(s => `${s.type}:${s.name}@${s.location.startLine}`));
           }
           symbols.push(...jsSymbols);
           break;
@@ -307,7 +305,6 @@ export class SymbolGraphBuilder {
         case 'python': {
           const pySymbols = this.extractPythonSymbols(node, filePath, source, rootPath, scope);
           if (pySymbols.length > 0) {
-            console.error(`[SYMBOL][DEBUG] Python symbols extracted:`, pySymbols.map(s => `${s.type}:${s.name}@${s.location.startLine}`));
           }
           symbols.push(...pySymbols);
           break;
@@ -323,7 +320,6 @@ export class SymbolGraphBuilder {
     };
     
     walk(tree.rootNode);
-    console.error(`[SYMBOL][DEBUG] Total symbols extracted from ${filePath}: ${symbols.length}`);
     return symbols;
   }
 
@@ -342,23 +338,18 @@ export class SymbolGraphBuilder {
       case 'method_definition':
       case 'arrow_function': {
         const sym = this.createFunctionSymbol(node, filePath, source, rootPath, scope);
-        console.error(`[SYMBOL][DEBUG] Created function symbol: ${sym.name} at ${filePath}:${sym.location.startLine}`);
         symbols.push(sym);
         break;
       }
       
       case 'class_declaration': {
         const sym = this.createClassSymbol(node, filePath, source, rootPath, scope);
-        console.error(`[SYMBOL][DEBUG] Created class symbol: ${sym.name} at ${filePath}:${sym.location.startLine}`);
         symbols.push(sym);
         break;
       }
       
       case 'variable_declaration': {
         const vars = this.createVariableSymbols(node, filePath, source, rootPath, scope);
-        if (vars.length > 0) {
-          console.error(`[SYMBOL][DEBUG] Created variable symbols:`, vars.map(v => `${v.name}@${v.location.startLine}`));
-        }
         symbols.push(...vars);
         break;
       }
@@ -366,7 +357,6 @@ export class SymbolGraphBuilder {
       case 'interface_declaration':
       case 'type_alias_declaration': {
         const sym = this.createTypeSymbol(node, filePath, source, rootPath, scope);
-        console.error(`[SYMBOL][DEBUG] Created type symbol: ${sym.name} at ${filePath}:${sym.location.startLine}`);
         symbols.push(sym);
         break;
       }
@@ -388,23 +378,18 @@ export class SymbolGraphBuilder {
     switch (nodeType) {
       case 'function_definition': {
         const sym = this.createFunctionSymbol(node, filePath, source, rootPath, scope);
-        console.error(`[SYMBOL][DEBUG] Created python function symbol: ${sym.name} at ${filePath}:${sym.location.startLine}`);
         symbols.push(sym);
         break;
       }
       
       case 'class_definition': {
         const sym = this.createClassSymbol(node, filePath, source, rootPath, scope);
-        console.error(`[SYMBOL][DEBUG] Created python class symbol: ${sym.name} at ${filePath}:${sym.location.startLine}`);
         symbols.push(sym);
         break;
       }
       
       case 'assignment': {
         const vars = this.createVariableSymbols(node, filePath, source, rootPath, scope);
-        if (vars.length > 0) {
-          console.error(`[SYMBOL][DEBUG] Created python variable symbols:`, vars.map(v => `${v.name}@${v.location.startLine}`));
-        }
         symbols.push(...vars);
         break;
       }
@@ -422,7 +407,6 @@ export class SymbolGraphBuilder {
   ): SymbolNode {
     const name = this.extractName(node) || 'anonymous';
     const location = this.createLocation(node, filePath, rootPath);
-    console.error(`[SYMBOL][DEBUG] Creating function symbol: ${name} at ${filePath}:${location.startLine}`);
     
     // Create base symbol
     const symbol: SymbolNode = {
@@ -453,7 +437,6 @@ export class SymbolGraphBuilder {
       if (name === 'anonymous') {
         symbol.id = smartSymbol.id;
       }
-      console.error(`[SMART-NAMING] Enhanced ${name} -> ${smartSymbol.inferredName} (confidence: ${smartSymbol.confidence.overall.toFixed(2)})`);
     }
     
     return symbol;
@@ -468,7 +451,6 @@ export class SymbolGraphBuilder {
   ): SymbolNode {
     const name = this.extractName(node) || 'AnonymousClass';
     const location = this.createLocation(node, filePath, rootPath);
-    console.error(`[SYMBOL][DEBUG] Creating class symbol: ${name} at ${filePath}:${location.startLine}`);
     return {
       id: `${path.relative(rootPath, filePath)}:${name}:${location.startLine}`,
       name,
@@ -502,7 +484,6 @@ export class SymbolGraphBuilder {
           if (idNode) {
             const name = idNode.text;
             const location = this.createLocation(child, filePath, rootPath);
-            console.error(`[SYMBOL][DEBUG] Creating variable symbol: ${name} at ${filePath}:${location.startLine}`);
             symbols.push({
               id: `${path.relative(rootPath, filePath)}:${name}:${location.startLine}`,
               name,
@@ -525,7 +506,6 @@ export class SymbolGraphBuilder {
       if (left && left.type === 'identifier') {
         const name = left.text;
         const location = this.createLocation(left, filePath, rootPath);
-        console.error(`[SYMBOL][DEBUG] Creating python variable symbol: ${name} at ${filePath}:${location.startLine}`);
         symbols.push({
           id: `${path.relative(rootPath, filePath)}:${name}:${location.startLine}`,
           name,
@@ -552,7 +532,6 @@ export class SymbolGraphBuilder {
   ): SymbolNode {
     const name = this.extractName(node) || 'AnonymousType';
     const location = this.createLocation(node, filePath, rootPath);
-    console.error(`[SYMBOL][DEBUG] Creating type symbol: ${name} at ${filePath}:${location.startLine}`);
     return {
       id: `${path.relative(rootPath, filePath)}:${name}:${location.startLine}`,
       name,
