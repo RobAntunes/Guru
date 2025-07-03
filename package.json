@@ -9,11 +9,12 @@
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "test": "vitest",
+    "test:all": "bun tests/all-tests.js",
     "test-symbol-graph": "tsx test-symbol-graph.js",
     "setup-cursor": "node setup-cursor.js",
     "lint": "eslint src --ext .ts,.tsx",
     "format": "prettier --write src",
-    "e2e": "bun test-mcp-integration.js"
+    "e2e": "bun tests/test-mcp-integration.js"
   },
   "keywords": [
     "mcp",
