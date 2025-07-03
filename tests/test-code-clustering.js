@@ -5,7 +5,7 @@
  * into semantic zones with confidence scoring.
  */
 
-import { SymbolGraphBuilder } from '../src/parsers/symbol-graph.js';
+import { SymbolGraphBuilder } from '../src/parsers/symbol-graph';
 import path from 'path';
 
 console.log('🧩 Testing Code Clustering...');
