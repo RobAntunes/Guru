@@ -1,0 +1,12 @@
+{
+  "singleton": {
+    "lastUpdated": "2025-07-03T16:48:01.569Z",
+    "successCount": 10,
+    "failCount": 0
+  },
+  "god_object": {
+    "lastUpdated": "2025-07-03T16:48:01.569Z",
+    "successCount": 0,
+    "failCount": 10
+  }
+}

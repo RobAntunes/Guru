@@ -1,0 +1,52 @@
+[
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-03T16:52:02.236Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": false,
+    "timestamp": "2025-07-03T16:52:02.236Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-03T16:53:57.534Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-03T16:53:57.535Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-03T16:56:03.686Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-03T16:56:03.688Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-03T16:56:03.695Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-03T16:56:03.695Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-03T16:56:03.697Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-03T16:56:03.697Z"
+  }
+]

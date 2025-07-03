@@ -1,0 +1,11 @@
+{
+  "feedback_effectiveness": "0/1 successful",
+  "optimal_learning_strategy": "default",
+  "updated": "2025-07-03T16:56:03.697Z",
+  "strategy_stats": {
+    "default": {
+      "count": 1,
+      "success": 0
+    }
+  }
+}

@@ -1,0 +1,844 @@
+[
+  {
+    "timestamp": "2025-07-03T16:45:47.518Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.6,
+    "new": 0.57,
+    "adjustment": -0.03
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.877Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.6,
+    "new": 0.57,
+    "adjustment": -0.03
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.879Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.7,
+    "new": 0.735,
+    "adjustment": 0.034999999999999996
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.881Z",
+    "type": "feedback",
+    "source": "patterns",
+    "prev": 0.8,
+    "new": 0.8350000000000001,
+    "adjustment": 0.034999999999999996,
+    "confidence": 0.3,
+    "actual": true
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.883Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.6,
+    "new": 0.57,
+    "adjustment": -0.03
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.883Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.57,
+    "new": 0.5415,
+    "adjustment": -0.028499999999999998
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.883Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.5415,
+    "new": 0.514425,
+    "adjustment": -0.027075000000000002
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.883Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.514425,
+    "new": 0.48870375,
+    "adjustment": -0.02572125
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.883Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.48870375,
+    "new": 0.4642685625,
+    "adjustment": -0.0244351875
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.883Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.4642685625,
+    "new": 0.441055134375,
+    "adjustment": -0.023213428125
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.883Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.441055134375,
+    "new": 0.41900237765625,
+    "adjustment": -0.02205275671875
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.883Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.41900237765625,
+    "new": 0.3980522587734375,
+    "adjustment": -0.0209501188828125
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.883Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.3980522587734375,
+    "new": 0.3781496458347656,
+    "adjustment": -0.019902612938671876
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.883Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.3781496458347656,
+    "new": 0.35924216354302735,
+    "adjustment": -0.018907482291738283
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.883Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.35924216354302735,
+    "new": 0.34128005536587597,
+    "adjustment": -0.017962108177151367
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.885Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.34128005536587597,
+    "new": 0.3242160525975822,
+    "adjustment": -0.0170640027682938
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.885Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.3242160525975822,
+    "new": 0.30800524996770307,
+    "adjustment": -0.01621080262987911
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.885Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.30800524996770307,
+    "new": 0.2926049874693179,
+    "adjustment": -0.015400262498385154
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.886Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.2926049874693179,
+    "new": 0.277974738095852,
+    "adjustment": -0.014630249373465895
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.886Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.277974738095852,
+    "new": 0.2640760011910594,
+    "adjustment": -0.0138987369047926
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.887Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.2640760011910594,
+    "new": 0.25087220113150643,
+    "adjustment": -0.01320380005955297
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.887Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.25087220113150643,
+    "new": 0.23832859107493112,
+    "adjustment": -0.012543610056575323
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.887Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.23832859107493112,
+    "new": 0.22641216152118457,
+    "adjustment": -0.011916429553746557
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.887Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.22641216152118457,
+    "new": 0.21509155344512534,
+    "adjustment": -0.01132060807605923
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.887Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.21509155344512534,
+    "new": 0.20433697577286908,
+    "adjustment": -0.010754577672256268
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.887Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.20433697577286908,
+    "new": 0.19412012698422562,
+    "adjustment": -0.010216848788643455
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.887Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.19412012698422562,
+    "new": 0.18441412063501433,
+    "adjustment": -0.009706006349211281
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.887Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.18441412063501433,
+    "new": 0.17519341460326363,
+    "adjustment": -0.009220706031750717
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.887Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.17519341460326363,
+    "new": 0.16643374387310045,
+    "adjustment": -0.008759670730163182
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.887Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.16643374387310045,
+    "new": 0.15811205667944542,
+    "adjustment": -0.008321687193655022
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.888Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.15811205667944542,
+    "new": 0.15020645384547315,
+    "adjustment": -0.007905602833972271
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.888Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.15020645384547315,
+    "new": 0.14269613115319948,
+    "adjustment": -0.007510322692273658
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.888Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.14269613115319948,
+    "new": 0.13556132459553952,
+    "adjustment": -0.007134806557659974
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.888Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.13556132459553952,
+    "new": 0.12878325836576254,
+    "adjustment": -0.006778066229776976
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.888Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.12878325836576254,
+    "new": 0.12234409544747442,
+    "adjustment": -0.006439162918288128
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.888Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.12234409544747442,
+    "new": 0.1162268906751007,
+    "adjustment": -0.006117204772373722
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.888Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.1162268906751007,
+    "new": 0.11041554614134566,
+    "adjustment": -0.005811344533755035
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.888Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.11041554614134566,
+    "new": 0.10489476883427838,
+    "adjustment": -0.005520777307067283
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.888Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.10489476883427838,
+    "new": 0.1,
+    "adjustment": -0.0052447384417139194
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.888Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.1,
+    "new": 0.1,
+    "adjustment": -0.005000000000000001
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.888Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.1,
+    "new": 0.1,
+    "adjustment": -0.005000000000000001
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.888Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.1,
+    "new": 0.1,
+    "adjustment": -0.005000000000000001
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.888Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.1,
+    "new": 0.1,
+    "adjustment": -0.005000000000000001
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.889Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.1,
+    "new": 0.1,
+    "adjustment": -0.005000000000000001
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.889Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.1,
+    "new": 0.1,
+    "adjustment": -0.005000000000000001
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.889Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.1,
+    "new": 0.1,
+    "adjustment": -0.005000000000000001
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.889Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.1,
+    "new": 0.1,
+    "adjustment": -0.005000000000000001
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.889Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.1,
+    "new": 0.1,
+    "adjustment": -0.005000000000000001
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.889Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.1,
+    "new": 0.1,
+    "adjustment": -0.005000000000000001
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.889Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.1,
+    "new": 0.1,
+    "adjustment": -0.005000000000000001
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.889Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.1,
+    "new": 0.1,
+    "adjustment": -0.005000000000000001
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.889Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.1,
+    "new": 0.1,
+    "adjustment": -0.005000000000000001
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.889Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.1,
+    "new": 0.1,
+    "adjustment": -0.005000000000000001
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.889Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.1,
+    "new": 0.1,
+    "adjustment": -0.005000000000000001
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.889Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.7,
+    "new": 0.735,
+    "adjustment": 0.034999999999999996
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.890Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.735,
+    "new": 0.7717499999999999,
+    "adjustment": 0.03675
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.890Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.7717499999999999,
+    "new": 0.8103374999999999,
+    "adjustment": 0.0385875
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.890Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.8103374999999999,
+    "new": 0.8508543749999999,
+    "adjustment": 0.040516875
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.890Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.8508543749999999,
+    "new": 0.89339709375,
+    "adjustment": 0.04254271875
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.890Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.89339709375,
+    "new": 0.9380669484374999,
+    "adjustment": 0.0446698546875
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.890Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.9380669484374999,
+    "new": 0.9849702958593749,
+    "adjustment": 0.046903347421875
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.890Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.9849702958593749,
+    "new": 0.99,
+    "adjustment": 0.049248514792968746
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.890Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.891Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.891Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.891Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.891Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.891Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.891Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.891Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.891Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.891Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.891Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.891Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.892Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.892Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.892Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.892Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.892Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.892Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.892Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.892Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.892Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.892Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.892Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.893Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.893Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.893Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.893Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.893Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.893Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.893Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.893Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.894Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.894Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.894Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.894Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.894Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.894Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.894Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.894Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.895Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.895Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.895Z",
+    "type": "underconfidence",
+    "source": "clustering",
+    "prev": 0.99,
+    "new": 0.99,
+    "adjustment": 0.0495
+  },
+  {
+    "timestamp": "2025-07-03T16:46:13.895Z",
+    "type": "overconfidence",
+    "source": "patterns",
+    "prev": 0.8,
+    "new": 0.76,
+    "adjustment": -0.04000000000000001
+  }
+]

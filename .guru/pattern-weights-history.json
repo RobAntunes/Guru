@@ -1,0 +1,122 @@
+[
+  {
+    "pattern": "singleton",
+    "type": "success",
+    "delta": 0.050000000000000044,
+    "timestamp": "2025-07-03T16:48:01.568Z"
+  },
+  {
+    "pattern": "god_object",
+    "type": "fail",
+    "delta": -0.050000000000000044,
+    "timestamp": "2025-07-03T16:48:01.568Z"
+  },
+  {
+    "pattern": "singleton",
+    "type": "success",
+    "delta": 0.05249999999999999,
+    "timestamp": "2025-07-03T16:48:01.568Z"
+  },
+  {
+    "pattern": "god_object",
+    "type": "fail",
+    "delta": -0.04749999999999999,
+    "timestamp": "2025-07-03T16:48:01.568Z"
+  },
+  {
+    "pattern": "singleton",
+    "type": "success",
+    "delta": 0.05498753117206978,
+    "timestamp": "2025-07-03T16:48:01.568Z"
+  },
+  {
+    "pattern": "god_object",
+    "type": "fail",
+    "delta": -0.0450124688279302,
+    "timestamp": "2025-07-03T16:48:01.568Z"
+  },
+  {
+    "pattern": "singleton",
+    "type": "success",
+    "delta": 0.05745037220843674,
+    "timestamp": "2025-07-03T16:48:01.568Z"
+  },
+  {
+    "pattern": "god_object",
+    "type": "fail",
+    "delta": -0.04254962779156335,
+    "timestamp": "2025-07-03T16:48:01.568Z"
+  },
+  {
+    "pattern": "singleton",
+    "type": "success",
+    "delta": 0.05987678647298966,
+    "timestamp": "2025-07-03T16:48:01.568Z"
+  },
+  {
+    "pattern": "god_object",
+    "type": "fail",
+    "delta": -0.040123213527010315,
+    "timestamp": "2025-07-03T16:48:01.568Z"
+  },
+  {
+    "pattern": "singleton",
+    "type": "success",
+    "delta": 0.062255739154294165,
+    "timestamp": "2025-07-03T16:48:01.568Z"
+  },
+  {
+    "pattern": "god_object",
+    "type": "fail",
+    "delta": -0.037744260845705924,
+    "timestamp": "2025-07-03T16:48:01.568Z"
+  },
+  {
+    "pattern": "singleton",
+    "type": "success",
+    "delta": 0.06457708618834013,
+    "timestamp": "2025-07-03T16:48:01.569Z"
+  },
+  {
+    "pattern": "god_object",
+    "type": "fail",
+    "delta": -0.03542291381165985,
+    "timestamp": "2025-07-03T16:48:01.569Z"
+  },
+  {
+    "pattern": "singleton",
+    "type": "success",
+    "delta": 0.06683172862941045,
+    "timestamp": "2025-07-03T16:48:01.569Z"
+  },
+  {
+    "pattern": "god_object",
+    "type": "fail",
+    "delta": -0.03316827137058953,
+    "timestamp": "2025-07-03T16:48:01.569Z"
+  },
+  {
+    "pattern": "singleton",
+    "type": "success",
+    "delta": 0.06901172837659963,
+    "timestamp": "2025-07-03T16:48:01.569Z"
+  },
+  {
+    "pattern": "god_object",
+    "type": "fail",
+    "delta": -0.030988271623400565,
+    "timestamp": "2025-07-03T16:48:01.569Z"
+  },
+  {
+    "pattern": "singleton",
+    "type": "success",
+    "delta": 0.07111038349957965,
+    "timestamp": "2025-07-03T16:48:01.569Z"
+  },
+  {
+    "pattern": "god_object",
+    "type": "fail",
+    "delta": -0.028889616500420434,
+    "timestamp": "2025-07-03T16:48:01.569Z"
+  }
+]

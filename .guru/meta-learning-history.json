@@ -1,0 +1,152 @@
+[
+  {
+    "feedback_effectiveness": "no data",
+    "optimal_learning_strategy": "default",
+    "updated": "2025-07-03T16:52:03.565Z",
+    "strategy_stats": {},
+    "feedbackEvents": []
+  },
+  {
+    "feedback_effectiveness": "no data",
+    "optimal_learning_strategy": "default",
+    "updated": "2025-07-03T16:52:03.566Z",
+    "strategy_stats": {},
+    "feedbackEvents": []
+  },
+  {
+    "feedback_effectiveness": "0/1 successful",
+    "optimal_learning_strategy": "default",
+    "updated": "2025-07-03T16:53:57.535Z",
+    "strategy_stats": {
+      "default": {
+        "count": 1,
+        "success": 0
+      }
+    },
+    "feedbackEvents": [
+      {
+        "type": "feedback",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "feedback_effectiveness": "0/1 successful",
+    "optimal_learning_strategy": "default",
+    "updated": "2025-07-03T16:53:57.535Z",
+    "strategy_stats": {
+      "default": {
+        "count": 1,
+        "success": 0
+      }
+    },
+    "feedbackEvents": [
+      {
+        "type": "feedback",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "feedback_effectiveness": "0/1 successful",
+    "optimal_learning_strategy": "default",
+    "updated": "2025-07-03T16:56:03.687Z",
+    "strategy_stats": {
+      "default": {
+        "count": 1,
+        "success": 0
+      }
+    },
+    "feedbackEvents": [
+      {
+        "type": "feedback",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "feedback_effectiveness": "0/1 successful",
+    "optimal_learning_strategy": "default",
+    "updated": "2025-07-03T16:56:03.688Z",
+    "strategy_stats": {
+      "default": {
+        "count": 1,
+        "success": 0
+      }
+    },
+    "feedbackEvents": [
+      {
+        "type": "feedback",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "feedback_effectiveness": "0/1 successful",
+    "optimal_learning_strategy": "default",
+    "updated": "2025-07-03T16:56:03.695Z",
+    "strategy_stats": {
+      "default": {
+        "count": 1,
+        "success": 0
+      }
+    },
+    "feedbackEvents": [
+      {
+        "type": "feedback",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "feedback_effectiveness": "0/1 successful",
+    "optimal_learning_strategy": "default",
+    "updated": "2025-07-03T16:56:03.695Z",
+    "strategy_stats": {
+      "default": {
+        "count": 1,
+        "success": 0
+      }
+    },
+    "feedbackEvents": [
+      {
+        "type": "feedback",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "feedback_effectiveness": "0/1 successful",
+    "optimal_learning_strategy": "default",
+    "updated": "2025-07-03T16:56:03.697Z",
+    "strategy_stats": {
+      "default": {
+        "count": 1,
+        "success": 0
+      }
+    },
+    "feedbackEvents": [
+      {
+        "type": "feedback",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "feedback_effectiveness": "0/1 successful",
+    "optimal_learning_strategy": "default",
+    "updated": "2025-07-03T16:56:03.697Z",
+    "strategy_stats": {
+      "default": {
+        "count": 1,
+        "success": 0
+      }
+    },
+    "feedbackEvents": [
+      {
+        "type": "feedback",
+        "value": 1
+      }
+    ]
+  }
+]
