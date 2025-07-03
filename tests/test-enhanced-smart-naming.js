@@ -1,6 +1,6 @@
 //Enhanced Smart Symbol Naming Test
 // Tests the improved confidence scoring and semantic patterns
-import { SymbolGraphBuilder } from './dist/parsers/symbol-graph.js';
+import { SymbolGraphBuilder } from '../src/parsers/symbol-graph.js';
 import path from 'path';
 
 console.log('🧠 Testing Enhanced Smart Symbol Naming...');

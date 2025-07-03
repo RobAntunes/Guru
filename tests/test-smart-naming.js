@@ -5,7 +5,7 @@
  * anonymous functions and provides confidence-scored naming.
  */
 
-import { SymbolGraphBuilder } from './dist/parsers/symbol-graph.js';
+import { SymbolGraphBuilder } from '../src/parsers/symbol-graph.js';
 import path from 'path';
 
 console.log('🧠 Testing Smart Symbol Naming...');

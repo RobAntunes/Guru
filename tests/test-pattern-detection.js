@@ -4,7 +4,7 @@
  * Test Pattern Detection - Comprehensive validation of design patterns and anti-pattern detection
  */
 
-import { GuruCore } from './dist/core/guru.js';
+import { GuruCore } from '../src/core/guru.js';
 import fs from 'fs';
 import path from 'path';
 

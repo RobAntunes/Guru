@@ -1,4 +1,4 @@
-import { GuruCore } from './dist/core/guru.js';
+import { GuruCore } from '../src/core/guru.js';
 
 (async () => {
   const guru = new GuruCore();

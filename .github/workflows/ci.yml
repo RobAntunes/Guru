@@ -29,6 +29,9 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Build TypeScript
+        run: bun run build
+
       - name: Run unit tests (bun test)
         run: bun test
 
