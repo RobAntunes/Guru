@@ -8,10 +8,10 @@
  * on Canon's TypeScript codebase to demonstrate AI-optimized understanding.
  */
 
-import { PurposeInferrer } from './src/intelligence/purpose-inferrer.js';
-import { SymbolGraphBuilder } from './src/parsers/symbol-graph.js';
-import { ExecutionTracer } from './src/intelligence/execution-tracer.js';
-import { LanguageManager } from './src/parsers/language-manager.js';
+import { PurposeInferrer } from '../src/intelligence/purpose-inferrer.ts';
+import { SymbolGraphBuilder } from '../src/parsers/symbol-graph.ts';
+import { ExecutionTracer } from '../src/intelligence/execution-tracer.ts';
+import { LanguageManager } from '../src/parsers/language-manager.ts';
 
 const CANON_SERVER_PATH = '/Users/boss/Documents/projects/canon/api/src/server.ts';
 

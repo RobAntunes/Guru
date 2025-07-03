@@ -5,7 +5,7 @@
  * Tests the full Guru system with GuruCore orchestrating all components
  */
 
-import { GuruCore } from './src/core/guru.js';
+import { GuruCore } from '../src/core/guru.ts';
 import fs from 'fs';
 
 const SAMPLES_DIR = './test-samples';

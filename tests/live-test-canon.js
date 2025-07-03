@@ -3,7 +3,7 @@
  * This will show our AI-optimized approach in action!
  */
 
-import { SymbolGraphBuilder } from './src/parsers/symbol-graph.js';
+import { SymbolGraphBuilder } from '../src/parsers/symbol-graph.ts';
 import { writeFile } from 'fs/promises';
 
 async function liveTestCanon() {

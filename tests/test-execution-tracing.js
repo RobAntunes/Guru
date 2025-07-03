@@ -3,6 +3,12 @@
  * Shows how our execution tracer simulates code flow for AI understanding
  */
 
+import { ExecutionTracer } from '../src/intelligence/execution-tracer.ts';
+/**
+ * Test AI-Optimized Execution Tracing on Canon TypeScript patterns
+ * Shows how our execution tracer simulates code flow for AI understanding
+ */
+
 import { ExecutionTracer } from './src/intelligence/execution-tracer.js';
 import { SymbolGraphBuilder } from './src/parsers/symbol-graph.js';
 import { writeFile } from 'fs/promises';

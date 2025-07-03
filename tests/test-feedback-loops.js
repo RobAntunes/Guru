@@ -1,4 +1,4 @@
-import { SelfReflectionEngine, PeerReviewEngine, ConsensusEngine, AdaptiveTuning, PatternLearning, AdversarialTester, ConfidenceCalibrator, MetaLearner } from './src/intelligence/self-reflection-engine.js';
+import { SelfReflectionEngine, PeerReviewEngine, ConsensusEngine, AdaptiveTuning, PatternLearning, AdversarialTester, ConfidenceCalibrator, MetaLearner } from '../src/intelligence/self-reflection-engine.ts';
 import fs from 'fs';
 
 async function run() {

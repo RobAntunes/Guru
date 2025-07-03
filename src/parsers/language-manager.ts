@@ -109,7 +109,14 @@ export class LanguageManager {
       console.error(`⚠️ No parser available for language: ${language}`);
       return null;
     }
-
+    if (typeof parser.parse !== 'function') {
+      console.error(`❌ Parser for ${language} does not have a parse() method.`);
+      return null;
+    }
+    if (typeof source !== 'string') {
+      console.error(`❌ Source for ${filePath} is not a string.`);
+      return null;
+    }
     try {
       const tree = parser.parse(source);
       return {

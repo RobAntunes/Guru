@@ -2,7 +2,7 @@
  * Test runner for Guru symbol graph building
  */
 
-import { SymbolGraphBuilder } from './src/parsers/symbol-graph.js';
+import { SymbolGraphBuilder } from '../src/parsers/symbol-graph.ts';
 import { writeFile } from 'fs/promises';
 
 async function testSymbolGraph() {
