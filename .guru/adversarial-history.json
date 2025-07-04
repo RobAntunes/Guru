@@ -118,5 +118,7313 @@
       "Add targeted tests or refactor for conflictingPattern"
     ],
     "timestamp": "2025-07-03T16:56:03.697Z"
+  },
+  {
+    "weaknesses": [
+      "bar",
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for bar",
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:32:51.177Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:32:51.246Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:32:51.246Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:32:51.247Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:32:51.248Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:32:51.249Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:32:51.249Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:32:52.083Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:32:52.182Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:32:53.014Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:32:53.846Z"
+  },
+  {
+    "weaknesses": [
+      "bar",
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for bar",
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:37:06.427Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:37:06.496Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:37:06.497Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:37:06.498Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:37:06.499Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:37:06.500Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:37:06.500Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:37:07.332Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:37:07.430Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:37:08.248Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:37:09.096Z"
+  },
+  {
+    "weaknesses": [
+      "bar",
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for bar",
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:45:32.387Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:45:32.461Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:45:32.462Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:45:32.468Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:45:32.469Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:45:32.471Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:45:32.472Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:45:33.383Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:45:33.493Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:45:34.421Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:45:35.392Z"
+  },
+  {
+    "weaknesses": [
+      "bar",
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for bar",
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:48:31.023Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:48:31.095Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:48:31.096Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:48:31.102Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:48:31.103Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:48:31.105Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:48:31.106Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:48:31.933Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:48:32.030Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:48:32.945Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T17:48:33.806Z"
+  },
+  {
+    "weaknesses": [
+      "bar",
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for bar",
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:07:35.137Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:07:35.211Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:07:35.212Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:07:35.217Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:07:35.218Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:07:35.221Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:07:35.222Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:07:36.830Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:07:36.930Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:07:38.536Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:07:40.159Z"
+  },
+  {
+    "weaknesses": [
+      "bar",
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for bar",
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:13:58.144Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:13:58.218Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:13:58.219Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:13:58.225Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:13:58.226Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:13:58.229Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:13:58.230Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:13:59.831Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:13:59.929Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:14:01.558Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:14:03.180Z"
+  },
+  {
+    "weaknesses": [
+      "bar",
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for bar",
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:15:54.164Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:15:54.235Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:15:54.237Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:15:54.244Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:15:54.244Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:15:54.247Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:15:54.248Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:15:56.091Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:15:56.200Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:15:57.895Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:15:59.521Z"
+  },
+  {
+    "weaknesses": [
+      "bar",
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for bar",
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:22:48.779Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:22:48.853Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:22:48.854Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:22:48.860Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:22:48.861Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:22:48.864Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:22:48.865Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:22:50.476Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:22:50.583Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:22:52.195Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:22:53.814Z"
+  },
+  {
+    "weaknesses": [
+      "bar",
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for bar",
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:51:55.359Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:51:55.441Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:51:55.443Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:51:55.451Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:51:55.452Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:51:55.456Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:51:55.457Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:51:57.071Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:51:57.170Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:51:58.775Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-03T18:52:00.370Z"
+  },
+  {
+    "weaknesses": [
+      "bar",
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for bar",
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:05:22.570Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:05:22.677Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:05:22.680Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:05:22.690Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:05:22.692Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:05:22.696Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:05:22.698Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:05:24.634Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:05:24.736Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:05:26.615Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:05:28.675Z"
+  },
+  {
+    "weaknesses": [
+      "bar",
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for bar",
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:08:22.583Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:08:22.650Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:08:22.652Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:08:22.658Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:08:22.659Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:08:22.662Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:08:22.664Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:08:24.507Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:08:24.610Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:08:26.472Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:08:28.467Z"
+  },
+  {
+    "weaknesses": [
+      "bar",
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for bar",
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:09:09.430Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:09:09.505Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:09:09.507Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:09:09.514Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:09:09.515Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:09:09.518Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:09:09.520Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:09:11.433Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:09:11.541Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:09:13.423Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:09:15.350Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:32:30.477Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:32:30.568Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:32:30.658Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:33:11.763Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:33:11.772Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:33:11.778Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:34:08.948Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:34:09.038Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:34:09.133Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.696Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.707Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.713Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.723Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.731Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.738Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.751Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.758Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.765Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.776Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.790Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.797Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.805Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.811Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.821Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.826Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.833Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.838Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.844Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.852Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T03:57:36.859Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:11.953Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:11.963Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:11.969Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:11.977Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:11.984Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:11.989Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:11.999Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:12.006Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:12.012Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:12.022Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:12.033Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:12.040Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:12.045Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:12.052Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:12.059Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:12.064Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:12.069Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:12.074Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:12.080Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:12.087Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T04:16:12.095Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:16:28.899Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:16:28.904Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:18:19.246Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:18:19.251Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:18:36.815Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:18:36.823Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:19:04.617Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:19:04.627Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:04.199Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:04.207Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:04.219Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:04.226Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:04.234Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:04.241Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:14.549Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:14.555Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:14.566Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:14.574Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:14.586Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:14.593Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:14.599Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:39.853Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:39.860Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:39.867Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:39.873Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:39.879Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:39.885Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:39.893Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:48.719Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:48.734Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:48.742Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:48.751Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:48.756Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:48.763Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:48.768Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:20:48.776Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:24:57.386Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:24:57.418Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:24:57.448Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:24:57.465Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:24:57.484Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:24:57.497Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:24:57.837Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:24:57.864Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:24:57.898Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:24:57.912Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:24:57.936Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:24:57.949Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:25:59.519Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:25:59.545Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:25:59.564Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:25:59.581Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:25:59.834Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:25:59.856Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:25:59.876Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:25:59.887Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:26:17.427Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:26:17.450Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:26:17.468Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:26:17.478Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:26:29.060Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:26:29.069Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:26:29.079Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:26:29.085Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:26:29.094Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:26:29.100Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:26:29.105Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:26:29.109Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:26:29.122Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:26:29.127Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:26:29.136Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:26:29.145Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:30:21.144Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:30:21.164Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:30:21.180Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:30:21.191Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:32:27.459Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:32:27.487Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:32:27.512Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:32:27.529Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:34:19.465Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:34:46.122Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:35:25.444Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:36:20.246Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:36:42.070Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:41:52.935Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:43:04.014Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:44:37.060Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:44:37.084Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:44:37.097Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:44:37.117Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:44:37.130Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:44:37.424Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:44:37.442Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:44:37.453Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:44:37.464Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:44:37.472Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:45:38.107Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:45:38.132Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:45:38.139Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:45:38.153Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:45:38.155Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:45:38.160Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:45:38.166Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:45:38.170Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:45:38.180Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:45:38.184Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:45:38.217Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:46:58.570Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:46:58.593Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:46:58.604Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:46:58.615Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:46:58.625Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:47:09.673Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:47:09.688Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:47:09.695Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:47:09.740Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:47:09.902Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:47:09.957Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:47:09.981Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:47:09.992Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:47:10.032Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:47:10.052Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:47:10.058Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:11.400Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:11.412Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:11.417Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:11.425Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:11.434Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:11.445Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:11.458Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:11.466Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:11.475Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:11.483Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:34.046Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:34.074Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:34.085Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:34.095Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:34.106Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:34.387Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:34.406Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:34.417Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:34.428Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:34.436Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:48.275Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:48.301Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:48.312Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:48.457Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:48.474Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:56.997Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:57.046Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:57.062Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:57.078Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:57.099Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:57.827Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:57.845Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:57.854Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:57.865Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:48:57.875Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:49:30.599Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:49:30.609Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:49:30.627Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:49:30.641Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:49:30.645Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:49:30.660Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:49:30.684Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:49:30.700Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:49:30.706Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:49:30.741Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.374Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.391Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.412Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.431Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.445Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.459Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.471Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.482Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.494Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.510Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.525Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.530Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.548Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.560Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.567Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.577Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.585Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.594Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.603Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.612Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.619Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.626Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.638Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.645Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.653Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.662Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.671Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.679Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.686Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.695Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.703Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.711Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.720Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.727Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.734Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.741Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.755Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.762Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.769Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.779Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.786Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.795Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.805Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.813Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.821Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.832Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.840Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.848Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.855Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.864Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.874Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.882Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.889Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.898Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.907Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.915Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.924Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.933Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.945Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.953Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.962Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.971Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.992Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:53:59.997Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:00.003Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:00.009Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:00.015Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:00.023Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:00.031Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:00.039Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:00.046Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:00.057Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:00.088Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:00.096Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:00.102Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.447Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.465Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.482Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.500Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.520Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.539Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.551Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.570Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.584Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.601Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.614Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.622Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.640Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.650Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.661Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.669Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.680Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.691Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.701Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.710Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.720Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.730Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.739Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.747Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.756Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.764Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.776Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.785Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.796Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.805Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.821Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.834Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.843Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.851Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.860Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.867Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.878Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.886Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.895Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.903Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.913Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.924Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.932Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.940Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.951Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.962Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.970Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.979Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:05.991Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.001Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.009Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.019Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.030Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.039Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.048Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.057Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.067Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.077Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.086Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.095Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.106Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.116Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.135Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.142Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.150Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.157Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.163Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.169Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.177Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.184Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.191Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.199Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.228Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.234Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:54:06.241Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:24.177Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:24.195Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:24.216Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:24.231Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:24.247Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:24.265Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:24.286Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:24.313Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.194Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.210Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.228Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.243Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.260Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.282Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.294Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.309Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.323Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.335Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.351Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.358Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.391Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.413Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.436Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.460Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.485Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.496Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.506Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.516Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.529Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.545Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.560Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.568Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.577Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.587Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.598Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.609Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.618Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.627Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.637Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.647Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.655Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.666Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.677Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.686Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.695Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.705Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.718Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.729Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.739Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.748Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.759Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.769Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.780Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.790Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.800Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.810Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.819Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.829Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.840Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.849Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.860Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.870Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.882Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.891Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.901Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.912Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.923Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.932Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.943Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.953Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.970Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.977Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.985Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.992Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:29.999Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:30.006Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:30.014Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:30.021Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:30.028Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:30.038Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:30.067Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:30.074Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:30.082Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:33.908Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T06:55:33.917Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:37:14.599Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:37:14.628Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:37:14.642Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:37:14.656Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:37:14.670Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:37:22.993Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:37:23.013Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:37:23.027Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:37:23.040Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:37:23.052Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:41:08.539Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:41:08.565Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:41:08.578Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:41:08.592Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:41:08.607Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:41:16.512Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:41:16.542Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:41:16.555Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:41:16.570Z"
+  },
+  {
+    "weaknesses": [
+      "ambiguousHandler",
+      "conflictingPattern"
+    ],
+    "strengths": [],
+    "improvement_areas": [
+      "Add targeted tests or refactor for ambiguousHandler",
+      "Add targeted tests or refactor for conflictingPattern"
+    ],
+    "timestamp": "2025-07-04T07:41:16.585Z"
   }
 ]

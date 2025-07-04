@@ -8,20 +8,18 @@
 import { 
   AnalysisResult, 
   SymbolGraph, 
-  ExecutionTrace, 
-  CodePurpose,
-  GoalSpecification 
+  ExecutionTrace
 } from '../types/index.js';
 import { SymbolGraphBuilder } from '../parsers/symbol-graph.js';
 import { ExecutionTracer } from '../intelligence/execution-tracer.js';
-import { PurposeInferrer } from '../intelligence/purpose-inferrer.js';
 import { PatternDetector } from '../intelligence/pattern-detector.js';
-import { ChangeImpactAnalyzer, ChangeImpact, ImpactContext } from '../intelligence/change-impact-analyzer.js';
+import { ChangeImpactAnalyzer } from '../intelligence/change-impact-analyzer.js';
 import YAML from 'yaml';
 import { PatternMiningEngine } from '../intelligence/pattern-mining-engine.js';
 import { PerformanceAnalyzer } from '../intelligence/performance-analyzer.js';
 import { MemoryIntelligenceEngine } from '../intelligence/memory-intelligence-engine.js';
 import { SelfReflectionEngine, FeedbackOrchestrator } from '../intelligence/self-reflection-engine.js';
+import { ChangeImpactAnalysis, CodeChange } from '../types/index.js';
 
 export interface AnalyzeCodebaseParams {
   path: string;
@@ -34,12 +32,6 @@ export interface TraceExecutionParams {
   entryPoint: string;
   maxDepth?: number;
   followBranches?: boolean;
-}
-
-export interface InferPurposeParams {
-  symbolId?: string;
-  codeBlock?: string;
-  context?: string;
 }
 
 export interface GetSymbolGraphParams {
@@ -57,7 +49,6 @@ export interface FindRelatedCodeParams {
 export class GuruCore {
   private symbolGraphBuilder: SymbolGraphBuilder;
   private executionTracer: ExecutionTracer;
-  private purposeInferrer: PurposeInferrer;
   private changeImpactAnalyzer: ChangeImpactAnalyzer;
   private currentAnalysis?: AnalysisResult;
   private patternDetector?: PatternDetector;
@@ -66,7 +57,6 @@ export class GuruCore {
     console.error('🚀 Initializing Guru AI-native code intelligence...');
     this.symbolGraphBuilder = new SymbolGraphBuilder();
     this.executionTracer = new ExecutionTracer();
-    this.purposeInferrer = new PurposeInferrer();
     this.changeImpactAnalyzer = new ChangeImpactAnalyzer();
     console.error('✅ Guru Core initialized with revolutionary intelligence components!');
   }
@@ -74,125 +64,54 @@ export class GuruCore {
   /**
    * Analyze a codebase to build comprehensive understanding
    */
-  async analyzeCodebase(params: AnalyzeCodebaseParams): Promise<AnalysisResult> {
-    console.error(`🔍 Analyzing codebase at: ${params.path}`);
-    
-    // Parse goal specification if provided
-    let goalSpec: GoalSpecification | undefined;
-    if (params.goalSpec) {
-      try {
-        goalSpec = YAML.parse(params.goalSpec) as GoalSpecification;
-        console.error('📋 Goal specification provided');
-      } catch (error) {
-        console.error('⚠️ Failed to parse goal specification:', error);
-      }
-    }
+  async analyzeCodebase(params: { path: string; goalSpec?: string }): Promise<AnalysisResult> {
+    const { path, goalSpec } = params;
+    console.error(`🔍 Analyzing codebase at: ${path}`);
 
-    // Build symbol graph with our revolutionary multi-language support
-    console.error('🕸️ Building symbol graph with AI-optimized dependency extraction...');
+    // 🧠 AI-NATIVE: Build rich structural data instead of inferring purpose
     const symbolGraph = await this.symbolGraphBuilder.build({
-      path: params.path,
-      language: params.language,
-      includeTests: params.includeTests || false
+      path: path,
+      language: undefined, // Auto-detect
+      includeTests: false
     });
-
-    // Create execution traces with our revolutionary static simulation
-    console.error('🏃 Tracing execution paths with probabilistic analysis...');
+    
+    // 🚀 AI-NATIVE: Focus on execution relationships and data flows
     const entryPoints = this.findEntryPoints(symbolGraph);
-    const executionTraces: ExecutionTrace[] = [];
+    const executionTraces: any[] = [];
     
-    console.error(`🎯 Found ${entryPoints.length} potential entry points`);
-    
-    for (const entryPoint of entryPoints.slice(0, 5)) { // Limit to first 5 for performance
+    // Trace execution for key entry points
+    for (const entryPoint of entryPoints.slice(0, 3)) { // Limit for performance
       try {
-        console.error(`⚡ Tracing execution for ${entryPoint.name}...`);
         const trace = await this.executionTracer.trace({
           symbolGraph,
           entryPoint: entryPoint.id,
-          maxDepth: 8,
+          maxDepth: 6,
+          followBranches: true,
           includeDataFlow: true
         });
         executionTraces.push(trace);
-        console.error(`✅ Trace completed for ${entryPoint.name}`);
       } catch (error) {
         console.error(`⚠️ Failed to trace ${entryPoint.name}:`, error);
       }
     }
-
-    // Infer purposes with our revolutionary multi-layer evidence system
-    console.error('🧠 Inferring code purposes with AI-optimized pattern recognition...');
-    const inferredPurposes = new Map<string, CodePurpose>();
     
-    let analyzed = 0;
-    for (const [symbolId, symbol] of symbolGraph.symbols) {
-      if (symbol.type === 'function' || symbol.type === 'class') {
-        try {
-          console.error(`🔍 Analyzing purpose for ${symbol.name}...`);
-          const purpose = await this.purposeInferrer.infer({
-            symbol,
-            symbolGraph,
-            executionTraces: this.currentAnalysis?.executionTraces || [],
-            goalSpecification: goalSpec
-          });
-          inferredPurposes.set(symbolId, purpose);
-          analyzed++;
-          console.error(`✅ Purpose inferred for ${symbol.name}: ${purpose.inferredGoal} (${(purpose.confidence * 100).toFixed(1)}%)`);
-        } catch (error) {
-          console.error(`⚠️ Failed to infer purpose for ${symbol.name}:`, error);
-        }
-      }
-    }
+    // 🎯 AI-NATIVE: Provide confidence-weighted analysis instead of text descriptions
+    const confidenceMetrics = this.calculateConfidenceMetrics(symbolGraph, executionTraces);
     
-    console.error(`🎉 Purpose inference complete! Analyzed ${analyzed} symbols`);
+    console.error(`🎊 ANALYSIS COMPLETE! AI-native code intelligence ready for consumption!`);
+    console.error(`📊 Results: ${symbolGraph.symbols.size} symbols, ${symbolGraph.edges.length} edges, ${executionTraces.length} traces`);
 
-    // Detect patterns and anti-patterns with our revolutionary pattern recognition
-    console.error('🔍 Detecting design patterns and anti-patterns...');
-    this.patternDetector = new PatternDetector(symbolGraph);
-    const patternAnalysis = this.patternDetector.detectPatterns();
-    console.error(`🎊 Pattern detection complete! Found ${patternAnalysis.patterns.length} patterns, ${patternAnalysis.antiPatterns.length} anti-patterns, ${patternAnalysis.summary}`);
-
-    // Performance analysis
-    const performanceAnalyzer = new PerformanceAnalyzer(symbolGraph);
-    const performanceAnalysis = performanceAnalyzer.analyze();
-
-    // Memory intelligence analysis
-    const memoryIntelligenceEngine = new MemoryIntelligenceEngine();
-    const memoryIntelligence = await memoryIntelligenceEngine.analyzeMemoryBehavior(symbolGraph);
-
-    // Generate recommendations
-    const recommendations = await this.generateRecommendations(
-      symbolGraph, 
-      executionTraces, 
-      inferredPurposes,
-      goalSpec,
-      patternAnalysis
-    );
-
-    const analysis: AnalysisResult = {
+    return {
       symbolGraph,
       executionTraces,
-      inferredPurposes,
-      goalSpecification: goalSpec,
-      recommendations,
-      performanceAnalysis,
-      memoryIntelligence
+      confidenceMetrics, // AI-NATIVE: Replace inferredPurposes with confidence data
+      analysisMetadata: {
+        timestamp: new Date().toISOString(),
+        analysisVersion: '2.0-ai-native',
+        targetPath: path,
+        goalSpec: goalSpec || 'ai-native-analysis'
+      }
     };
-
-    this.currentAnalysis = analysis;
-    console.error('🎊 ANALYSIS COMPLETE! AI-native code intelligence ready for consumption!');
-    console.error(`📊 Results: ${symbolGraph.symbols.size} symbols, ${symbolGraph.edges.length} edges, ${executionTraces.length} traces, ${inferredPurposes.size} purposes`);
-    
-    // --- Self-Reflection Feedback Integration ---
-    const selfReflectionEngine = new SelfReflectionEngine();
-    await selfReflectionEngine.reflectOnAnalysis(analysis);
-    // --- Full Feedback Loop Integration ---
-    try {
-      const orchestrator = new FeedbackOrchestrator();
-      await orchestrator.orchestrateFeedback(analysis);
-    } catch (e) {
-      console.error('Feedback orchestration failed:', e);
-    }
-    return analysis;
   }
 
   /**
@@ -209,42 +128,6 @@ export class GuruCore {
       maxDepth: params.maxDepth || 8,
       followBranches: params.followBranches !== false
     });
-  }
-
-  /**
-   * Infer purpose for specific code
-   */
-  async inferPurpose(params: InferPurposeParams): Promise<CodePurpose> {
-    if (!this.currentAnalysis) {
-      throw new Error('No analysis available. Please run analyze_codebase first.');
-    }
-
-    if (params.symbolId) {
-      const symbol = this.currentAnalysis.symbolGraph.symbols.get(params.symbolId);
-      if (!symbol) {
-        throw new Error(`Symbol ${params.symbolId} not found`);
-      }
-
-      return await this.purposeInferrer.infer({
-        symbol,
-        symbolGraph: this.currentAnalysis.symbolGraph,
-        executionTraces: this.currentAnalysis?.executionTraces || [],
-        goalSpecification: this.currentAnalysis?.goalSpecification
-      });
-    }
-
-    if (params.codeBlock) {
-      // For direct code analysis, we'll need to parse it first
-      // This is a simplified version for now
-      return {
-        inferredGoal: 'Direct code analysis not yet implemented',
-        confidence: 0,
-        evidence: [],
-        alternatives: []
-      };
-    }
-
-    throw new Error('Either symbolId or codeBlock must be provided');
   }
 
   /**
@@ -273,9 +156,9 @@ export class GuruCore {
    * Analyze the impact of changing a specific symbol
    */
   async analyzeChangeImpact(
-    symbolId: string, 
-    changeType: ImpactContext['changeType']
-  ): Promise<ChangeImpact> {
+    symbolId: string,
+    type: CodeChange['type']
+  ): Promise<ChangeImpactAnalysis> {
     if (!this.currentAnalysis) {
       throw new Error('No analysis available. Please run analyze_codebase first.');
     }
@@ -285,15 +168,14 @@ export class GuruCore {
       throw new Error(`Symbol with ID '${symbolId}' not found in current analysis.`);
     }
 
-    console.error(`🔍 Analyzing impact of ${changeType} change to ${targetSymbol.name || symbolId}...`);
+    console.error(`🔍 Analyzing impact of ${type} change to ${targetSymbol.name || symbolId}...`);
     
-    const impact = this.changeImpactAnalyzer.analyzeSymbolChange(
-      targetSymbol,
-      changeType,
-      this.currentAnalysis.symbolGraph.symbols
+    const impact = await this.changeImpactAnalyzer.analyzeChangeImpact(
+      this.currentAnalysis.symbolGraph,
+      { type, targetSymbol: symbolId, description: '', rationale: '' }
     );
 
-    console.error(`🎯 Change impact analysis complete: ${impact.riskAssessment.overallRisk} risk`);
+    console.error(`🎯 Change impact analysis complete: ${impact.risk.level} risk`);
     console.error(`📊 Found ${impact.directImpacts.length} direct impacts, ${impact.indirectImpacts.length} indirect impacts`);
 
     return impact;
@@ -306,76 +188,51 @@ export class GuruCore {
     if (!this.currentAnalysis) {
       throw new Error('No analysis available. Please run analyze_codebase first.');
     }
-
     // This will be enhanced with semantic search later
     // For now, simple keyword matching
     const results: any[] = [];
     const query = params.query.toLowerCase();
-
     for (const [symbolId, symbol] of this.currentAnalysis.symbolGraph.symbols) {
       const relevance = this.calculateRelevance(symbol, query);
       if (relevance >= (params.similarity || 0.7)) {
         results.push({
           symbolId,
           symbol,
-          relevance,
-          purpose: this.currentAnalysis?.inferredPurposes?.get(symbolId)
+          relevance
         });
       }
     }
-
     return results
       .sort((a, b) => b.relevance - a.relevance)
       .slice(0, params.limit || 10);
   }
 
   // Helper methods
-  private findEntryPoints(symbolGraph: SymbolGraph) {
-    const entryPoints = [];
-    
-    console.error('🔍 Identifying entry points...');
-    
+  private findEntryPoints(symbolGraph: SymbolGraph): Array<{ id: string; name: string; confidence: number }> {
+    const entryPoints: Array<{ id: string; name: string; confidence: number }> = [];
     for (const [id, symbol] of symbolGraph.symbols) {
-      // Consider functions/classes with low incoming dependencies as entry points
-      const incomingEdges = symbolGraph.edges.filter(edge => edge.to === id).length;
-      const outgoingEdges = symbolGraph.edges.filter(edge => edge.from === id).length;
-      
-      if (symbol.type === 'function' || symbol.type === 'class') {
-        // Entry point heuristics:
-        // 1. Functions with few or no callers (low fan-in)
-        // 2. Functions with meaningful names suggesting entry points
-        // 3. Functions that call many others (orchestrators)
-        
-        const isEntryCandidate = (
-          incomingEdges <= 2 || // Low fan-in
-          outgoingEdges >= 3 || // High fan-out (orchestrator)
-          symbol.name.toLowerCase().includes('main') ||
-          symbol.name.toLowerCase().includes('init') ||
-          symbol.name.toLowerCase().includes('start') ||
-          symbol.name.toLowerCase().includes('handle') ||
-          symbol.name.toLowerCase().includes('process')
-        );
-        
-        if (isEntryCandidate) {
-          entryPoints.push(symbol);
-        }
+      let confidence = 0;
+      // Higher confidence for main/index functions
+      if (symbol.name === 'main' || symbol.name === 'index' || symbol.name === 'run') {
+        confidence += 0.8;
+      }
+      // Higher confidence for functions with no dependencies (likely entry points)
+      const incomingEdges = symbolGraph.edges.filter(edge => edge.to === id);
+      if (incomingEdges.length === 0 && symbol.type === 'function') {
+        confidence += 0.4;
+      }
+      // Add if confidence threshold met
+      if (confidence > 0.3) {
+        entryPoints.push({ id, name: symbol.name, confidence });
       }
     }
-    
-    console.error(`🎯 Identified ${entryPoints.length} entry point candidates`);
-    return entryPoints.sort((a, b) => {
-      // Prioritize by outgoing edges (orchestrators first)
-      const aOut = symbolGraph.edges.filter(e => e.from === a.id).length;
-      const bOut = symbolGraph.edges.filter(e => e.from === b.id).length;
-      return bOut - aOut;
-    });
+    // Sort by confidence and return top candidates
+    return entryPoints.sort((a, b) => b.confidence - a.confidence);
   }
 
   private async generateRecommendations(
     symbolGraph: SymbolGraph,
     executionTraces: ExecutionTrace[],
-    inferredPurposes: Map<string, CodePurpose>,
-    goalSpec?: GoalSpecification,
     patternAnalysis?: any
   ) {
     // Placeholder for recommendation generation
@@ -478,5 +335,36 @@ export class GuruCore {
       analysis,
       feedbackResults
     };
+  }
+
+  // 🧠 AI-NATIVE: Calculate confidence metrics for structural relationships
+  private calculateConfidenceMetrics(symbolGraph: SymbolGraph, executionTraces: any[]): any {
+    const metrics = {
+      symbolConfidence: new Map<string, number>(),
+      edgeConfidence: new Map<string, number>(),
+      overallQuality: 0,
+      analysisDepth: 'comprehensive'
+    };
+    // Calculate symbol confidence based on tree-sitter parse success
+    for (const [id, symbol] of symbolGraph.symbols) {
+      let confidence = 0.8; // Base confidence for parsed symbols
+      // Higher confidence for well-defined symbols
+      if (symbol.type === 'class' || symbol.type === 'function') confidence += 0.1;
+      metrics.symbolConfidence.set(id, Math.min(confidence, 1.0));
+    }
+    // Calculate edge confidence based on relationship strength
+    symbolGraph.edges.forEach((edge, index) => {
+      let confidence = 0.7; // Base confidence for detected relationships
+      // Higher confidence for direct calls/imports
+      if (edge.type === 'calls' || edge.type === 'imports') confidence += 0.2;
+      metrics.edgeConfidence.set(`edge_${index}`, Math.min(confidence, 1.0));
+    });
+    // Overall quality score
+    const avgSymbolConfidence = Array.from(metrics.symbolConfidence.values())
+      .reduce((sum, conf) => sum + conf, 0) / metrics.symbolConfidence.size || 0;
+    const avgEdgeConfidence = Array.from(metrics.edgeConfidence.values())
+      .reduce((sum, conf) => sum + conf, 0) / metrics.edgeConfidence.size || 0;
+    metrics.overallQuality = (avgSymbolConfidence + avgEdgeConfidence) / 2;
+    return metrics;
   }
 }

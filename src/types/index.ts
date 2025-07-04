@@ -7,24 +7,31 @@ import type { ConfidenceScore, SymbolContext } from './smart-naming.js';
 import type { EntryPointAnalysis, ApplicationEntryPoint } from './entry-point.js';
 import type { ClusteringAnalysis } from './clustering.js';
 import type { PerformanceAnalysisResult } from './performance.js';
-import type { MemoryIntelligenceAnalysis } from '../intelligence/memory-intelligence-engine.js';
 
 export interface SymbolNode {
+  /**
+   * Unique, stable identifier for this symbol (e.g., AST hash, canonical path)
+   * All references should use this id or the embedding for model-native access.
+   */
   id: string;
-  name: string;
+  name: string; // Human name, optional for model use
   type: SymbolType;
   location: SourceLocation;
   scope: string;
   dependencies: string[]; // IDs of symbols this depends on
   dependents: string[];   // IDs of symbols that depend on this
   metadata: SymbolMetadata;
-  // Smart naming enhancements
-  smartNaming?: {
-    inferredName: string;
-    confidence: ConfidenceScore;
-    context: SymbolContext;
-    originalName?: string;
-  };
+  /**
+   * Optional vector embedding for this symbol (for model-native queries)
+   */
+  embedding?: number[];
+  // Remove or make optional all human-centric fields
+  // smartNaming?: {
+  //   inferredName: string;
+  //   confidence: ConfidenceScore;
+  //   context: SymbolContext;
+  //   originalName?: string;
+  // };
 }
 
 export type SymbolType = 
@@ -35,7 +42,9 @@ export type SymbolType =
   | 'interface'
   | 'type'
   | 'module'
-  | 'namespace';
+  | 'namespace'
+  | 'method'
+  | 'object';
 
 export interface SourceLocation {
   file: string;
@@ -62,6 +71,9 @@ export interface Parameter {
   defaultValue?: string;
 }
 
+/**
+ * SymbolGraph: All symbols are referenced by id or embedding, not by name.
+ */
 export interface SymbolGraph {
   symbols: Map<string, SymbolNode>;
   edges: SymbolEdge[];
@@ -146,60 +158,25 @@ export interface ExecutionPath {
   conditions: string[]; // Conditions that must be true for this path
 }
 
-export interface CodePurpose {
-  inferredGoal: string;
-  confidence: number; // 0-1 scale
-  evidence: PurposeEvidence[];
-  alternatives: AlternativePurpose[];
-}
-
-export interface PurposeEvidence {
-  type: 'structural' | 'behavioral' | 'naming' | 'dependency';
-  description: string;
-  strength: number; // 0-1 scale
-  source: string; // Where this evidence came from
-}
-
-export interface AlternativePurpose {
-  goal: string;
-  confidence: number;
-  reasoning: string;
-}
-
-export interface GoalSpecification {
-  primary: string;
-  secondary: string[];
-  constraints: string[];
-  successCriteria: string[];
-  inputOutput?: {
-    inputs: InputSpec[];
-    outputs: OutputSpec[];
-  };
-  behaviorRequirements?: string[];
-}
-
-export interface InputSpec {
-  name: string;
-  type: string;
-  description: string;
-  constraints?: string[];
-}
-
-export interface OutputSpec {
-  name: string;
-  type: string;
-  description: string;
-  conditions?: string[];
-}
-
 export interface AnalysisResult {
   symbolGraph: SymbolGraph;
-  executionTraces?: ExecutionTrace[];
-  inferredPurposes?: Map<string, CodePurpose>;
-  goalSpecification?: GoalSpecification;
-  recommendations?: Recommendation[];
-  performanceAnalysis?: PerformanceAnalysisResult;
-  memoryIntelligence?: MemoryIntelligenceAnalysis;
+  executionTraces: ExecutionTrace[];
+  confidenceMetrics: ConfidenceMetrics;
+  analysisMetadata: AnalysisMetadata;
+}
+
+export interface ConfidenceMetrics {
+  symbolConfidence: Map<string, number>;
+  edgeConfidence: Map<string, number>;
+  overallQuality: number;
+  analysisDepth: string;
+}
+
+export interface AnalysisMetadata {
+  timestamp: string;
+  analysisVersion: string;
+  targetPath: string;
+  goalSpec: string;
 }
 
 // Smart naming types
@@ -219,4 +196,94 @@ export interface Recommendation {
   rationale: string;
 }
 
-export type { MemoryIntelligenceAnalysis, StaleClosureAnalysis, DataFlowAnalysis, PseudoStackAnalysis, MemoryHealthScore } from '../intelligence/memory-intelligence-engine.js';
+// Pattern Detection Types
+export interface DesignPattern {
+  type: string;
+  symbols: string[];
+  confidence: number;
+  evidence: any[];
+  description: string;
+  implications: string[];
+}
+
+export interface AntiPattern {
+  type: string;
+  symbols: string[];
+  severity: number;
+  evidence: any[];
+  description: string;
+  problems: string[];
+  suggestions: string[];
+}
+
+export interface PatternDetectionResult {
+  designPatterns: DesignPattern[];
+  antiPatterns: AntiPattern[];
+  summary: {
+    totalPatterns: number;
+    designPatternCount: number;
+    antiPatternCount: number;
+    overallHealth: number;
+    recommendations: string[];
+  };
+}
+
+// Change Impact Analysis Types
+export interface CodeChange {
+  type: 'signature_change' | 'behavior_change' | 'modification' | 'addition' | 'deletion';
+  targetSymbol: string;
+  description: string;
+  rationale?: string;
+}
+
+export interface ChangeImpactAnalysis {
+  change: CodeChange;
+  directImpacts: string[];
+  indirectImpacts: string[];
+  risk: any;
+  recommendations: any[];
+  affectedSymbols: string[];
+  metadata: {
+    totalImpacts: number;
+    riskScore: number;
+    safeToAutomate: boolean;
+    estimatedEffort: string;
+    analysisConfidence: number;
+  };
+}
+
+// Add missing types for change impact and pattern detection
+export type ImpactLevel = 'low' | 'medium' | 'high';
+export interface ChangeRisk {
+  level: ImpactLevel;
+  score: number;
+  factors: string[];
+  confidence: number;
+}
+export interface RippleEffect {
+  symbol: string;
+  impact: string;
+  severity: ImpactLevel;
+}
+export interface ChangeRecommendation {
+  type: string;
+  priority: 'low' | 'medium' | 'high';
+  description: string;
+  action: string;
+  confidence: number;
+}
+export type PatternConfidence = 'low' | 'medium' | 'high';
+export interface PatternEvidence {
+  type: string;
+  description: string;
+  strength: number;
+  source?: string;
+}
+
+// If needed, define a minimal MemoryIntelligenceAnalysis interface here:
+export interface MemoryIntelligenceAnalysis {
+  summary: string;
+  details?: any;
+}
+
+// Update CodeCluster type: remove or make optional all human-centric fields (name, purpose, semanticZone). Only require id, symbolIds, and structural/embedding features. Update comments to clarify model-native usage.

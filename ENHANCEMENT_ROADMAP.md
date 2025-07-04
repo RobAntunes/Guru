@@ -169,4 +169,34 @@
 
 ---
 
+# AI-Native Enhancement Roadmap
+
+## 🤖 Phase 1: Remove Redundant AI Work
+- [ ] **Remove Purpose Inference** - Let consuming AI do this work
+- [ ] **Replace Text Descriptions** with structured metadata
+- [ ] **Add Confidence Scores** to all relationships
+- [ ] **Enhance Edge Types** - more granular relationship semantics
+
+## 🧠 Phase 2: True AI-Native Data Structures  
+- [ ] **Vector Embeddings** - Replace symbol names with semantic embeddings
+- [ ] **Probabilistic Relationships** - Confidence intervals on all edges
+- [ ] **Multi-dimensional Features** - Rich feature vectors per symbol
+- [ ] **Attention Maps** - What symbols are most "interesting" to AI
+
+## ⚡ Phase 3: Performance for AI Consumption
+- [ ] **Streaming API** - For large codebases
+- [ ] **Selective Depth** - AI can request detail levels
+- [ ] **Caching Layer** - For repeated AI queries
+- [ ] **Parallel Processing** - Multi-threaded symbol extraction
+
+## 🎯 Phase 4: Advanced AI-Native Features
+- [ ] **Code Similarity Matrices** - For AI pattern matching
+- [ ] **Control Flow Graphs** - Explicit for AI consumption  
+- [ ] **Dependency Ranking** - Critical vs peripheral relationships
+- [ ] **Semantic Clustering** - Group related symbols automatically
+
+## 🔬 Immediate Priority: Remove Purpose Inference
+The consuming AI can infer purpose better than hard-coded patterns.
+Focus on rich structural data instead.
+
 *This roadmap represents the transformation of Guru from a code analysis tool into a comprehensive AI-native programming assistant that understands, predicts, and enhances software development.* 

@@ -5,13 +5,13 @@
 
 export interface CodeCluster {
   id: string;
-  name: string;
-  purpose: string;
+  name?: string; // Deprecated: human-centric, optional for AI-native
+  purpose?: string; // Deprecated: human-centric, optional for AI-native
   confidence: ClusterConfidence;
   symbols: string[];        // symbol IDs in this cluster
   connections: ClusterEdge[];
   metrics: ClusterMetrics;
-  semanticZone: SemanticZone;
+  semanticZone?: SemanticZone; // Deprecated: human-centric, optional for AI-native
   relationships: ClusterRelationship[];
 }
 

@@ -1,773 +1,679 @@
 /**
- * Advanced Design Pattern Detection System
- * Identifies common software design patterns and anti-patterns
+ * PatternDetector - AI-native design pattern and anti-pattern detection
+ * 
+ * Detects common design patterns and anti-patterns in code with confidence scoring
+ * Built specifically for AI agent consumption and decision making
  */
 
-import { SymbolNode, SymbolGraph } from '../types/index.js';
-
-export interface PatternMatch {
-  pattern: string;
-  confidence: number;
-  location: {
-    file: string;
-    symbols: string[];
-    startLine?: number;
-    endLine?: number;
-  };
-  description: string;
-  characteristics: string[];
-  suggestions?: string[];
-  antiPattern?: boolean;
-  severity?: 'low' | 'medium' | 'high' | 'critical';
-}
-
-export interface PatternDetectionResult {
-  patterns: PatternMatch[];
-  antiPatterns: PatternMatch[];
-  summary: {
-    totalPatterns: number;
-    uniquePatterns: Set<string>;
-    qualityScore: number;
-    recommendations: string[];
-  };
-}
+import { 
+  DesignPattern, 
+  AntiPattern, 
+  PatternDetectionResult,
+  PatternConfidence,
+  PatternEvidence
+} from '../types/index.js';
+import { SymbolGraph, SymbolNode } from '../types/index.js';
 
 export class PatternDetector {
-  private symbolGraph: SymbolGraph;
-
-  constructor(symbolGraph: SymbolGraph) {
-    this.symbolGraph = symbolGraph;
-  }
-
+  
   /**
-   * Detect all patterns in the codebase
+   * Detect all patterns (design patterns + anti-patterns) in symbol graph
    */
-  detectPatterns(): PatternDetectionResult {
-    const patterns: PatternMatch[] = [];
-    const antiPatterns: PatternMatch[] = [];
-
-    // Creational Patterns
-    patterns.push(...this.detectSingletonPattern());
-    patterns.push(...this.detectFactoryPattern());
-    patterns.push(...this.detectBuilderPattern());
-    patterns.push(...this.detectPrototypePattern());
-
-    // Only implemented patterns for now
-    // patterns.push(...this.detectAdapterPattern());
-    // patterns.push(...this.detectDecoratorPattern());
-    // patterns.push(...this.detectFacadePattern());
-    // patterns.push(...this.detectProxyPattern());
-    // patterns.push(...this.detectCompositePattern());
-
-    // patterns.push(...this.detectObserverPattern());
-    // patterns.push(...this.detectStrategyPattern());
-    // patterns.push(...this.detectCommandPattern());
-    // patterns.push(...this.detectStatePattern());
-    // patterns.push(...this.detectChainOfResponsibilityPattern());
-    // patterns.push(...this.detectVisitorPattern());
-
-    // patterns.push(...this.detectMVCPattern());
-    // patterns.push(...this.detectRepositoryPattern());
-    // patterns.push(...this.detectDependencyInjectionPattern());
-    // patterns.push(...this.detectMiddlewarePattern());
-
-    // Anti-Patterns
-    antiPatterns.push(...this.detectGodObjectAntiPattern());
-    antiPatterns.push(...this.detectLongParameterListAntiPattern());
-    // antiPatterns.push(...this.detectDeepNestingAntiPattern());
-    // antiPatterns.push(...this.detectMagicNumberAntiPattern());
-    // antiPatterns.push(...this.detectDuplicateCodeAntiPattern());
-    antiPatterns.push(...this.detectLongMethodAntiPattern());
-
-    const uniquePatterns = new Set(patterns.map(p => p.pattern));
-    const qualityScore = this.calculateQualityScore(patterns, antiPatterns);
-    const recommendations = this.generateRecommendations(patterns, antiPatterns);
-
-    return {
-      patterns,
+  async detectPatterns(symbolGraph: SymbolGraph): Promise<PatternDetectionResult> {
+    console.log('🔍 Detecting design patterns and anti-patterns...');
+    
+    const designPatterns = await this.detectDesignPatterns(symbolGraph);
+    const antiPatterns = await this.detectAntiPatterns(symbolGraph);
+    
+    const result: PatternDetectionResult = {
+      designPatterns,
       antiPatterns,
       summary: {
-        totalPatterns: patterns.length,
-        uniquePatterns,
-        qualityScore,
-        recommendations
+        totalPatterns: designPatterns.length + antiPatterns.length,
+        designPatternCount: designPatterns.length,
+        antiPatternCount: antiPatterns.length,
+        overallHealth: this.calculateCodeHealth(designPatterns, antiPatterns),
+        recommendations: this.generateRecommendations(designPatterns, antiPatterns)
       }
     };
+    
+    console.log(`🎊 Pattern detection complete! Found ${designPatterns.length} patterns, ${antiPatterns.length} anti-patterns`);
+    return result;
   }
-
-  // Creational Patterns
-
-  private detectSingletonPattern(): PatternMatch[] {
-    const matches: PatternMatch[] = [];
-
-    for (const [symbolId, symbol] of this.symbolGraph.symbols) {
+  
+  /**
+   * Detect design patterns
+   */
+  private async detectDesignPatterns(symbolGraph: SymbolGraph): Promise<DesignPattern[]> {
+    const patterns: DesignPattern[] = [];
+    
+    // Singleton Pattern Detection
+    patterns.push(...await this.detectSingletonPattern(symbolGraph));
+    
+    // Factory Pattern Detection  
+    patterns.push(...await this.detectFactoryPattern(symbolGraph));
+    
+    // Observer Pattern Detection
+    patterns.push(...await this.detectObserverPattern(symbolGraph));
+    
+    // Strategy Pattern Detection
+    patterns.push(...await this.detectStrategyPattern(symbolGraph));
+    
+    return patterns;
+  }
+  
+  /**
+   * Detect anti-patterns
+   */
+  private async detectAntiPatterns(symbolGraph: SymbolGraph): Promise<AntiPattern[]> {
+    const antiPatterns: AntiPattern[] = [];
+    
+    // God Function Anti-Pattern
+    antiPatterns.push(...await this.detectGodFunction(symbolGraph));
+    
+    // Callback Hell Anti-Pattern
+    antiPatterns.push(...await this.detectCallbackHell(symbolGraph));
+    
+    // Spaghetti Code Anti-Pattern
+    antiPatterns.push(...await this.detectSpaghettiCode(symbolGraph));
+    
+    // Magic Number Anti-Pattern
+    antiPatterns.push(...await this.detectMagicNumbers(symbolGraph));
+    
+    return antiPatterns;
+  }
+  
+  /**
+   * Detect Singleton Pattern
+   */
+  private async detectSingletonPattern(symbolGraph: SymbolGraph): Promise<DesignPattern[]> {
+    const patterns: DesignPattern[] = [];
+    
+    for (const [symbolId, symbol] of symbolGraph.symbols) {
       if (symbol.type !== 'class') continue;
-
-      const hasPrivateConstructor = this.hasPrivateConstructor(symbol);
-      const hasStaticInstance = this.hasStaticInstanceMethod(symbol);
-      const hasInstanceField = this.hasStaticInstanceField(symbol);
-
-      if ((hasPrivateConstructor || hasStaticInstance) && hasInstanceField) {
-        matches.push({
-          pattern: 'Singleton',
-          confidence: hasPrivateConstructor ? 0.9 : 0.7,
-          location: {
-            file: symbol.location.file,
-            symbols: [symbolId],
-            startLine: symbol.location.startLine,
-            endLine: symbol.location.endLine
-          },
-          description: 'Ensures a class has only one instance and provides global access to it',
-          characteristics: [
-            hasPrivateConstructor ? 'Private constructor' : 'Static instance method',
-            'Static instance field',
-            'Global access point'
-          ],
-          suggestions: [
-            'Consider dependency injection instead for better testability',
-            'Ensure thread safety if needed',
-            'Consider using a module pattern instead'
-          ]
-        });
-      }
-    }
-
-    return matches;
-  }
-
-  private detectFactoryPattern(): PatternMatch[] {
-    const matches: PatternMatch[] = [];
-
-    for (const [symbolId, symbol] of this.symbolGraph.symbols) {
-      if (symbol.type !== 'function' && symbol.type !== 'class') continue;
-
-      const createsObjects = this.createsMultipleObjectTypes(symbol);
-      const hasFactoryName = /create|build|make|factory/i.test(symbol.name);
-      const hasConditionalCreation = this.hasConditionalObjectCreation(symbol);
-
-      if (createsObjects && (hasFactoryName || hasConditionalCreation)) {
-        matches.push({
-          pattern: 'Factory',
-          confidence: hasFactoryName && hasConditionalCreation ? 0.9 : 0.7,
-          location: {
-            file: symbol.location.file,
-            symbols: [symbolId],
-            startLine: symbol.location.startLine,
-            endLine: symbol.location.endLine
-          },
-          description: 'Creates objects without specifying their concrete classes',
-          characteristics: [
-            'Creates multiple object types',
-            hasFactoryName ? 'Factory naming convention' : 'Conditional object creation',
-            'Encapsulates object creation logic'
-          ],
-          suggestions: [
-            'Consider using abstract factory for families of objects',
-            'Document supported object types',
-            'Consider using dependency injection container'
-          ]
-        });
-      }
-    }
-
-    return matches;
-  }
-
-  private detectBuilderPattern(): PatternMatch[] {
-    const matches: PatternMatch[] = [];
-
-    for (const [symbolId, symbol] of this.symbolGraph.symbols) {
-      if (symbol.type !== 'class') continue;
-
-      const hasFluentInterface = this.hasFluentInterface(symbol);
-      const hasBuildMethod = this.hasBuildMethod(symbol);
-      const hasBuilderName = /builder/i.test(symbol.name);
-
-      if ((hasFluentInterface || hasBuildMethod) && hasBuilderName) {
-        matches.push({
-          pattern: 'Builder',
-          confidence: hasFluentInterface && hasBuildMethod ? 0.9 : 0.7,
-          location: {
-            file: symbol.location.file,
-            symbols: [symbolId],
-            startLine: symbol.location.startLine,
-            endLine: symbol.location.endLine
-          },
-          description: 'Constructs complex objects step by step',
-          characteristics: [
-            hasFluentInterface ? 'Fluent interface' : 'Method chaining',
-            hasBuildMethod ? 'Build method' : 'Construction methods',
-            'Builder naming convention'
-          ],
-          suggestions: [
-            'Consider validation in build method',
-            'Document required vs optional parameters',
-            'Consider immutable objects'
-          ]
-        });
-      }
-    }
-
-    return matches;
-  }
-
-  private detectPrototypePattern(): PatternMatch[] {
-    const matches: PatternMatch[] = [];
-
-    for (const [symbolId, symbol] of this.symbolGraph.symbols) {
-      if (symbol.type !== 'class') continue;
-
-      const hasCloneMethod = this.hasCloneMethod(symbol);
-      const implementsCloneable = this.implementsCloneableInterface(symbol);
-
-      if (hasCloneMethod || implementsCloneable) {
-        matches.push({
-          pattern: 'Prototype',
-          confidence: hasCloneMethod && implementsCloneable ? 0.9 : 0.7,
-          location: {
-            file: symbol.location.file,
-            symbols: [symbolId],
-            startLine: symbol.location.startLine,
-            endLine: symbol.location.endLine
-          },
-          description: 'Creates objects by cloning an existing instance',
-          characteristics: [
-            hasCloneMethod ? 'Clone method' : 'Cloneable interface',
-            'Object copying mechanism'
-          ],
-          suggestions: [
-            'Ensure deep vs shallow copy behavior is clear',
-            'Consider immutable objects instead',
-            'Document cloning behavior'
-          ]
-        });
-      }
-    }
-
-    return matches;
-  }
-
-  // Structural Patterns
-
-  private detectAdapterPattern(): PatternMatch[] {
-    const matches: PatternMatch[] = [];
-
-    for (const [symbolId, symbol] of this.symbolGraph.symbols) {
-      if (symbol.type !== 'class') continue;
-
-      const hasAdapterName = /adapter|wrapper/i.test(symbol.name);
-      const wrapsExternalInterface = this.wrapsExternalInterface(symbol);
-      const providesCompatibilityLayer = this.providesCompatibilityLayer(symbol);
-
-      if (hasAdapterName && (wrapsExternalInterface || providesCompatibilityLayer)) {
-        matches.push({
-          pattern: 'Adapter',
-          confidence: hasAdapterName && wrapsExternalInterface ? 0.9 : 0.7,
-          location: {
-            file: symbol.location.file,
-            symbols: [symbolId],
-            startLine: symbol.location.startLine,
-            endLine: symbol.location.endLine
-          },
-          description: 'Allows incompatible interfaces to work together',
-          characteristics: [
-            'Adapter naming convention',
-            wrapsExternalInterface ? 'Wraps external interface' : 'Provides compatibility',
-            'Interface translation'
-          ],
-          suggestions: [
-            'Document interface mapping',
-            'Consider configuration for different adapters',
-            'Ensure error handling for incompatible data'
-          ]
-        });
-      }
-    }
-
-    return matches;
-  }
-
-  private detectDecoratorPattern(): PatternMatch[] {
-    const matches: PatternMatch[] = [];
-
-    for (const [symbolId, symbol] of this.symbolGraph.symbols) {
-      if (symbol.type !== 'class') continue;
-
-      const hasDecoratorName = /decorator|wrapper/i.test(symbol.name);
-      const extendsBaseInterface = this.extendsBaseInterface(symbol);
-      const composesOriginalObject = this.composesOriginalObject(symbol);
-      const enhancesBehavior = this.enhancesBehavior(symbol);
-
-      if (hasDecoratorName && extendsBaseInterface && composesOriginalObject && enhancesBehavior) {
-        matches.push({
-          pattern: 'Decorator',
-          confidence: 0.9,
-          location: {
-            file: symbol.location.file,
-            symbols: [symbolId],
-            startLine: symbol.location.startLine,
-            endLine: symbol.location.endLine
-          },
-          description: 'Adds new functionality to objects dynamically',
-          characteristics: [
-            'Decorator naming convention',
-            'Extends base interface',
-            'Composes original object',
-            'Enhances behavior'
-          ],
-          suggestions: [
-            'Consider decorator chains',
-            'Document enhancement behavior',
-            'Ensure decorator order doesn\'t matter'
-          ]
-        });
-      }
-    }
-
-    return matches;
-  }
-
-  private detectObserverPattern(): PatternMatch[] {
-    const matches: PatternMatch[] = [];
-
-    for (const [symbolId, symbol] of this.symbolGraph.symbols) {
-      if (symbol.type !== 'class') continue;
-
-      const hasObserverMethods = this.hasObserverMethods(symbol);
-      const maintainsList = this.maintainsObserverList(symbol);
-      const hasNotificationMethods = this.hasNotificationMethods(symbol);
-
-      if (hasObserverMethods && maintainsList && hasNotificationMethods) {
-        matches.push({
-          pattern: 'Observer',
-          confidence: 0.9,
-          location: {
-            file: symbol.location.file,
-            symbols: [symbolId],
-            startLine: symbol.location.startLine,
-            endLine: symbol.location.endLine
-          },
-          description: 'Defines a subscription mechanism to notify multiple objects',
-          characteristics: [
-            'Subscribe/Unsubscribe methods',
-            'Maintains observer list',
-            'Notification methods'
-          ],
-          suggestions: [
-            'Consider weak references to prevent memory leaks',
-            'Handle observer exceptions gracefully',
-            'Consider async notification patterns'
-          ]
-        });
-      }
-    }
-
-    return matches;
-  }
-
-  // Anti-Patterns
-
-  private detectGodObjectAntiPattern(): PatternMatch[] {
-    const matches: PatternMatch[] = [];
-
-    for (const [symbolId, symbol] of this.symbolGraph.symbols) {
-      if (symbol.type !== 'class') continue;
-
-      const methodCount = this.getMethodCount(symbol);
-      const fieldCount = this.getFieldCount(symbol);
-      const lineCount = this.getLineCount(symbol);
-      const responsibilityCount = this.getResponsibilityCount(symbol);
-
-      const isGodObject = methodCount > 20 || fieldCount > 15 || lineCount > 500 || responsibilityCount > 5;
-
-      if (isGodObject) {
-        const confidence = Math.min(
-          (methodCount / 30) + (fieldCount / 20) + (lineCount / 1000) + (responsibilityCount / 10),
-          1.0
-        );
-
-        matches.push({
-          pattern: 'God Object',
-          confidence,
-          location: {
-            file: symbol.location.file,
-            symbols: [symbolId],
-            startLine: symbol.location.startLine,
-            endLine: symbol.location.endLine
-          },
-          description: 'Class that knows too much or does too much',
-          characteristics: [
-            `${methodCount} methods (threshold: 20)`,
-            `${fieldCount} fields (threshold: 15)`,
-            `${lineCount} lines (threshold: 500)`,
-            `${responsibilityCount} responsibilities (threshold: 5)`
-          ],
-          suggestions: [
-            'Extract related methods into separate classes',
-            'Apply Single Responsibility Principle',
-            'Consider using composition over inheritance',
-            'Split into multiple cohesive classes'
-          ],
-          antiPattern: true,
-          severity: confidence > 0.8 ? 'critical' : confidence > 0.6 ? 'high' : 'medium'
-        });
-      }
-    }
-
-    return matches;
-  }
-
-  private detectLongParameterListAntiPattern(): PatternMatch[] {
-    const matches: PatternMatch[] = [];
-
-    for (const [symbolId, symbol] of this.symbolGraph.symbols) {
-      if (symbol.type !== 'function' && symbol.type !== 'class') continue;
-
-      const paramCount = this.getParameterCount(symbol);
-      if (paramCount > 6) {
-        const confidence = Math.min(paramCount / 10, 1.0);
-
-        matches.push({
-          pattern: 'Long Parameter List',
-          confidence,
-          location: {
-            file: symbol.location.file,
-            symbols: [symbolId],
-            startLine: symbol.location.startLine,
-            endLine: symbol.location.endLine
-          },
-          description: 'Function has too many parameters, making it hard to use',
-          characteristics: [
-            `${paramCount} parameters (threshold: 6)`,
-            'Difficult to remember parameter order',
-            'Hard to test all combinations'
-          ],
-          suggestions: [
-            'Use parameter objects or configuration objects',
-            'Apply method overloading',
-            'Consider builder pattern for complex construction',
-            'Split function into smaller, focused functions'
-          ],
-          antiPattern: true,
-          severity: paramCount > 10 ? 'high' : 'medium'
-        });
-      }
-    }
-
-    return matches;
-  }
-
-  private detectDeepNestingAntiPattern(): PatternMatch[] {
-    const matches: PatternMatch[] = [];
-
-    for (const [symbolId, symbol] of this.symbolGraph.symbols) {
-      if (symbol.type !== 'function' && symbol.type !== 'class') continue;
-
-      const nestingLevel = this.getMaxNestingLevel(symbol);
-      if (nestingLevel > 4) {
-        const confidence = Math.min(nestingLevel / 8, 1.0);
-
-        matches.push({
-          pattern: 'Deep Nesting',
-          confidence,
-          location: {
-            file: symbol.location.file,
-            symbols: [symbolId],
-            startLine: symbol.location.startLine,
-            endLine: symbol.location.endLine
-          },
-          description: 'Function has excessive nesting levels, reducing readability',
-          characteristics: [
-            `${nestingLevel} nesting levels (threshold: 4)`,
-            'Hard to follow logic flow',
-            'Difficult to test all branches'
-          ],
-          suggestions: [
-            'Extract nested logic into separate methods',
-            'Use early returns to reduce nesting',
-            'Consider strategy pattern for complex conditionals',
-            'Apply guard clauses'
-          ],
-          antiPattern: true,
-          severity: nestingLevel > 6 ? 'high' : 'medium'
-        });
-      }
-    }
-
-    return matches;
-  }
-
-  private detectMagicNumberAntiPattern(): PatternMatch[] {
-    const matches: PatternMatch[] = [];
-
-    for (const [symbolId, symbol] of this.symbolGraph.symbols) {
-      const magicNumbers = this.findMagicNumbers(symbol);
       
-      if (magicNumbers.length > 0) {
-        matches.push({
-          pattern: 'Magic Numbers',
-          confidence: Math.min(magicNumbers.length / 5, 1.0),
-          location: {
-            file: symbol.location.file,
-            symbols: [symbolId],
-            startLine: symbol.location.startLine,
-            endLine: symbol.location.endLine
-          },
-          description: 'Unexplained numeric literals that reduce code readability',
-          characteristics: [
-            `${magicNumbers.length} magic numbers found`,
-            'Numbers without clear meaning',
+      const evidence: PatternEvidence[] = [];
+      let confidence = 0;
+      
+      // Check for getInstance method
+      const hasGetInstance = this.symbolHasMethod(symbol, symbolGraph, 'getInstance');
+      if (hasGetInstance) {
+        evidence.push({ type: 'method_name', description: 'Has getInstance method', strength: 0.4 });
+        confidence += 0.4;
+      }
+      
+      // Check for private constructor
+      const hasPrivateConstructor = this.symbolHasPrivateConstructor(symbol, symbolGraph);
+      if (hasPrivateConstructor) {
+        evidence.push({ type: 'access_modifier', description: 'Has private constructor', strength: 0.3 });
+        confidence += 0.3;
+      }
+      
+      // Check for static instance
+      const hasStaticInstance = this.symbolHasStaticInstance(symbol, symbolGraph);
+      if (hasStaticInstance) {
+        evidence.push({ type: 'static_field', description: 'Has static instance field', strength: 0.3 });
+        confidence += 0.3;
+      }
+      
+      if (confidence >= 0.6) {
+        patterns.push({
+          type: 'singleton',
+          symbols: [symbolId],
+          confidence,
+          evidence,
+          description: `Singleton pattern detected in ${symbol.name}`,
+          implications: [
+            'Single instance enforced globally',
+            'Potential testing difficulties',
+            'Global state management'
+          ]
+        });
+      }
+    }
+    
+    return patterns;
+  }
+  
+  /**
+   * Detect Factory Pattern
+   */
+  private async detectFactoryPattern(symbolGraph: SymbolGraph): Promise<DesignPattern[]> {
+    const patterns: DesignPattern[] = [];
+    
+    for (const [symbolId, symbol] of symbolGraph.symbols) {
+      if (symbol.type !== 'function' && symbol.type !== 'method') continue;
+      
+      const evidence: PatternEvidence[] = [];
+      let confidence = 0;
+      
+      const effectiveName = symbol.name;
+      
+      // Check naming patterns
+      if (/create|make|build|factory|generate/i.test(effectiveName)) {
+        evidence.push({ type: 'naming_convention', description: 'Factory-like naming pattern', strength: 0.3 });
+        confidence += 0.3;
+      }
+      
+      // Check for return type diversity (factory returns different types)
+      const returnsMultipleTypes = this.symbolReturnsMultipleTypes(symbol, symbolGraph);
+      if (returnsMultipleTypes) {
+        evidence.push({ type: 'return_pattern', description: 'Returns different types based on input', strength: 0.4 });
+        confidence += 0.4;
+      }
+      
+      // Check for conditional creation logic
+      const hasConditionalLogic = this.symbolHasConditionalCreation(symbol, symbolGraph);
+      if (hasConditionalLogic) {
+        evidence.push({ type: 'control_flow', description: 'Conditional object creation', strength: 0.3 });
+        confidence += 0.3;
+      }
+      
+      if (confidence >= 0.6) {
+        patterns.push({
+          type: 'factory',
+          symbols: [symbolId],
+          confidence,
+          evidence,
+          description: `Factory pattern detected in ${effectiveName}`,
+          implications: [
+            'Centralizes object creation logic',
+            'Supports polymorphic instantiation',
+            'Decouples creation from usage'
+          ]
+        });
+      }
+    }
+    
+    return patterns;
+  }
+  
+  /**
+   * Detect Observer Pattern
+   */
+  private async detectObserverPattern(symbolGraph: SymbolGraph): Promise<DesignPattern[]> {
+    const patterns: DesignPattern[] = [];
+    
+    for (const [symbolId, symbol] of symbolGraph.symbols) {
+      if (symbol.type !== 'class' && symbol.type !== 'object') continue;
+      
+      const evidence: PatternEvidence[] = [];
+      let confidence = 0;
+      
+      // Check for event-related methods
+      const hasEventMethods = this.symbolHasEventMethods(symbol, symbolGraph);
+      if (hasEventMethods.subscribe || hasEventMethods.notify) {
+        evidence.push({ type: 'method_pattern', description: 'Has event subscription/notification methods', strength: 0.4 });
+        confidence += 0.4;
+      }
+      
+      // Check for listener management
+      const hasListenerManagement = this.symbolHasListenerManagement(symbol, symbolGraph);
+      if (hasListenerManagement) {
+        evidence.push({ type: 'data_structure', description: 'Manages collection of listeners', strength: 0.3 });
+        confidence += 0.3;
+      }
+      
+      // Check for event emission patterns
+      const hasEventEmission = this.symbolHasEventEmission(symbol, symbolGraph);
+      if (hasEventEmission) {
+        evidence.push({ type: 'behavior_pattern', description: 'Emits events to multiple listeners', strength: 0.3 });
+        confidence += 0.3;
+      }
+      
+      if (confidence >= 0.6) {
+        patterns.push({
+          type: 'observer',
+          symbols: [symbolId],
+          confidence,
+          evidence,
+          description: `Observer pattern detected in ${symbol.name}`,
+          implications: [
+            'Loose coupling between subjects and observers',
+            'Dynamic subscription/unsubscription',
+            'Broadcast communication'
+          ]
+        });
+      }
+    }
+    
+    return patterns;
+  }
+  
+  /**
+   * Detect Strategy Pattern
+   */
+  private async detectStrategyPattern(symbolGraph: SymbolGraph): Promise<DesignPattern[]> {
+    const patterns: DesignPattern[] = [];
+    
+    for (const [symbolId, symbol] of symbolGraph.symbols) {
+      if (symbol.type !== 'class') continue;
+      
+      const evidence: PatternEvidence[] = [];
+      let confidence = 0;
+      
+      // Check for strategy-like naming
+      const effectiveName = symbol.name;
+      if (/strategy|algorithm|policy|handler/i.test(effectiveName)) {
+        evidence.push({ type: 'naming_convention', description: 'Strategy-like naming', strength: 0.2 });
+        confidence += 0.2;
+      }
+      
+      // Check for common interface/method
+      const hasCommonInterface = this.symbolImplementsCommonInterface(symbol, symbolGraph);
+      if (hasCommonInterface) {
+        evidence.push({ type: 'interface_pattern', description: 'Implements common interface', strength: 0.4 });
+        confidence += 0.4;
+      }
+      
+      // Check for runtime strategy switching
+      const hasRuntimeSwitching = this.symbolHasRuntimeSwitching(symbol, symbolGraph);
+      if (hasRuntimeSwitching) {
+        evidence.push({ type: 'behavior_pattern', description: 'Runtime strategy switching', strength: 0.4 });
+        confidence += 0.4;
+      }
+      
+      if (confidence >= 0.6) {
+        patterns.push({
+          type: 'strategy',
+          symbols: [symbolId],
+          confidence,
+          evidence,
+          description: `Strategy pattern detected in ${effectiveName}`,
+          implications: [
+            'Encapsulates family of algorithms',
+            'Runtime algorithm selection',
+            'Easy to extend with new strategies'
+          ]
+        });
+      }
+    }
+    
+    return patterns;
+  }
+  
+  /**
+   * Detect God Function Anti-Pattern
+   */
+  private async detectGodFunction(symbolGraph: SymbolGraph): Promise<AntiPattern[]> {
+    const antiPatterns: AntiPattern[] = [];
+    
+    for (const [symbolId, symbol] of symbolGraph.symbols) {
+      if (symbol.type !== 'function' && symbol.type !== 'method') continue;
+      
+      const evidence: PatternEvidence[] = [];
+      let severity = 0;
+      
+      // Check function length (lines of code)
+      const lineCount = this.estimateLineCount(symbol);
+      if (lineCount > 50) {
+        evidence.push({ type: 'size_metric', description: `Function has ${lineCount} lines`, strength: 0.3 });
+        severity += 0.3;
+      }
+      
+      // Check cyclomatic complexity
+      const complexity = this.estimateCyclomaticComplexity(symbol);
+      if (complexity > 10) {
+        evidence.push({ type: 'complexity_metric', description: `High cyclomatic complexity: ${complexity}`, strength: 0.4 });
+        severity += 0.4;
+      }
+      
+      // Check number of responsibilities
+      const responsibilities = this.estimateResponsibilities(symbol);
+      if (responsibilities > 3) {
+        evidence.push({ type: 'responsibility_metric', description: `Multiple responsibilities: ${responsibilities}`, strength: 0.3 });
+        severity += 0.3;
+      }
+      
+      if (severity >= 0.6) {
+        antiPatterns.push({
+          type: 'god_function',
+          symbols: [symbolId],
+          severity,
+          evidence,
+          description: `God function detected: ${symbol.name}`,
+          problems: [
+            'Single function doing too many things',
+            'Difficult to understand and maintain',
+            'Hard to test individual responsibilities'
+          ],
+          suggestions: [
+            'Break into smaller, focused functions',
+            'Extract common logic into utilities',
+            'Apply Single Responsibility Principle'
+          ]
+        });
+      }
+    }
+    
+    return antiPatterns;
+  }
+  
+  /**
+   * Detect Callback Hell Anti-Pattern
+   */
+  private async detectCallbackHell(symbolGraph: SymbolGraph): Promise<AntiPattern[]> {
+    const antiPatterns: AntiPattern[] = [];
+    
+    for (const [symbolId, symbol] of symbolGraph.symbols) {
+      if (symbol.type !== 'function' && symbol.type !== 'method') continue;
+      
+      const evidence: PatternEvidence[] = [];
+      let severity = 0;
+      
+      // Check for nested callback depth
+      const callbackDepth = this.estimateCallbackDepth(symbol);
+      if (callbackDepth > 3) {
+        evidence.push({ type: 'nesting_depth', description: `Callback nesting depth: ${callbackDepth}`, strength: 0.5 });
+        severity += 0.5;
+      }
+      
+      // Check for error handling complexity
+      const errorHandlingComplexity = this.estimateErrorHandlingComplexity(symbol);
+      if (errorHandlingComplexity > 0.3) {
+        evidence.push({ type: 'error_handling', description: 'Complex error handling in callbacks', strength: 0.3 });
+        severity += 0.3;
+      }
+      
+      // Check for promise/async patterns (good) vs callback patterns (bad)
+      const usesModernAsync = this.usesModernAsyncPatterns(symbol);
+      if (!usesModernAsync && callbackDepth > 2) {
+        evidence.push({ type: 'async_pattern', description: 'Uses callbacks instead of promises/async', strength: 0.2 });
+        severity += 0.2;
+      }
+      
+      if (severity >= 0.6) {
+        antiPatterns.push({
+          type: 'callback_hell',
+          symbols: [symbolId],
+          severity,
+          evidence,
+          description: `Callback hell detected in ${symbol.name}`,
+          problems: [
+            'Deeply nested callback structure',
+            'Difficult error handling',
+            'Poor readability and maintenance'
+          ],
+          suggestions: [
+            'Convert to Promise-based approach',
+            'Use async/await syntax',
+            'Extract nested callbacks into named functions'
+          ]
+        });
+      }
+    }
+    
+    return antiPatterns;
+  }
+  
+  /**
+   * Detect Spaghetti Code Anti-Pattern
+   */
+  private async detectSpaghettiCode(symbolGraph: SymbolGraph): Promise<AntiPattern[]> {
+    const antiPatterns: AntiPattern[] = [];
+    
+    // Analyze overall graph structure for spaghetti patterns
+    const graphMetrics = this.analyzeGraphStructure(symbolGraph);
+    
+    if (graphMetrics.cyclomaticComplexity > 0.7 || graphMetrics.coupling > 0.8) {
+      const evidence: PatternEvidence[] = [];
+      let severity = 0;
+      
+      if (graphMetrics.cyclomaticComplexity > 0.7) {
+        evidence.push({ type: 'graph_metric', description: `High graph complexity: ${graphMetrics.cyclomaticComplexity.toFixed(2)}`, strength: 0.4 });
+        severity += 0.4;
+      }
+      
+      if (graphMetrics.coupling > 0.8) {
+        evidence.push({ type: 'coupling_metric', description: `High coupling: ${graphMetrics.coupling.toFixed(2)}`, strength: 0.3 });
+        severity += 0.3;
+      }
+      
+      if (graphMetrics.cohesion < 0.3) {
+        evidence.push({ type: 'cohesion_metric', description: `Low cohesion: ${graphMetrics.cohesion.toFixed(2)}`, strength: 0.3 });
+        severity += 0.3;
+      }
+      
+      if (severity >= 0.6) {
+        antiPatterns.push({
+          type: 'spaghetti_code',
+          symbols: Array.from(symbolGraph.symbols.keys()).slice(0, 10), // Sample of affected symbols
+          severity,
+          evidence,
+          description: 'Spaghetti code pattern detected in codebase structure',
+          problems: [
+            'High coupling between components',
+            'Poor separation of concerns',
+            'Difficult to understand control flow'
+          ],
+          suggestions: [
+            'Refactor to improve separation of concerns',
+            'Reduce coupling between modules',
+            'Introduce clear architectural layers'
+          ]
+        });
+      }
+    }
+    
+    return antiPatterns;
+  }
+  
+  /**
+   * Detect Magic Numbers Anti-Pattern
+   */
+  private async detectMagicNumbers(symbolGraph: SymbolGraph): Promise<AntiPattern[]> {
+    const antiPatterns: AntiPattern[] = [];
+    
+    for (const [symbolId, symbol] of symbolGraph.symbols) {
+      if (symbol.type !== 'function' && symbol.type !== 'method') continue;
+      
+      const evidence: PatternEvidence[] = [];
+      let severity = 0;
+      
+      // Simple heuristic: look for numeric literals in function bodies
+      // In a real implementation, this would parse the AST
+      const hasMagicNumbers = this.detectMagicNumbersInSymbol(symbol);
+      if (hasMagicNumbers.count > 2) {
+        evidence.push({ type: 'literal_count', description: `${hasMagicNumbers.count} magic numbers found`, strength: 0.4 });
+        severity += 0.4;
+      }
+      
+      if (hasMagicNumbers.hasComplexCalculations) {
+        evidence.push({ type: 'calculation_pattern', description: 'Complex calculations with magic numbers', strength: 0.3 });
+        severity += 0.3;
+      }
+      
+      if (severity >= 0.6) {
+        antiPatterns.push({
+          type: 'magic_numbers',
+          symbols: [symbolId],
+          severity,
+          evidence,
+          description: `Magic numbers detected in ${symbol.name}`,
+          problems: [
+            'Unexplained numeric literals',
+            'Difficult to understand calculations',
             'Hard to maintain and modify'
           ],
           suggestions: [
             'Extract numbers into named constants',
-            'Use enums for related values',
-            'Add comments explaining number significance',
-            'Consider configuration files for thresholds'
-          ],
-          antiPattern: true,
-          severity: 'low'
+            'Add comments explaining calculations',
+            'Use configuration files for magic values'
+          ]
         });
       }
     }
-
-    return matches;
+    
+    return antiPatterns;
   }
-
-  private detectDuplicateCodeAntiPattern(): PatternMatch[] {
-    const matches: PatternMatch[] = [];
-    const duplicates = this.findDuplicateCodeBlocks();
-
-    for (const duplicate of duplicates) {
-      matches.push({
-        pattern: 'Duplicate Code',
-        confidence: duplicate.similarity,
-        location: {
-          file: duplicate.files[0],
-          symbols: duplicate.symbols,
-          startLine: duplicate.startLine,
-          endLine: duplicate.endLine
-        },
-        description: 'Similar code blocks that should be consolidated',
-        characteristics: [
-          `${duplicate.files.length} similar code blocks`,
-          `${duplicate.similarity * 100}% similarity`,
-          'Maintenance burden multiplied'
-        ],
-        suggestions: [
-          'Extract common code into shared function',
-          'Use template method pattern',
-          'Consider strategy pattern for variations',
-          'Create utility functions'
-        ],
-        antiPattern: true,
-        severity: duplicate.similarity > 0.8 ? 'medium' : 'low'
-      });
-    }
-
-    return matches;
-  }
-
-  private detectLongMethodAntiPattern(): PatternMatch[] {
-    const matches: PatternMatch[] = [];
-
-    for (const [symbolId, symbol] of this.symbolGraph.symbols) {
-      if (symbol.type !== 'function' && symbol.type !== 'class') continue;
-
-      const lineCount = this.getLineCount(symbol);
-      const complexity = this.getCyclomaticComplexity(symbol);
-
-      if (lineCount > 50 || complexity > 10) {
-        const confidence = Math.min((lineCount / 100) + (complexity / 20), 1.0);
-
-        matches.push({
-          pattern: 'Long Method',
-          confidence,
-          location: {
-            file: symbol.location.file,
-            symbols: [symbolId],
-            startLine: symbol.location.startLine,
-            endLine: symbol.location.endLine
-          },
-          description: 'Method is too long and complex, violating single responsibility',
-          characteristics: [
-            `${lineCount} lines (threshold: 50)`,
-            `${complexity} cyclomatic complexity (threshold: 10)`,
-            'Multiple responsibilities'
-          ],
-          suggestions: [
-            'Extract methods for distinct responsibilities',
-            'Apply single responsibility principle',
-            'Consider command pattern for complex operations',
-            'Break into smaller, focused methods'
-          ],
-          antiPattern: true,
-          severity: lineCount > 100 ? 'high' : 'medium'
-        });
-      }
-    }
-
-    return matches;
-  }
-
-  // Helper methods (implementations would be more sophisticated in real system)
   
-  private hasPrivateConstructor(symbol: SymbolNode): boolean {
-    return symbol.name.includes('private') || symbol.metadata.accessibility === 'private';
+  // Helper methods for pattern detection
+  private symbolHasMethod(symbol: SymbolNode, graph: SymbolGraph, methodName: string): boolean {
+    // Check if symbol has a method with given name
+    // This would need to traverse the symbol's methods in a real implementation
+    return symbol.name.toLowerCase().includes(methodName.toLowerCase());
   }
-
-  private hasStaticInstanceMethod(symbol: SymbolNode): boolean {
-    return /getInstance|instance/i.test(symbol.name || '');
+  
+  private symbolHasPrivateConstructor(symbol: SymbolNode, graph: SymbolGraph): boolean {
+    // Check for private constructor pattern
+    return symbol.name.toLowerCase().includes('private') || symbol.name.toLowerCase().includes('constructor');
   }
-
-  private hasStaticInstanceField(symbol: SymbolNode): boolean {
-    return true; // Simplified
+  
+  private symbolHasStaticInstance(symbol: SymbolNode, graph: SymbolGraph): boolean {
+    // Check for static instance field
+    return symbol.name.toLowerCase().includes('instance') || symbol.name.toLowerCase().includes('static');
   }
-
-  private createsMultipleObjectTypes(symbol: SymbolNode): boolean {
-    return /new |create|Object\.create/i.test(symbol.metadata.docstring || '');
+  
+  private symbolReturnsMultipleTypes(symbol: SymbolNode, graph: SymbolGraph): boolean {
+    // Analyze if function returns different types based on input
+    const effectiveName = symbol.name;
+    return /create|make|build|factory/i.test(effectiveName);
   }
-
-  private hasConditionalObjectCreation(symbol: SymbolNode): boolean {
-    return /if|switch|case/i.test(symbol.metadata.docstring || '');
+  
+  private symbolHasConditionalCreation(symbol: SymbolNode, graph: SymbolGraph): boolean {
+    // Check for conditional object creation logic
+    const effectiveName = symbol.name;
+    return /switch|case|if|condition/i.test(effectiveName);
   }
-
-  private hasFluentInterface(symbol: SymbolNode): boolean {
-    return /return this/i.test(symbol.metadata.docstring || '');
+  
+  private symbolHasEventMethods(symbol: SymbolNode, graph: SymbolGraph): { subscribe: boolean, notify: boolean } {
+    const name = symbol.name.toLowerCase();
+    return {
+      subscribe: /subscribe|listen|on|add.*listener/i.test(name),
+      notify: /notify|emit|trigger|fire|publish/i.test(name)
+    };
   }
-
-  private hasBuildMethod(symbol: SymbolNode): boolean {
-    return /build\(/i.test(symbol.metadata.docstring || '');
+  
+  private symbolHasListenerManagement(symbol: SymbolNode, graph: SymbolGraph): boolean {
+    const name = symbol.name.toLowerCase();
+    return /listener|observer|subscriber|callback/i.test(name);
   }
-
-  private hasCloneMethod(symbol: SymbolNode): boolean {
-    return /clone\(/i.test(symbol.metadata.docstring || '');
+  
+  private symbolHasEventEmission(symbol: SymbolNode, graph: SymbolGraph): boolean {
+    const name = symbol.name.toLowerCase();
+    return /emit|fire|trigger|publish|broadcast/i.test(name);
   }
-
-  private implementsCloneableInterface(symbol: SymbolNode): boolean {
-    return /Cloneable|clone/i.test(symbol.name || '');
+  
+  private symbolImplementsCommonInterface(symbol: SymbolNode, graph: SymbolGraph): boolean {
+    // Check if symbol implements a common interface pattern
+    const name = symbol.name.toLowerCase();
+    return /execute|process|handle|apply|run/i.test(name);
   }
-
-  private wrapsExternalInterface(symbol: SymbolNode): boolean {
-    // Implementation would check if class wraps external APIs
-    return true; // Simplified
+  
+  private symbolHasRuntimeSwitching(symbol: SymbolNode, graph: SymbolGraph): boolean {
+    // Check for runtime strategy switching patterns
+    const name = symbol.name.toLowerCase();
+    return /switch|select|choose|strategy|algorithm/i.test(name);
   }
-
-  private providesCompatibilityLayer(symbol: SymbolNode): boolean {
-    // Implementation would check for compatibility methods
-    return true; // Simplified
-  }
-
-  private extendsBaseInterface(symbol: SymbolNode): boolean {
-    // Implementation would check inheritance/interface implementation
-    return true; // Simplified
-  }
-
-  private composesOriginalObject(symbol: SymbolNode): boolean {
-    // Implementation would check for composition
-    return true; // Simplified
-  }
-
-  private enhancesBehavior(symbol: SymbolNode): boolean {
-    // Implementation would check if class adds behavior
-    return true; // Simplified
-  }
-
-  private hasObserverMethods(symbol: SymbolNode): boolean {
-    return /subscribe|unsubscribe|addListener|removeListener/i.test(symbol.metadata.docstring || '');
-  }
-
-  private maintainsObserverList(symbol: SymbolNode): boolean {
-    return /observers|listeners|subscribers/i.test(symbol.metadata.docstring || '');
-  }
-
-  private hasNotificationMethods(symbol: SymbolNode): boolean {
-    return /notify|emit|trigger|fire/i.test(symbol.metadata.docstring || '');
-  }
-
-  private getMethodCount(symbol: SymbolNode): number {
-    return Math.floor(Math.random() * 30) + 1; // Simplified
-  }
-
-  private getFieldCount(symbol: SymbolNode): number {
-    return Math.floor(Math.random() * 20) + 1; // Simplified
-  }
-
-  private getLineCount(symbol: SymbolNode): number {
-    if (symbol.location.endLine && symbol.location.startLine) {
-      return symbol.location.endLine - symbol.location.startLine + 1;
+  
+  private estimateLineCount(symbol: SymbolNode): number {
+    // Estimate lines of code - simplified heuristic
+    const location = symbol.location;
+    if (location.endLine && location.startLine) {
+      return location.endLine - location.startLine + 1;
     }
-    return Math.floor(Math.random() * 100) + 1; // Simplified
+    return 10; // Default estimate
   }
-
-  private getResponsibilityCount(symbol: SymbolNode): number {
-    return Math.floor(Math.random() * 8) + 1; // Simplified
+  
+  private estimateCyclomaticComplexity(symbol: SymbolNode): number {
+    // Simplified cyclomatic complexity estimation
+    const name = symbol.name.toLowerCase();
+    let complexity = 1;
+    
+    // Estimate based on naming patterns and function characteristics
+    if (/complex|process|handle|manage|control/i.test(name)) complexity += 3;
+    if (/if|switch|case|for|while|loop/i.test(name)) complexity += 2;
+    if (/everything|all|total|complete/i.test(name)) complexity += 4;
+    
+    return complexity;
   }
-
-  private getParameterCount(symbol: SymbolNode): number {
-    return Math.floor(Math.random() * 12) + 1; // Simplified
+  
+  private estimateResponsibilities(symbol: SymbolNode): number {
+    // Estimate number of responsibilities based on naming and context
+    const name = symbol.name.toLowerCase();
+    let responsibilities = 1;
+    
+    if (/and|plus|also|additionally/i.test(name)) responsibilities += 1;
+    if (/everything|all|complete|total/i.test(name)) responsibilities += 2;
+    if (/process.*and|handle.*and|manage.*and/i.test(name)) responsibilities += 1;
+    
+    return responsibilities;
   }
-
-  private getMaxNestingLevel(symbol: SymbolNode): number {
-    // Implementation would analyze nesting depth
-    return Math.floor(Math.random() * 8) + 1; // Simplified
+  
+  private estimateCallbackDepth(symbol: SymbolNode): number {
+    // Estimate callback nesting depth
+    const name = symbol.name.toLowerCase();
+    if (/callback|nested|deep|hell/i.test(name)) return 4;
+    if (/async|promise|then/i.test(name)) return 1;
+    return 2;
   }
-
-  private getCyclomaticComplexity(symbol: SymbolNode): number {
-    return Math.floor(Math.random() * 15) + 1; // Simplified
+  
+  private estimateErrorHandlingComplexity(symbol: SymbolNode): number {
+    // Estimate error handling complexity
+    const name = symbol.name.toLowerCase();
+    if (/error|catch|handle.*error|try/i.test(name)) return 0.5;
+    return 0.1;
   }
-
-  private findMagicNumbers(symbol: SymbolNode): number[] {
-    // No code property, so skip
-    return [];
+  
+  private usesModernAsyncPatterns(symbol: SymbolNode): boolean {
+    // Check if uses modern async patterns
+    const name = symbol.name.toLowerCase();
+    return /async|await|promise|then/i.test(name);
   }
-
-  private findDuplicateCodeBlocks(): Array<{
-    files: string[];
-    symbols: string[];
-    similarity: number;
-    startLine: number;
-    endLine: number;
-  }> {
-    // Implementation would find similar code blocks
-    return []; // Simplified
+  
+  private analyzeGraphStructure(graph: SymbolGraph): { cyclomaticComplexity: number, coupling: number, cohesion: number } {
+    const totalSymbols = graph.symbols.size;
+    const totalEdges = graph.edges.length;
+    
+    // Simplified metrics
+    const cyclomaticComplexity = totalEdges / Math.max(totalSymbols, 1);
+    const coupling = Math.min(1.0, totalEdges / (totalSymbols * 2));
+    const cohesion = Math.max(0.1, 1 - coupling);
+    
+    return { cyclomaticComplexity, coupling, cohesion };
   }
-
-  private calculateQualityScore(patterns: PatternMatch[], antiPatterns: PatternMatch[]): number {
-    const goodPatterns = patterns.length * 10;
-    const badPatterns = antiPatterns.reduce((sum, ap) => {
-      const severity = ap.severity === 'critical' ? 20 : ap.severity === 'high' ? 15 : ap.severity === 'medium' ? 10 : 5;
-      return sum + severity;
-    }, 0);
-
-    return Math.max(0, Math.min(100, goodPatterns - badPatterns));
+  
+  private detectMagicNumbersInSymbol(symbol: SymbolNode): { count: number, hasComplexCalculations: boolean } {
+    // Simplified magic number detection
+    const name = symbol.name.toLowerCase();
+    
+    let count = 0;
+    if (/\d+/g.test(name)) count += 1;
+    if (/calculate|compute|math|number/i.test(name)) count += 2;
+    
+    const hasComplexCalculations = /calculate|compute|algorithm|math|formula/i.test(name);
+    
+    return { count, hasComplexCalculations };
   }
-
-  private generateRecommendations(patterns: PatternMatch[], antiPatterns: PatternMatch[]): string[] {
+  
+  private calculateCodeHealth(designPatterns: DesignPattern[], antiPatterns: AntiPattern[]): number {
+    const patternBonus = designPatterns.length * 0.1;
+    const antiPatternPenalty = antiPatterns.reduce((sum, ap) => sum + ap.severity, 0) * 0.2;
+    
+    return Math.max(0, Math.min(1, 0.7 + patternBonus - antiPatternPenalty));
+  }
+  
+  private generateRecommendations(designPatterns: DesignPattern[], antiPatterns: AntiPattern[]): string[] {
     const recommendations: string[] = [];
-
-    if (antiPatterns.length > 0) {
-      recommendations.push(`Address ${antiPatterns.length} anti-patterns to improve code quality`);
+    
+    if (antiPatterns.length > 3) {
+      recommendations.push('High number of anti-patterns detected - consider architectural refactoring');
     }
-
-    const criticalAntiPatterns = antiPatterns.filter(ap => ap.severity === 'critical');
-    if (criticalAntiPatterns.length > 0) {
-      recommendations.push(`Critical: Fix ${criticalAntiPatterns.length} critical anti-patterns immediately`);
+    
+    if (designPatterns.length === 0) {
+      recommendations.push('No design patterns detected - consider introducing proven patterns');
     }
-
-    if (patterns.length < 5) {
-      recommendations.push('Consider implementing more design patterns for better structure');
+    
+    const godFunctions = antiPatterns.filter(ap => ap.type === 'god_function');
+    if (godFunctions.length > 0) {
+      recommendations.push('Break down large functions into smaller, focused units');
     }
-
+    
+    const callbackHell = antiPatterns.filter(ap => ap.type === 'callback_hell');
+    if (callbackHell.length > 0) {
+      recommendations.push('Modernize async code with promises/async-await');
+    }
+    
     return recommendations;
   }
 }
-
-/**
- * Factory for creating pattern detectors
- */
-export class PatternDetectorFactory {
-  static create(symbolGraph: SymbolGraph): PatternDetector {
-    return new PatternDetector(symbolGraph);
-  }
-} 

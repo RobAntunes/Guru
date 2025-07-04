@@ -37,24 +37,6 @@ export class CodeClustererHelpers {
     return responsibilities;
   }
   
-  private findCommonWords(names: string[]): string[] {
-    const wordCounts = new Map<string, number>();
-    
-    for (const name of names) {
-      const words = name.toLowerCase().split(/[_\-\.\s]/);
-      for (const word of words) {
-        if (word.length > 2) {
-          wordCounts.set(word, (wordCounts.get(word) || 0) + 1);
-        }
-      }
-    }
-    
-    return Array.from(wordCounts.entries())
-      .filter(([_, count]) => count > 1)
-      .sort((a, b) => b[1] - a[1])
-      .map(([word]) => word);
-  }
-  
   private calculateSizeDistribution(clusters: CodeCluster[]): Record<string, number> {
     const distribution: Record<string, number> = {};
     

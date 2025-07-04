@@ -2,51 +2,1516 @@
   {
     "predicted_confidence": 0.8,
     "actual_outcome": true,
-    "timestamp": "2025-07-03T16:52:02.236Z"
-  },
-  {
-    "predicted_confidence": 0.8,
-    "actual_outcome": false,
-    "timestamp": "2025-07-03T16:52:02.236Z"
+    "timestamp": "2025-07-04T06:47:10.058Z"
   },
   {
     "predicted_confidence": 0.8,
     "actual_outcome": true,
-    "timestamp": "2025-07-03T16:53:57.534Z"
+    "timestamp": "2025-07-04T06:48:11.400Z"
   },
   {
     "predicted_confidence": 0.8,
     "actual_outcome": true,
-    "timestamp": "2025-07-03T16:53:57.535Z"
+    "timestamp": "2025-07-04T06:48:11.412Z"
   },
   {
     "predicted_confidence": 0.8,
     "actual_outcome": true,
-    "timestamp": "2025-07-03T16:56:03.686Z"
+    "timestamp": "2025-07-04T06:48:11.417Z"
   },
   {
     "predicted_confidence": 0.8,
     "actual_outcome": true,
-    "timestamp": "2025-07-03T16:56:03.688Z"
+    "timestamp": "2025-07-04T06:48:11.425Z"
   },
   {
     "predicted_confidence": 0.8,
     "actual_outcome": true,
-    "timestamp": "2025-07-03T16:56:03.695Z"
+    "timestamp": "2025-07-04T06:48:11.434Z"
   },
   {
     "predicted_confidence": 0.8,
     "actual_outcome": true,
-    "timestamp": "2025-07-03T16:56:03.695Z"
+    "timestamp": "2025-07-04T06:48:11.444Z"
   },
   {
     "predicted_confidence": 0.8,
     "actual_outcome": true,
-    "timestamp": "2025-07-03T16:56:03.697Z"
+    "timestamp": "2025-07-04T06:48:11.457Z"
   },
   {
     "predicted_confidence": 0.8,
     "actual_outcome": true,
-    "timestamp": "2025-07-03T16:56:03.697Z"
+    "timestamp": "2025-07-04T06:48:11.466Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:11.475Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:11.483Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:34.046Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:34.074Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:34.085Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:34.095Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:34.106Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:34.387Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:34.406Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:34.417Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:34.428Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:34.436Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:48.275Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:48.301Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:48.312Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:48.457Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:48.474Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:56.996Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:57.046Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:57.062Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:57.077Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:57.099Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:57.827Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:57.845Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:57.854Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:57.865Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:48:57.874Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:49:30.599Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:49:30.608Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:49:30.627Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:49:30.640Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:49:30.645Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:49:30.660Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:49:30.684Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:49:30.700Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:49:30.706Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:49:30.741Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.374Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.391Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.412Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.431Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.445Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.459Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.471Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.482Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.494Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.510Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.524Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.530Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.548Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.560Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.567Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.577Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.584Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.594Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.603Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.612Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.619Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.626Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.638Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.645Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.653Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.661Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.671Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.679Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.686Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.695Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.703Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.711Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.720Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.727Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.734Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.741Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.754Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.762Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.769Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.779Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.786Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.795Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.805Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.813Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.821Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.832Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.840Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.848Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.855Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.864Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.874Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.882Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.889Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.898Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.907Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.914Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.924Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.933Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.944Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.953Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.962Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.971Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.991Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:53:59.997Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:00.003Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:00.009Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:00.015Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:00.023Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:00.031Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:00.039Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:00.046Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:00.056Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:00.088Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:00.096Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:00.102Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.447Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.465Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.482Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.499Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.519Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.538Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.551Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.569Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.584Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.601Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.614Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.621Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.640Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.650Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.661Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.669Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.679Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.691Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.701Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.710Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.720Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.729Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.739Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.747Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.755Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.764Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.776Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.784Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.795Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.804Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.820Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.834Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.843Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.851Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.860Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.867Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.878Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.886Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.894Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.902Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.913Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.924Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.932Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.940Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.950Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.961Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.969Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.979Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:05.990Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.001Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.009Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.019Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.030Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.039Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.048Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.057Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.067Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.077Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.086Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.094Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.106Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.115Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.134Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.142Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.150Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.157Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.163Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.169Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.177Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.184Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.191Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.198Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.228Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.234Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:54:06.241Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:24.176Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:24.185Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:24.191Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:24.215Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:24.231Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:24.239Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:24.247Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:24.264Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:24.286Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:24.313Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.194Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.210Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.227Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.243Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.260Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.282Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.294Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.309Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.323Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.335Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.351Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.358Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.391Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.413Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.436Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.460Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.484Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.496Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.506Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.516Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.529Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.545Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.559Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.568Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.577Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.587Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.598Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.609Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.617Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.627Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.637Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.647Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.655Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.666Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.676Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.685Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.694Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.705Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.717Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.728Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.739Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.748Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.759Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.768Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.779Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.790Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.800Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.810Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.818Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.829Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.840Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.849Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.860Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.870Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.881Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.891Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.901Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.912Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.923Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.932Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.941Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.952Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.970Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.977Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.985Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.991Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:29.999Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:30.006Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:30.014Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:30.021Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:30.028Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:30.038Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:30.067Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:30.074Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:30.082Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:33.908Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T06:55:33.916Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:37:14.599Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:37:14.628Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:37:14.642Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:37:14.656Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:37:14.669Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:37:22.993Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:37:23.013Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:37:23.026Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:37:23.040Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:37:23.052Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:41:08.539Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:41:08.564Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:41:08.578Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:41:08.592Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:41:08.607Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:41:16.511Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:41:16.541Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:41:16.554Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:41:16.569Z"
+  },
+  {
+    "predicted_confidence": 0.8,
+    "actual_outcome": true,
+    "timestamp": "2025-07-04T07:41:16.584Z"
   }
 ]

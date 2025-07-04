@@ -14,6 +14,13 @@ export interface ConfidenceScore {
   strategy: number;
   context: number;
   evidence: string[];
+  breakdown?: {         // Enhanced breakdown
+    base: number;
+    evidenceBoost: number;
+    contextBoost: number;
+    qualityBoost: number;
+    penalties: number;
+  };
 }
 
 export interface SmartSymbol {
@@ -22,6 +29,7 @@ export interface SmartSymbol {
   originalName?: string;
   confidence: ConfidenceScore;
   context?: SymbolContext;
+  calibration?: any; // Import from enhanced-confidence-calibrator when available
 }
 
 export interface SymbolContext {

@@ -1,0 +1,1 @@
+function a(){} const b=()=>{}; class C{m(){}}

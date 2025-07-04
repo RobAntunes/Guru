@@ -1,0 +1,11 @@
+{
+  "high_confidence": [
+    {
+      "symbolId": "foo",
+      "decision": "ok",
+      "confidence": 0.8500000000000001
+    }
+  ],
+  "needs_review": [],
+  "consensus_confidence": 0.6833333333333332
+}

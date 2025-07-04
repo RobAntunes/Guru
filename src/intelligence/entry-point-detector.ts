@@ -115,7 +115,7 @@ export class EntryPointDetector {
     const disqualifiers: string[] = [];
     
     // Check function name patterns
-    const effectiveName = symbol.smartNaming?.inferredName || symbol.name;
+    const effectiveName = symbol.name;
     for (const pattern of ENTRY_POINT_PATTERNS) {
       if (pattern.type === 'function_name') {
         const regex = pattern.pattern instanceof RegExp ? pattern.pattern : new RegExp(pattern.pattern, 'i');

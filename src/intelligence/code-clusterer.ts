@@ -223,25 +223,18 @@ export class CodeClusterer {
     symbolGraph: SymbolGraph
   ): Promise<CodeCluster[]> {
     const clusters: CodeCluster[] = [];
-    
     for (let i = 0; i < candidates.length; i++) {
       const candidate = candidates[i];
-      
       const cluster: CodeCluster = {
         id: `cluster_${i + 1}`,
-        name: this.generateClusterName(candidate.symbols, symbolGraph),
-        purpose: this.inferClusterPurpose(candidate.symbols, symbolGraph),
         confidence: this.calculateClusterConfidence(candidate),
         symbols: candidate.symbols,
         connections: [],
         metrics: this.calculateClusterMetrics(candidate.symbols, symbolGraph),
-        semanticZone: this.detectSemanticZone(candidate.symbols, symbolGraph),
         relationships: []
       };
-      
       clusters.push(cluster);
     }
-    
     return clusters;
   }
   

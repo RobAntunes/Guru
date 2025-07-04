@@ -9,6 +9,7 @@ import { SymbolNode, SmartSymbol, SymbolContext, ConfidenceScore, NamingStrategy
 import { SEMANTIC_PREFIXES } from '../types/smart-naming.js';
 import { createHash } from 'crypto';
 import Parser from 'tree-sitter';
+import { SmartConfidenceCalibrator, Evidence, AnalysisContext, CalibratedConfidence } from './enhanced-confidence-calibrator.js';
 
 interface BehavioralPattern {
   type: 'property_extractor' | 'comparator' | 'predicate' | 'transformer' | 'accumulator' | 'validator' | 'mapper' | 'event_handler' | 'formatter' | 'filter' | 'reducer' | 'selector' | 'converter' | 'checker' | 'unknown';
@@ -43,6 +44,8 @@ interface AISemanticContext {
 export class SmartSymbolNamer {
   private hashCache = new Map<string, string>();
   private behavioralPatterns = new Map<string, BehavioralPattern>();
+  private confidenceCalibrator = new SmartConfidenceCalibrator();
+  private symbolRegistry = new Map<string, SymbolNode>(); // For cross-validation
 
   /**
    * Enhance a symbol with smart naming and confidence scoring
@@ -53,18 +56,35 @@ export class SmartSymbolNamer {
     source: string,
     allSymbols: Map<string, SymbolNode>
   ): SmartSymbol {
+    // Register symbol for cross-validation
+    this.symbolRegistry.set(symbol.id, symbol);
     // For anonymous functions, prioritize behavioral analysis
     if (symbol.name === 'anonymous') {
       const behavioralStrategy = this.generateBehavioralNamingStrategy(symbol, node, source);
       if (behavioralStrategy && behavioralStrategy.confidence > 0.5) {
-        const enhancedSymbol: SmartSymbol = {
-          id: this.generateSemanticId(symbol, node, source, behavioralStrategy.name),
-          inferredName: behavioralStrategy.name,
-          originalName: undefined,
-          confidence: this.calculateConfidenceScore(symbol, behavioralStrategy, node, source),
-          context: behavioralStrategy.context
-        };
-        return enhancedSymbol;
+        // Generate enhanced confidence with calibration
+        const evidence = this.generateEvidence(symbol, node, source, behavioralStrategy);
+        const analysisContext = this.buildAnalysisContext(symbol, node, source, behavioralStrategy);
+        const baseConfidence = this.calculateConfidenceScore(symbol, behavioralStrategy, node, source);
+        const calibratedConf = this.confidenceCalibrator.calibrateConfidence(
+        baseConfidence.overall, evidence, analysisContext, symbol, node
+        );
+
+      const enhancedSymbol: SmartSymbol = {
+        id: this.generateSemanticId(symbol, node, source, behavioralStrategy.name),
+        inferredName: behavioralStrategy.name,
+        originalName: undefined,
+        confidence: {
+          overall: calibratedConf.calibrated,
+          strategy: baseConfidence.strategy,
+          context: calibratedConf.calibrated,
+          evidence: [...baseConfidence.evidence, ...calibratedConf.reasoning],
+          breakdown: calibratedConf.breakdown
+        },
+        context: behavioralStrategy.context,
+        calibration: calibratedConf
+      };
+      return enhancedSymbol;
       }
     }
 
@@ -1451,5 +1471,152 @@ export class SmartSymbolNamer {
       default:
         return 'utility';
     }
+  }
+  
+  /**
+   * Generate evidence for confidence calibration
+   */
+  private generateEvidence(
+    symbol: SymbolNode, 
+    node: Parser.SyntaxNode, 
+    source: string, 
+    strategy?: NamingStrategy
+  ): Evidence[] {
+    const evidence: Evidence[] = [];
+    
+    // Naming evidence
+    if (symbol.name && symbol.name !== 'anonymous') {
+      evidence.push({
+        type: 'naming',
+        content: `Function has explicit name: ${symbol.name}`,
+        strength: this.hasSemanticNaming(symbol.name) ? 0.9 : 0.7,
+        source: 'symbol-name'
+      });
+    }
+    
+    // Behavioral evidence from function analysis
+    const bodyAnalysis = this.analyzeFunctionBody(node, source);
+    if (bodyAnalysis.patterns.length > 0) {
+      evidence.push({
+        type: 'behavioral',
+        content: `Detected patterns: ${bodyAnalysis.patterns.join(', ')}`,
+        strength: Math.min(0.9, bodyAnalysis.patterns.length * 0.2 + 0.3),
+        source: 'function-body-analysis'
+      });
+    }
+    
+    // Structural evidence
+    if (symbol.metadata.parameters && symbol.metadata.parameters.length > 0) {
+      evidence.push({
+        type: 'structural',
+        content: `Function has ${symbol.metadata.parameters.length} parameters`,
+        strength: 0.6,
+        source: 'parameter-analysis'
+      });
+    }
+    
+    // Context evidence
+    const callContext = this.extractCallContext(node, source);
+    if (callContext) {
+      evidence.push({
+        type: 'contextual',
+        content: `Used in ${callContext} context`,
+        strength: this.isWellKnownPattern(callContext) ? 0.8 : 0.6,
+        source: 'call-context'
+      });
+    }
+    
+    // Documentation evidence
+    if (symbol.metadata.docstring) {
+      evidence.push({
+        type: 'contextual',
+        content: 'Function has documentation',
+        strength: 0.7,
+        source: 'documentation'
+      });
+    }
+    
+    // Strategy-specific evidence
+    if (strategy) {
+      evidence.push({
+        type: 'contextual',
+        content: `Applied strategy: ${strategy.evidence.join(', ')}`,
+        strength: strategy.confidence,
+        source: 'naming-strategy'
+      });
+    }
+    
+    return evidence;
+  }
+  
+  /**
+   * Build analysis context for confidence calibration
+   */
+  private buildAnalysisContext(
+    symbol: SymbolNode,
+    node: Parser.SyntaxNode,
+    source: string,
+    strategy?: NamingStrategy
+  ): AnalysisContext {
+    const hasExplicitNaming = !!(symbol.name && symbol.name !== 'anonymous' && symbol.name.length > 1);
+    const isGenericName = this.isGenericName(symbol.name || '');
+    const callPattern = this.extractCallContext(node, source);
+    const consistencyScore = this.calculateConsistencyScore(symbol, node);
+    
+    return {
+      hasExplicitNaming,
+      consistencyScore,
+      isGenericName,
+      callPattern: callPattern || undefined,
+      fileContext: symbol.location.file.split('/').pop(),
+      usageFrequency: symbol.dependencies.length + symbol.dependents.length
+    };
+  }
+  
+  /**
+   * Check if name is generic
+   */
+  private isGenericName(name: string): boolean {
+    const genericNames = [
+      'func', 'function', 'method', 'callback', 'handler', 'temp', 'tmp', 
+      'test', 'data', 'item', 'value', 'obj', 'result', 'output', 'input',
+      'x', 'y', 'z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
+      'anonymous', 'unknown', 'default'
+    ];
+    return genericNames.includes(name.toLowerCase());
+  }
+  
+  /**
+   * Calculate consistency score
+   */
+  private calculateConsistencyScore(symbol: SymbolNode, node: Parser.SyntaxNode): number {
+    let score = 0.5; // Base score
+    
+    // Parameter usage consistency
+    if (symbol.metadata.parameters) {
+      const bodyText = node.text;
+      const usedParams = symbol.metadata.parameters.filter(param => 
+        (bodyText.match(new RegExp(`\\b${param}\\b`, 'g')) || []).length >= 2
+      );
+      score += (usedParams.length / symbol.metadata.parameters.length) * 0.3;
+    }
+    
+    // Return pattern consistency
+    const returnStatements = (node.text.match(/return\s+/g) || []).length;
+    if (returnStatements === 1) score += 0.2; // Single return path is consistent
+    
+    return Math.min(1.0, score);
+  }
+  
+  /**
+   * Check if pattern is well-known
+   */
+  private isWellKnownPattern(pattern: string): boolean {
+    const wellKnownPatterns = [
+      'map', 'filter', 'reduce', 'forEach', 'find', 'some', 'every',
+      'sort', 'flatMap', 'addEventListener', 'setTimeout', 'setInterval',
+      'then', 'catch', 'finally', 'Promise.all', 'Promise.race'
+    ];
+    return wellKnownPatterns.includes(pattern);
   }
 }

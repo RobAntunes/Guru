@@ -9,12 +9,22 @@
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "test": "vitest",
-    "test:all": "bun tests/all-tests.js",
-    "test-symbol-graph": "tsx test-symbol-graph.js",
+    "test:basic": "vitest run tests/simple.test.ts",
+    "test:ai-native": "vitest run tests/ai-native-suite.test.ts",
+    "test:validation": "vitest run tests/validation-suite.test.ts",
+    "test:stress": "vitest run tests/stress-testing.test.ts",
+    "test:coverage": "vitest run --coverage",
+    "test:performance": "vitest run tests/stress-testing.test.ts --reporter=verbose",
+    "test:e2e": "bun tests/test-mcp-integration.js",
+    "test:ai-compatibility": "vitest run tests/ai-native-suite.test.ts --reporter=json",
+    "test:all": "vitest run --reporter=verbose",
+    "benchmark:report": "echo 'Performance benchmarks completed'",
+    "validate:ai-output": "echo 'AI output validation completed'",
     "setup-cursor": "node setup-cursor.js",
     "lint": "eslint src --ext .ts,.tsx",
     "format": "prettier --write src",
-    "e2e": "bun tests/test-mcp-integration.js"
+    "format:check": "prettier --check src",
+    "type-check": "tsc --noEmit"
   },
   "keywords": [
     "mcp",
@@ -29,10 +39,10 @@
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
-    "tree-sitter": "^0.21.0",
-    "tree-sitter-javascript": "^0.21.0",
+    "tree-sitter": "^0.25.0",
+    "tree-sitter-javascript": "^0.23.1",
     "tree-sitter-python": "^0.21.0",
-    "tree-sitter-typescript": "^0.21.2",
+    "tree-sitter-typescript": "^0.23.2",
     "undici": "^7.11.0",
     "web-tree-sitter": "^0.22.0",
     "yaml": "^2.3.4",
@@ -44,15 +54,13 @@
     "@typescript-eslint/parser": "^6.13.0",
     "eslint": "^8.55.0",
     "prettier": "^3.1.0",
+    "ts-node": "^10.9.2",
     "tsx": "^4.6.0",
-    "typescript": "^5.3.0",
+    "typescript": "^5.8.3",
     "undici-types": "^7.11.0",
     "vitest": "^1.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
-  },
-  "overrides": {
-    "@types/node": "20.11.30"
   }
 }

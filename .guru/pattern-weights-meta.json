@@ -8,5 +8,15 @@
     "lastUpdated": "2025-07-03T16:48:01.569Z",
     "successCount": 0,
     "failCount": 10
+  },
+  "fooPattern": {
+    "lastUpdated": "2025-07-04T03:09:09.429Z",
+    "successCount": 12,
+    "failCount": 0
+  },
+  "barPattern": {
+    "lastUpdated": "2025-07-04T03:09:09.429Z",
+    "successCount": 0,
+    "failCount": 12
   }
 }

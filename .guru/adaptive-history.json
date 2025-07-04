@@ -840,5 +840,101 @@
     "prev": 0.8,
     "new": 0.76,
     "adjustment": -0.04000000000000001
+  },
+  {
+    "timestamp": "2025-07-03T17:32:51.176Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.6,
+    "new": 0.57,
+    "adjustment": -0.03
+  },
+  {
+    "timestamp": "2025-07-03T17:37:06.426Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.6,
+    "new": 0.57,
+    "adjustment": -0.03
+  },
+  {
+    "timestamp": "2025-07-03T17:45:32.385Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.6,
+    "new": 0.57,
+    "adjustment": -0.03
+  },
+  {
+    "timestamp": "2025-07-03T17:48:31.022Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.6,
+    "new": 0.57,
+    "adjustment": -0.03
+  },
+  {
+    "timestamp": "2025-07-03T18:07:35.135Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.6,
+    "new": 0.57,
+    "adjustment": -0.03
+  },
+  {
+    "timestamp": "2025-07-03T18:13:58.143Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.6,
+    "new": 0.57,
+    "adjustment": -0.03
+  },
+  {
+    "timestamp": "2025-07-03T18:15:54.163Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.6,
+    "new": 0.57,
+    "adjustment": -0.03
+  },
+  {
+    "timestamp": "2025-07-03T18:22:48.778Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.6,
+    "new": 0.57,
+    "adjustment": -0.03
+  },
+  {
+    "timestamp": "2025-07-03T18:51:55.357Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.6,
+    "new": 0.57,
+    "adjustment": -0.03
+  },
+  {
+    "timestamp": "2025-07-04T03:05:22.567Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.6,
+    "new": 0.57,
+    "adjustment": -0.03
+  },
+  {
+    "timestamp": "2025-07-04T03:08:22.581Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.6,
+    "new": 0.57,
+    "adjustment": -0.03
+  },
+  {
+    "timestamp": "2025-07-04T03:09:09.428Z",
+    "type": "overconfidence",
+    "source": "naming",
+    "prev": 0.6,
+    "new": 0.57,
+    "adjustment": -0.03
   }
 ]

@@ -14,8 +14,6 @@ import { readFile, readdir, stat } from 'fs/promises';
 import path from 'node:path';
 import Parser from 'tree-sitter';
 
-console.error('[FS][DEBUG] TOP-LEVEL Guru symbol-graph.ts loaded!');
-
 export interface BuildParams {
   path: string;
   language?: string;
@@ -43,13 +41,20 @@ export class SymbolGraphBuilder {
   async build(params: BuildParams & { expandFiles?: string[]; expandSymbols?: string[] }): Promise<SymbolGraph> {
     console.error(`🌳 Building symbol graph for ${params.path}`);
     const languageManager = await languageManagerReady;
-    console.error(`[BUILD] Supported languages:`, languageManager.getSupportedLanguages());
 
     // 1. Recursively find all source files from the given path
-    const allSourceFiles = await this.findSourceFiles(params.path, params.includeTests || false);
-    console.error(`[BUILD] Total source files discovered from ${params.path}: ${allSourceFiles.length}`);
+    let allSourceFiles: string[] = [];
+    try {
+      const stats = await stat(params.path);
+      if (stats.isFile()) {
+        allSourceFiles = [params.path];
+      } else {
+        allSourceFiles = await this.findSourceFiles(params.path, params.includeTests || false);
+      }
+    } catch (e) {
+      allSourceFiles = [];
+    }
     if (allSourceFiles.length === 0) {
-      console.error(`[BUILD] No source files found. Searched recursively from: ${params.path}`);
       return {
         symbols: new Map(),
         edges: [],
@@ -92,13 +97,10 @@ export class SymbolGraphBuilder {
     const analyzedFiles = new Set<string>(this._currentGraph?.metadata.analyzedFiles || []);
     for (const filePath of filesToIndex) {
       try {
-        console.error(`[BUILD] Parsing file: ${filePath}`);
         const source = await readFile(filePath, 'utf-8');
         const parseResult = await languageManager.parseFile(filePath, source);
         if (parseResult) {
-          console.error(`[BUILD] Detected language: ${parseResult.language} for ${filePath}`);
           const fileSymbols = await this.extractSymbols(filePath, parseResult, params.path);
-          console.error(`[BUILD] Extracted ${fileSymbols.length} symbols from ${filePath}`);
           for (const symbol of fileSymbols) {
             if (!this.indexedSymbols.has(symbol.id)) {
               symbols.set(symbol.id, symbol);
@@ -108,9 +110,11 @@ export class SymbolGraphBuilder {
           analyzedFiles.add(filePath);
           this.indexedFiles.add(filePath);
         } else {
+          // Failed to parse
           console.error(`[BUILD] Failed to parse ${filePath}`);
         }
       } catch (error) {
+        // Error processing file
         console.error(`[BUILD] Error processing ${filePath}:`, error);
       }
     }
@@ -186,28 +190,22 @@ export class SymbolGraphBuilder {
   }
 
   private async findSourceFiles(rootPath: string, includeTests: boolean): Promise<string[]> {
-    console.error('[FS][DEBUG] Guru traversal debug ACTIVE! If you see this, the new code is running.');
     const files: string[] = [];
     let rootMissing = false;
     const projectRoot = path.resolve(rootPath);
-    console.error(`[FS][DEBUG] Computed projectRoot: ${projectRoot}`);
     // Log the current working directory and root entries
     if (rootPath === '.' || rootPath === process.cwd()) {
       try {
         const cwd = process.cwd();
-        console.error(`[FS][DEBUG] Current working directory: ${cwd}`);
         const rootEntries = await readdir(cwd);
-        console.error(`[FS][DEBUG] Entries in root directory (${cwd}): ${rootEntries.join(', ')}`);
       } catch (err) {
-        console.error(`[FS][DEBUG] Error reading root directory:`, err);
+        console.error(`[FS] Error reading root directory:`, err);
       }
     }
     const traverse = async (dir: string, isRoot = false) => {
       let entries: string[] = [];
       const absDir = path.resolve(dir);
-      console.error(`[FS][DEBUG] Checking absDir: ${absDir} against projectRoot: ${projectRoot}`);
       if (!absDir.startsWith(projectRoot)) {
-        console.error(`[FS][WARN] Skipping directory outside project root: ${absDir} (projectRoot: ${projectRoot})`);
         return;
       }
       try {
@@ -216,9 +214,6 @@ export class SymbolGraphBuilder {
         if (error.code === 'ENOENT') {
           if (isRoot) {
             rootMissing = true;
-            console.error(`[FS] Root directory missing: ${dir}`);
-          } else {
-            console.error(`[FS] Skipping missing directory: ${dir}`);
           }
         } else {
           console.error(`[FS] Error traversing ${dir}:`, error);
@@ -227,7 +222,6 @@ export class SymbolGraphBuilder {
       }
       for (const entry of entries) {
         if (entry.startsWith('.')) {
-          console.error(`[FS] Skipping hidden file or directory: ${entry}`);
           continue;
         }
         const fullPath = path.join(dir, entry);
@@ -237,22 +231,17 @@ export class SymbolGraphBuilder {
           stats = await stat(fullPath);
         } catch (err: any) {
           if (err.code === 'ENOENT') {
-            console.error(`[FS] Skipping missing file or directory: ${fullPath}`);
             continue;
           } else {
-            console.error(`[FS] Error stating ${fullPath}:`, err);
             continue;
           }
         }
         if (stats.isDirectory()) {
-          console.error(`[FS][DEBUG] Checking absSubDir: ${absFullPath} against projectRoot: ${projectRoot}`);
           if (!absFullPath.startsWith(projectRoot)) {
-            console.error(`[FS][WARN] Skipping subdirectory outside project root: ${absFullPath} (projectRoot: ${projectRoot})`);
             continue;
           }
           if (!['node_modules', 'dist', 'build', '.next', 'coverage'].includes(entry)) {
             if (includeTests || !entry.match(/^(test|tests|__tests__|spec|specs)$/i)) {
-              console.error(`[FS] Recursing into subdirectory: ${absFullPath}`);
               await traverse(fullPath);
             } else {
               console.error(`[FS] Skipping test directory: ${fullPath}`);
@@ -262,26 +251,21 @@ export class SymbolGraphBuilder {
           }
         } else if (stats.isFile()) {
           const ext = path.extname(entry).toLowerCase();
-          console.error(`[FS] Considering file: ${fullPath}`);
           if (['.js', '.jsx', '.ts', '.tsx', '.py', '.pyx', '.pyi'].includes(ext)) {
             if (includeTests || !entry.match(/\.(test|spec)\.(js|jsx|ts|tsx|py)$/i)) {
               files.push(fullPath);
-              console.error(`[FS] Found source file: ${fullPath}`);
             } else {
-              console.error(`[FS] Skipping test file: ${fullPath}`);
             }
           } else {
-            console.error(`[FS] Skipping non-source file: ${fullPath}`);
+            console.error(`[FS] Skipping excluded directory: ${fullPath}`);
           }
         }
       }
-      console.error(`[FS] Files found so far: ${files.length}`);
     };
     await traverse(rootPath, true);
     if (rootMissing) {
       console.error(`[FS] Aborting: root directory does not exist: ${rootPath}`);
     }
-    console.error(`[FS] Total source files found: ${files.length}`);
     return files;
   }
 
@@ -295,14 +279,19 @@ export class SymbolGraphBuilder {
       // Extract different types of symbols based on language
       switch (language) {
         case 'javascript':
-        case 'typescript': {
+        case 'js':
+        case 'typescript':
+        case 'ts':
+        case 'tsx':
+        case 'jsx': {
           const jsSymbols = this.extractJavaScriptSymbols(node, filePath, source, rootPath, scope);
           if (jsSymbols.length > 0) {
           }
           symbols.push(...jsSymbols);
           break;
         }
-        case 'python': {
+        case 'python':
+        case 'py': {
           const pySymbols = this.extractPythonSymbols(node, filePath, source, rootPath, scope);
           if (pySymbols.length > 0) {
           }
@@ -407,7 +396,6 @@ export class SymbolGraphBuilder {
   ): SymbolNode {
     const name = this.extractName(node) || 'anonymous';
     const location = this.createLocation(node, filePath, rootPath);
-    
     // Create base symbol
     const symbol: SymbolNode = {
       id: `${path.relative(rootPath, filePath)}:${name}:${location.startLine}`,
@@ -421,24 +409,10 @@ export class SymbolGraphBuilder {
         accessibility: 'public',
         parameters: this.extractParameters(node),
         docstring: this.extractDocstring(node, source)
-      }
+      },
+      embedding: undefined // Placeholder: plug in embedding generation here
     };
-    
-    // Enhance with smart naming if needed
-    if (name === 'anonymous' || this.shouldEnhanceNaming(name)) {
-      const smartSymbol = this.smartNamer.enhanceSymbol(symbol, node, source, new Map());
-      symbol.smartNaming = {
-        inferredName: smartSymbol.inferredName,
-        confidence: smartSymbol.confidence,
-        context: smartSymbol.context || {},
-        originalName: smartSymbol.originalName
-      };
-      // Update the symbol ID if it was anonymous
-      if (name === 'anonymous') {
-        symbol.id = smartSymbol.id;
-      }
-    }
-    
+    // Remove smartNaming and human-centric logic
     return symbol;
   }
 
@@ -462,7 +436,8 @@ export class SymbolGraphBuilder {
       metadata: {
         accessibility: 'public',
         docstring: this.extractDocstring(node, source)
-      }
+      },
+      embedding: undefined // Placeholder: plug in embedding generation here
     };
   }
 
@@ -484,17 +459,42 @@ export class SymbolGraphBuilder {
           if (idNode) {
             const name = idNode.text;
             const location = this.createLocation(child, filePath, rootPath);
+            
+            // Check if this variable is assigned an arrow function
+            const valueNode = child.childForFieldName('value');
+            let symbolType: SymbolType = 'variable';
+            let metadata: any = { accessibility: 'public' };
+            
+            if (valueNode && valueNode.type === 'arrow_function') {
+              // This is a function assigned to a variable (e.g., React component)
+              symbolType = 'function';
+              metadata = {
+                accessibility: 'public',
+                parameters: this.extractParameters(valueNode),
+                docstring: this.extractDocstring(child, source),
+                isComponent: name.includes('Component') || name.endsWith('FC') || 
+                            source.includes('React.FC') || source.includes(': FC') 
+              };
+            } else if (valueNode && valueNode.type === 'function') {
+              // Regular function assigned to variable
+              symbolType = 'function';
+              metadata = {
+                accessibility: 'public',
+                parameters: this.extractParameters(valueNode),
+                docstring: this.extractDocstring(child, source)
+              };
+            }
+            
             symbols.push({
               id: `${path.relative(rootPath, filePath)}:${name}:${location.startLine}`,
               name,
-              type: 'variable',
+              type: symbolType,
               location,
               scope,
               dependencies: [],
               dependents: [],
-              metadata: {
-                accessibility: 'public'
-              }
+              metadata,
+              embedding: undefined // Placeholder: plug in embedding generation here
             });
           }
         }
@@ -516,7 +516,8 @@ export class SymbolGraphBuilder {
           dependents: [],
           metadata: {
             accessibility: 'public'
-          }
+          },
+          embedding: undefined // Placeholder: plug in embedding generation here
         });
       }
     }
@@ -542,7 +543,8 @@ export class SymbolGraphBuilder {
       dependents: [],
       metadata: {
         accessibility: 'public'
-      }
+      },
+      embedding: undefined // Placeholder: plug in embedding generation here
     };
   }
 
@@ -672,12 +674,17 @@ export class SymbolGraphBuilder {
     const walk = (node: Parser.SyntaxNode, currentScope?: string) => {
       switch (language) {
         case 'javascript':
+        case 'js':
         case 'typescript':
+        case 'ts':
+        case 'tsx':
+        case 'jsx':
           edges.push(...this.extractJavaScriptDependencies(
             node, filePath, allSymbols, symbolLookup, source, currentScope
           ));
           break;
         case 'python':
+        case 'py':
           edges.push(...this.extractPythonDependencies(
             node, filePath, allSymbols, symbolLookup, source, currentScope
           ));
@@ -725,6 +732,7 @@ export class SymbolGraphBuilder {
     switch (nodeType) {
       case 'import_statement':
       case 'import_clause':
+      case 'import_declaration': // TypeScript imports
         edges.push(...this.extractImportDependencies(node, filePath, allSymbols, source));
         break;
         
@@ -742,6 +750,24 @@ export class SymbolGraphBuilder {
         
       case 'new_expression':
         edges.push(...this.extractConstructorDependencies(node, filePath, allSymbols, symbolLookup, source));
+        break;
+        
+      // JSX/React specific patterns
+      case 'jsx_element':
+      case 'jsx_self_closing_element':
+        // Track JSX element usage as dependencies
+        const tagName = this.extractJSXTagName(node);
+        if (tagName && tagName !== 'div' && tagName !== 'span' && tagName !== 'p') {
+          const callerSymbol = this.findContainingSymbol(node, filePath, allSymbols);
+          if (callerSymbol) {
+            edges.push({
+              from: callerSymbol,
+              to: `jsx:${tagName}`,
+              type: 'uses',
+              weight: 0.8
+            });
+          }
+        }
         break;
     }
     
@@ -1044,5 +1070,28 @@ export class SymbolGraphBuilder {
     ]);
     
     return genericNames.has(name.toLowerCase()) || name.length < 3;
+  }
+
+  private extractJSXTagName(node: Parser.SyntaxNode): string | null {
+    // Extract JSX tag name from jsx_element or jsx_self_closing_element
+    for (let i = 0; i < node.childCount; i++) {
+      const child = node.child(i);
+      if (child) {
+        // Look for jsx_opening_element or the tag directly
+        if (child.type === 'jsx_opening_element' || child.type === 'jsx_self_closing_element') {
+          for (let j = 0; j < child.childCount; j++) {
+            const grandchild = child.child(j);
+            if (grandchild && grandchild.type === 'identifier') {
+              return grandchild.text;
+            }
+          }
+        }
+        // Sometimes the identifier is directly a child
+        if (child.type === 'identifier') {
+          return child.text;
+        }
+      }
+    }
+    return null;
   }
 }
