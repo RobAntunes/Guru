@@ -12,6 +12,211 @@
   "ai-native-incremental-test-persistent/c.ts": {
     "fileHash": "d01d3894d2f6ce1a298efe9046d331d2e783ff17c5d4cc2b8558333a1c3d476b",
     "position": 1275,
-    "size": 143
+    "size": 142
+  },
+  "./stress-large-file.ts": {
+    "fileHash": "0f9e1a7a986d645b1346db432d4576750c548b1a5d14ba85cf89f3572364b70f",
+    "position": 0,
+    "size": 104
+  },
+  "./stress-deep-nesting.ts": {
+    "fileHash": "66bc30480f23558ef92f0b5a9b35fd7eabdcd2d043f0a82a3e7fe761f6f00462",
+    "position": 2688,
+    "size": 596
+  },
+  "./edge-malformed-0.ts": {
+    "fileHash": "5f29b1502a716fbaac61b61d4b70b195a1011ba69c95fbbfbd96c67944fe2dc5",
+    "position": 3284,
+    "size": 104
+  },
+  "./edge-malformed-1.ts": {
+    "fileHash": "f9f4805ce0e34b78390c755f30c42a261c1db17c8ac430e8cebfd0e74864aca3",
+    "position": 3388,
+    "size": 103
+  },
+  "./edge-malformed-2.ts": {
+    "fileHash": "10b155393d978d779b8aed61b1248e991beee4d284afab84a8033bd5dc4a8acd",
+    "position": 3491,
+    "size": 103
+  },
+  "./edge-malformed-3.ts": {
+    "fileHash": "79b364cf84390f698618811ee1147362edce65c346d36aa756fe5c0b0a61f0fa",
+    "position": 3594,
+    "size": 106
+  },
+  "./edge-malformed-4.ts": {
+    "fileHash": "af1d0a85263673ead682fba561bba8628f35fbfd2e21b44185f40eff3a4904a0",
+    "position": 3700,
+    "size": 105
+  },
+  "./edge-minimal-0.ts": {
+    "fileHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "position": 3805,
+    "size": 103
+  },
+  "./edge-minimal-1.ts": {
+    "fileHash": "17eb8cbd3d1d4a7dea0c40d20fe991d5952e2fc7ccbe0b5a15af05fac40d4a7e",
+    "position": 3908,
+    "size": 104
+  },
+  "./edge-minimal-2.ts": {
+    "fileHash": "6a3cf5192354f71615ac51034b3e97c20eda99643fcaf5bbe6d41ad59bd12167",
+    "position": 4012,
+    "size": 105
+  },
+  "./edge-minimal-3.ts": {
+    "fileHash": "3f41cbb303012f33212c92326b27f6cc604fd414e20315cb10f2be7f1f6bb83c",
+    "position": 4117,
+    "size": 102
+  },
+  "./edge-minimal-4.ts": {
+    "fileHash": "9f085b1079ab38f776bbb3930dfd067a838ca3e0483aff8625f88837e8ed964c",
+    "position": 4219,
+    "size": 105
+  },
+  "./stress-memory-test.ts": {
+    "fileHash": "9f6878ee2ab5ade16851c301f2ecd25260aacf58f8ad2c1c2ad00a9b9a8cb9b0",
+    "position": 6319,
+    "size": 105
+  },
+  "./stress-concurrent-1.ts": {
+    "fileHash": "4fa823450ecfa0bcbbfcd386ec1fbedaa4d463595979739342bc9dd2dc17257c",
+    "position": 7256,
+    "size": 278
+  },
+  "./stress-concurrent-4.ts": {
+    "fileHash": "6508c7b171db5650564ed23782fc21d137eb15b62543235e4d463ef408df739b",
+    "position": 6979,
+    "size": 277
+  },
+  "./stress-concurrent-3.ts": {
+    "fileHash": "afad39aa63667e0b1d1afb80449ec6f1c87d093ba876aaa9d531377805c93316",
+    "position": 7534,
+    "size": 276
+  },
+  "./stress-concurrent-2.ts": {
+    "fileHash": "b1b1f087858dac9b5077116d50c77f4d685d5a1f9a2b845d804f843e9ef106c5",
+    "position": 6424,
+    "size": 278
+  },
+  "./stress-concurrent-0.ts": {
+    "fileHash": "6e746fe3547ab73f457f6d130ea4350d17ad8ca9d4cd464603a9a989bead85ad",
+    "position": 6702,
+    "size": 277
+  },
+  "project/src/utils.ts": {
+    "fileHash": "4c3566c35e2a58d57e04f9342c9fc0facc46997dc45d5538b2d2de3da87b32bf",
+    "position": 7810,
+    "size": 305
+  },
+  "project/scripts/process.py": {
+    "fileHash": "1ef2e08425750083bdc32a57f10b886c92efeec07191ccd7ef1d1c0e66ad09fa",
+    "position": 8115,
+    "size": 305
+  },
+  "project/src/main.js": {
+    "fileHash": "bfcf237d7af6d494b59a60cd68526b5a92234f3dee9cb015e3edb86f5f9b9849",
+    "position": 8420,
+    "size": 354
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-0.ts": {
+    "fileHash": "c3fabccff17f06e8cbdc23b6fd64bc89761cb680291fe6c1d71841dd237f7b4c",
+    "position": 8848,
+    "size": 148
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-1.ts": {
+    "fileHash": "b04fc843ceea6bc691d26185481513d7a99d3c1745a6d336a4ad3249bbb491c3",
+    "position": 8996,
+    "size": 149
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-2.ts": {
+    "fileHash": "da2ccef2ec36a06d921db6aef1ff96ef1eba1c4040e81e28a4d0b361a1d54185",
+    "position": 9145,
+    "size": 148
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-3.ts": {
+    "fileHash": "5831cccd933a1d0a5f7c7acef60844089123129ac0afe92eeac892cae1cd43d6",
+    "position": 9293,
+    "size": 148
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-4.ts": {
+    "fileHash": "cc0d42914afa1cb62b013491dfe442cacfc196d43606dde4b382621cd1fc637b",
+    "position": 9441,
+    "size": 148
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-5.ts": {
+    "fileHash": "1b563f64718b4d18e63684e1b0f65b43b8a6e8fd8e4415fd50132781cbb904fe",
+    "position": 9589,
+    "size": 149
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-6.ts": {
+    "fileHash": "9e41285ee946480301baf3b24cca77e8d5185c715e43fee4aa1ce189ecf1b267",
+    "position": 9738,
+    "size": 149
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-7.ts": {
+    "fileHash": "9721b01a19eb8bc209ab4c1d6c910c1ef382ee97b29128e0aa0773fee434eb1c",
+    "position": 9887,
+    "size": 148
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-8.ts": {
+    "fileHash": "131f2710d9f1720339368b8f0c3a09d2d071b4c09d5de6abbd9bcf5372ba1456",
+    "position": 10035,
+    "size": 150
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-9.ts": {
+    "fileHash": "ce4e3e960e9730e6a0c0e5ceedf6732168deb4d7fc590e14401438dbfa38843f",
+    "position": 10185,
+    "size": 149
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-10.ts": {
+    "fileHash": "4034713aa9fc8b7a4b889d2c866a46336007a47c836fe947537d496137ae4f57",
+    "position": 10334,
+    "size": 150
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-11.ts": {
+    "fileHash": "4fd61e0bae4df536d4b4f0ace039cb044367c6c80cf99332c1588dbf404804db",
+    "position": 10484,
+    "size": 150
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-12.ts": {
+    "fileHash": "a14e08880cb34aee156912245911affa0e73bc919be6938602ab3f22a4655d2b",
+    "position": 10634,
+    "size": 150
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-13.ts": {
+    "fileHash": "f757b41bd86f29c5aab76ee4ffdc56c50fd8b09a591ac399ebb3ce50c14f9e04",
+    "position": 10784,
+    "size": 152
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-14.ts": {
+    "fileHash": "ffba90ac6068a842c0e2be91d9b9687beac794c633f0793a582ff28aee58f402",
+    "position": 10936,
+    "size": 152
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-15.ts": {
+    "fileHash": "bbd5440bfd8275c2090bfed5ca6ff7e5885c282fb09b44549b3e3412e164dd5e",
+    "position": 11088,
+    "size": 150
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-16.ts": {
+    "fileHash": "12119efd1be6f9d9cbd7de7993ab74b6920ff22bebb77bbbcfb156802d248dc0",
+    "position": 11238,
+    "size": 149
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-17.ts": {
+    "fileHash": "c96ae68dd3b248e7cd67c98852ddafe08d8f49841a01cb37164579fdce5e744d",
+    "position": 11387,
+    "size": 150
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-18.ts": {
+    "fileHash": "5767a2a882c8fa28d0b84615e12727c4bbb21ca377a2750f722f841f6ca25276",
+    "position": 11537,
+    "size": 149
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-83zM23/benchmark-19.ts": {
+    "fileHash": "b66dc6a0f48f92baeda0ef772c1e6c20ce31218790cffcccb56f87685155b8b8",
+    "position": 11686,
+    "size": 150
   }
 }

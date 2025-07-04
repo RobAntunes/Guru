@@ -648,4 +648,19 @@ export class GuruCore {
       return false;
     }
   }
+
+  /**
+   * Cleanup method to properly release resources
+   */
+  async cleanup(): Promise<void> {
+    // Cleanup incremental analyzer if it exists
+    if (this.incrementalAnalyzer) {
+      await this.incrementalAnalyzer.cleanup();
+    }
+
+    // Clear component references
+    this.components = {};
+    this.initializedComponents.clear();
+    this.currentAnalysis = undefined;
+  }
 }

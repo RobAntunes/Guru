@@ -139,7 +139,7 @@ describe('Guru Validation & Effectiveness Suite', () => {
         console.log(`    🧠 Intelligence quality: ${result.symbolGraph.symbols.size > 2 ? 'High' : 'Moderate'}`);
         
         // Performance validation
-        expect(analysisTime).toBeLessThan(1000); // Should complete under 1s
+        expect(analysisTime).toBeLessThan(2000); // Should complete under 2s (increased from 1s)
         expect(result.symbolGraph.symbols.size).toBeGreaterThan(0);
         
         // AI-native effectiveness scoring

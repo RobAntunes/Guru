@@ -153,6 +153,63 @@ export class WorkerPool<T, R> {
     });
   }
 
+  /**
+   * Run multiple tasks in parallel with better load balancing
+   */
+  runTasks(tasks: T[]): Promise<R[]> {
+    return Promise.all(tasks.map(task => this.runTask(task)));
+  }
+
+  /**
+   * Run tasks in optimized batches based on current worker capacity
+   */
+  async runTasksInBatches(tasks: T[], batchSize?: number): Promise<R[]> {
+    const results: R[] = [];
+    const optimalBatchSize = batchSize || this.calculateOptimalBatchSize(tasks.length);
+    
+    for (let i = 0; i < tasks.length; i += optimalBatchSize) {
+      const batch = tasks.slice(i, i + optimalBatchSize);
+      const batchResults = await Promise.all(
+        batch.map(task => this.runTask(task))
+      );
+      results.push(...batchResults);
+      
+      // Check memory pressure between batches
+      if (this.memoryPressureLevel === 'high' || this.memoryPressureLevel === 'critical') {
+        // Small delay to allow memory cleanup
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+    }
+    
+    return results;
+  }
+
+  /**
+   * Calculate optimal batch size based on worker count and memory pressure
+   */
+  private calculateOptimalBatchSize(totalTasks: number): number {
+    const workerCount = this.workers.length;
+    let batchSize = Math.max(1, Math.floor(totalTasks / workerCount));
+    
+    // Adjust based on memory pressure
+    switch (this.memoryPressureLevel) {
+      case 'critical':
+        batchSize = Math.max(1, Math.floor(batchSize * 0.3));
+        break;
+      case 'high':
+        batchSize = Math.max(1, Math.floor(batchSize * 0.5));
+        break;
+      case 'medium':
+        batchSize = Math.max(1, Math.floor(batchSize * 0.8));
+        break;
+      case 'low':
+        batchSize = Math.min(totalTasks, Math.floor(batchSize * 1.5));
+        break;
+    }
+    
+    return Math.max(1, Math.min(20, batchSize)); // Between 1 and 20 tasks per batch
+  }
+
   private processQueue() {
     if (this.queue.length === 0 || this.idleWorkers.length === 0) return;
     

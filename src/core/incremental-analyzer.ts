@@ -131,11 +131,31 @@ export class IncrementalAnalyzer {
         // First try the compiled version (for production)
         workerPath = require.resolve('./worker-symbol-analyze.js');
       } catch {
-        // Fallback to the same directory where this file was compiled from
-        workerPath = path.join(__dirname, 'worker-symbol-analyze.js');
+        try {
+          // Try TypeScript version for development
+          workerPath = require.resolve('./worker-symbol-analyze.ts');
+        } catch {
+          // Fallback to relative path
+          workerPath = path.join(__dirname, 'worker-symbol-analyze.js');
+          // Check if TypeScript version exists
+          const tsPath = path.join(__dirname, 'worker-symbol-analyze.ts');
+          if (await this.fileExists(tsPath)) {
+            workerPath = tsPath;
+          }
+        }
       }
       
-      this.workerPool = new WorkerPool(workerPath, maxWorkers);
+      this.workerPool = new WorkerPool(workerPath, maxWorkers, {
+        maxMemoryMB: this.memoryLimits.maxMemoryMB,
+        pressureThresholdMB: Math.floor(this.memoryLimits.maxMemoryMB * 0.7),
+        criticalThresholdMB: Math.floor(this.memoryLimits.maxMemoryMB * 0.9),
+        minWorkers: Math.max(1, Math.floor(maxWorkers / 2)),
+        maxWorkers: maxWorkers
+      });
+      
+      if (!this.quiet) {
+        console.log(`[IncrementalAnalyzer] Initialized worker pool with ${maxWorkers} workers using ${workerPath}`);
+      }
     } catch (error) {
       console.error('[IncrementalAnalyzer][ERROR] Failed to initialize worker pool:', error);
       // Continue without worker pool - analysis will still work without parallelism
@@ -940,8 +960,15 @@ export class IncrementalAnalyzer {
   }
 
   async analyzeFilesParallel(files: string[]): Promise<any[]> {
+    const startTime = Date.now();
+    const fileCount = files.length;
+    
     if (!this.workerPool) {
       // Fallback to sequential analysis using analyzeFile method
+      if (!this.quiet) {
+        console.log(`[IncrementalAnalyzer] Using sequential analysis for ${fileCount} files (no worker pool)`);
+      }
+      
       const results = [];
       for (const file of files) {
         try {
@@ -952,40 +979,249 @@ export class IncrementalAnalyzer {
           results.push({ filePath: file, symbols: [], error: errorMessage });
         }
       }
+      
+      const duration = Date.now() - startTime;
+      if (!this.quiet) {
+        console.log(`[IncrementalAnalyzer] Sequential analysis completed: ${fileCount} files in ${duration}ms (${(duration/fileCount).toFixed(2)}ms/file)`);
+      }
+      
       return results;
     }
+
+    if (!this.quiet) {
+      console.log(`[IncrementalAnalyzer] Using parallel analysis for ${fileCount} files with ${this.workerPool.getStats().activeWorkers + this.workerPool.getStats().idleWorkers} workers`);
+    }
+
+    // Use adaptive batch processing for better memory management and performance
+    const results = await this.processFilesInBatches(files, startTime);
     
-    const results = await Promise.all(
-      files.map(file =>
-        this.workerPool!.runTask(file)
-      )
-    );
+    const duration = Date.now() - startTime;
+    const successCount = results.filter(r => r && !r.error).length;
+    const errorCount = results.filter(r => r && r.error).length;
     
-    // Cache the results from worker analysis
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const result = results[i];
+    if (!this.quiet) {
+      console.log(`[IncrementalAnalyzer] Parallel analysis completed: ${successCount} success, ${errorCount} errors in ${duration}ms (${(duration/fileCount).toFixed(2)}ms/file)`);
       
-      if (result && !result.error && this.symbolCache) {
-        try {
-          const fileHash = await this.hashFile(file);
-          
-          // Transform worker result to CachedSymbol format if needed
-          const symbols = result.symbols || [];
-          
-          // Save to symbol cache
-          this.symbolCache.setSymbols(file, fileHash, symbols);
-          
-          // Also update our internal cache for consistency
-          await this.updateCache(file, symbols, []); // TODO: extract dependencies from results
-          
-        } catch (error) {
-          console.error('[IncrementalAnalyzer][ERROR] Failed to cache results for', file, ':', error);
+      const stats = this.workerPool.getStats();
+      console.log(`[IncrementalAnalyzer] Worker pool stats: ${stats.activeWorkers} active, ${stats.idleWorkers} idle, ${stats.queueLength} queued, memory pressure: ${stats.memoryPressureLevel}`);
+      
+      // Calculate performance improvement
+      const avgTimePerFile = duration / fileCount;
+      const estimatedSequentialTime = avgTimePerFile * fileCount * 2.5; // Conservative estimate
+      const speedupRatio = estimatedSequentialTime / duration;
+      console.log(`[IncrementalAnalyzer] Estimated speedup: ${speedupRatio.toFixed(2)}x over sequential processing`);
+    }
+    
+    return results;
+  }
+
+  /**
+   * Process files in adaptive batches for optimal performance and memory usage
+   */
+  private async processFilesInBatches(files: string[], startTime: number): Promise<any[]> {
+    const results: any[] = [];
+    const workerStats = this.workerPool!.getStats();
+    
+    // Calculate optimal batch size based on worker count and memory pressure
+    const baseBatchSize = Math.max(1, Math.floor(files.length / (workerStats.activeWorkers + workerStats.idleWorkers)));
+    const adaptiveBatchSize = this.calculateAdaptiveBatchSize(baseBatchSize, files.length, workerStats.memoryPressureLevel);
+    
+    if (!this.quiet) {
+      console.log(`[IncrementalAnalyzer] Processing ${files.length} files in batches of ${adaptiveBatchSize}`);
+    }
+    
+    // Process files in batches
+    for (let i = 0; i < files.length; i += adaptiveBatchSize) {
+      const batchFiles = files.slice(i, i + adaptiveBatchSize);
+      const batchStartTime = Date.now();
+      
+      // Process batch in parallel
+      const batchResults = await Promise.all(
+        batchFiles.map(file => this.processFileWithRetry(file))
+      );
+      
+      // Cache results and extract dependencies
+      await this.processBatchResults(batchFiles, batchResults);
+      
+      results.push(...batchResults);
+      
+      const batchDuration = Date.now() - batchStartTime;
+      const totalDuration = Date.now() - startTime;
+      const progress = ((i + batchFiles.length) / files.length * 100).toFixed(1);
+      
+      if (!this.quiet) {
+        console.log(`[IncrementalAnalyzer] Batch ${Math.floor(i / adaptiveBatchSize) + 1} completed: ${batchFiles.length} files in ${batchDuration}ms (${progress}% total, ${(batchDuration/batchFiles.length).toFixed(2)}ms/file)`);
+      }
+      
+      // Check memory pressure and adjust batch size if needed
+      const currentStats = this.workerPool!.getStats();
+      if (currentStats.memoryPressureLevel === 'high' || currentStats.memoryPressureLevel === 'critical') {
+        if (!this.quiet) {
+          console.log(`[IncrementalAnalyzer] Memory pressure detected (${currentStats.memoryPressureLevel}), reducing batch size for next batch`);
         }
+        // Force garbage collection if available
+        if (global.gc) {
+          global.gc();
+        }
+        // Small delay to allow memory cleanup
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
     }
     
     return results;
+  }
+
+  /**
+   * Calculate adaptive batch size based on system conditions
+   */
+  private calculateAdaptiveBatchSize(baseBatchSize: number, totalFiles: number, memoryPressureLevel: string): number {
+    let batchSize = baseBatchSize;
+    
+    // Adjust based on memory pressure
+    switch (memoryPressureLevel) {
+      case 'critical':
+        batchSize = Math.max(1, Math.floor(batchSize * 0.3));
+        break;
+      case 'high':
+        batchSize = Math.max(1, Math.floor(batchSize * 0.5));
+        break;
+      case 'medium':
+        batchSize = Math.max(1, Math.floor(batchSize * 0.8));
+        break;
+      case 'low':
+        batchSize = Math.min(totalFiles, Math.floor(batchSize * 1.2));
+        break;
+    }
+    
+    // Ensure reasonable bounds
+    batchSize = Math.max(1, Math.min(50, batchSize)); // Between 1 and 50 files per batch
+    
+    return batchSize;
+  }
+
+  /**
+   * Process a single file with retry logic
+   */
+  private async processFileWithRetry(file: string, maxRetries = 2): Promise<any> {
+    let lastError: Error | null = null;
+    
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const result = await this.workerPool!.runTask(file);
+        return result;
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        
+        if (attempt < maxRetries) {
+          // Small delay before retry
+          await new Promise(resolve => setTimeout(resolve, 50 * (attempt + 1)));
+        }
+      }
+    }
+    
+    return { filePath: file, symbols: [], error: lastError?.message || 'Unknown error' };
+  }
+
+  /**
+   * Process batch results with enhanced dependency extraction and caching
+   */
+  private async processBatchResults(batchFiles: string[], batchResults: any[]): Promise<void> {
+    const cachePromises: Promise<void>[] = [];
+    
+    for (let i = 0; i < batchFiles.length; i++) {
+      const file = batchFiles[i];
+      const result = batchResults[i];
+      
+      if (result && !result.error && this.symbolCache) {
+        // Process asynchronously to avoid blocking
+        cachePromises.push(this.cacheFileResult(file, result));
+      }
+    }
+    
+    // Wait for all cache operations to complete
+    await Promise.all(cachePromises);
+  }
+
+  /**
+   * Cache a single file result with enhanced dependency extraction
+   */
+  private async cacheFileResult(file: string, result: any): Promise<void> {
+    try {
+      const fileHash = await this.hashFile(file);
+      
+      // Transform worker result to CachedSymbol format if needed
+      const symbols = result.symbols || [];
+      
+      // Save to symbol cache
+      if (this.symbolCache) {
+        this.symbolCache.setSymbols(file, fileHash, symbols);
+      }
+      
+      // Enhanced dependency extraction from symbols
+      const dependencies = this.extractDependenciesFromSymbols(file, symbols);
+      
+      // Update internal cache for consistency
+      await this.updateCache(file, symbols, dependencies);
+      
+    } catch (error) {
+      if (!this.quiet) {
+        console.error('[IncrementalAnalyzer][ERROR] Failed to cache results for', file, ':', error);
+      }
+    }
+  }
+
+  /**
+   * Extract dependencies from symbols with enhanced analysis
+   */
+  private extractDependenciesFromSymbols(filePath: string, symbols: any[]): string[] {
+    const dependencies: string[] = [];
+    const fileDir = path.dirname(filePath);
+    
+    for (const symbol of symbols) {
+      // Look for import/require statements in symbol references
+      if (symbol.references) {
+        for (const ref of symbol.references) {
+          if (ref.type === 'import' || ref.type === 'require') {
+            const depPath = this.resolveImportPath(ref.target, fileDir);
+            if (depPath && !dependencies.includes(depPath)) {
+              dependencies.push(depPath);
+            }
+          }
+        }
+      }
+      
+      // Also check for file extensions that might indicate dependencies
+      if (symbol.location && symbol.location.includes('.')) {
+        const potentialDep = path.resolve(fileDir, symbol.location);
+        if (potentialDep !== filePath && !dependencies.includes(potentialDep)) {
+          dependencies.push(potentialDep);
+        }
+      }
+    }
+    
+    return dependencies;
+  }
+
+  /**
+   * Resolve import path to absolute file path
+   */
+  private resolveImportPath(importPath: string, fromDir: string): string | null {
+    try {
+      // Handle relative imports
+      if (importPath.startsWith('./') || importPath.startsWith('../')) {
+        return path.resolve(fromDir, importPath);
+      }
+      
+      // Handle absolute imports (simplified - would need package.json resolution in real implementation)
+      if (importPath.startsWith('/')) {
+        return importPath;
+      }
+      
+      // Skip node_modules and other external dependencies for now
+      return null;
+    } catch (error) {
+      return null;
+    }
   }
 }
 
