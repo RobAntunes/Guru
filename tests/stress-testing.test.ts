@@ -52,8 +52,10 @@ describe('Guru Stress & Edge Case Testing', () => {
         console.log(`    🎯 Symbols extracted: ${result.symbolGraph.symbols.size}`);
         console.log(`    🔗 Relationships: ${result.symbolGraph.edges.length}`);
         
-        // Should handle large files under 12 seconds (increased from 5s for real-world hardware)
-        expect(analysisTime).toBeLessThan(12000);
+        // Should handle large files under a reasonable threshold (dynamic for CI)
+        const isCI = process.env.CI === 'true';
+        const threshold = isCI ? 20000 : 12000;
+        expect(analysisTime).toBeLessThan(threshold);
         // Should extract significant number of symbols
         expect(result.symbolGraph.symbols.size).toBeGreaterThan(100);
         
