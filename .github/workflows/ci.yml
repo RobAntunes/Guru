@@ -13,7 +13,7 @@ jobs:
     
     strategy:
       matrix:
-        bun-version: [2.0.0]
+        bun-version: [1.2.18]
     
     steps:
     - name: 📥 Checkout code
@@ -44,11 +44,11 @@ jobs:
       
     - name: 🎯 Generate test report
       run: bun run test:coverage
-      if: matrix.bun-version == '2.0.0'
+      if: matrix.bun-version == '1.2.18'
       
     - name: 📈 Upload coverage to Codecov
       uses: codecov/codecov-action@v3
-      if: matrix.bun-version == '2.0.0'
+      if: matrix.bun-version == '1.2.18'
       with:
         file: ./coverage/lcov.info
         flags: unittests
@@ -65,7 +65,7 @@ jobs:
     - name: 🟢 Setup Bun
       uses: oven-sh/setup-bun@v1
       with:
-        bun-version: '2.0.0'
+        bun-version: '1.2.18'
         
     - name: 🔧 Install dependencies
       run: bun install
@@ -105,7 +105,7 @@ jobs:
     - name: 🟢 Setup Bun
       uses: oven-sh/setup-bun@v1
       with:
-        bun-version: '2.0.0'
+        bun-version: '1.2.18'
         
     - name: 🔧 Install dependencies
       run: bun install
@@ -132,7 +132,7 @@ jobs:
     - name: 🟢 Setup Bun
       uses: oven-sh/setup-bun@v1
       with:
-        bun-version: '2.0.0'
+        bun-version: '1.2.18'
         
     - name: 🔧 Install dependencies
       run: bun install
@@ -152,7 +152,7 @@ jobs:
     - name: 🟢 Setup Bun
       uses: oven-sh/setup-bun@v1
       with:
-        bun-version: '2.0.0'
+        bun-version: '1.2.18'
         
     - name: 🔧 Install dependencies
       run: bun install
@@ -182,7 +182,7 @@ jobs:
     - name: 🟢 Setup Bun
       uses: oven-sh/setup-bun@v1
       with:
-        bun-version: '2.0.0'
+        bun-version: '1.2.18'
         
     - name: 🔧 Install dependencies
       run: bun install
