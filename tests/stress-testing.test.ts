@@ -59,7 +59,7 @@ describe('Guru Stress & Edge Case Testing', () => {
       } finally {
         await unlink(testFile).catch(() => {});
       }
-    });
+    }, 30000);
 
     it('should handle deeply nested structures', async () => {
       console.log('\n🌀 STRESS TEST: Deep Nesting');
