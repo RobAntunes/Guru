@@ -67,7 +67,7 @@ jobs:
       uses: actions/checkout@v4
       
     - name: 🛡️ Run CodeQL security scan
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3
       if: github.event_name == 'push'
       with:
         languages: javascript

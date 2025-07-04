@@ -12,7 +12,6 @@
     "test:ai-native": "vitest run tests/ai-native-suite.test.ts",
     "test:stress": "vitest run tests/stress-testing.test.ts",
     "test:validation": "vitest run tests/validation-suite.test.ts",
-    "test:e2e": "bun tests/test-mcp-integration.js",
     "test:ai-compatibility": "vitest run tests/ai-native-suite.test.ts --reporter=json",
     "test:all": "vitest run --reporter=verbose",
     "benchmark:report": "echo 'Performance benchmarks completed'",
