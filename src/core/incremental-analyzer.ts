@@ -12,6 +12,7 @@ import * as zlib from "zlib";
 import { guruConfig, guruExcludedDirs } from "./config.js";
 import { SymbolCache, CachedSymbol } from "./symbol-cache.js";
 import { WorkerPool } from './worker-pool.js';
+import { DatabaseAdapter } from "./database-adapter.js";
 import * as os from 'os';
 
 export interface FileAnalysisCache {
@@ -21,6 +22,13 @@ export interface FileAnalysisCache {
   dependencies: string[];
   analysisTimestamp: number;
   version: string;
+}
+
+export interface AnalysisResult {
+  symbolGraph: SymbolGraph;
+  entryPoints?: any;
+  clusters?: any;
+  metadata?: any;
 }
 
 export interface AnalysisCheckpoint {
@@ -40,24 +48,49 @@ export interface ChangeDetectionResult {
   analysisRequired: boolean;
 }
 
+interface MemoryLimits {
+  maxCacheEntries: number;
+  maxDependencyEntries: number;
+  memoryCheckIntervalMs: number;
+  maxMemoryMB: number;
+}
+
 export class IncrementalAnalyzer {
   private cacheDir: string;
   private currentVersion = "1.0.0";
+  private db: DatabaseAdapter;
+  
+  // Memory-bounded caches with LRU eviction
   private fileCache = new Map<string, FileAnalysisCache>();
   private dependencyGraph = new Map<string, Set<string>>();
   private reverseDependencyGraph = new Map<string, Set<string>>();
+  
+  // LRU tracking
+  private fileCacheAccess: string[] = [];
+  private dependencyAccess: string[] = [];
+  
+  // Memory management
+  private memoryLimits: MemoryLimits = {
+    maxCacheEntries: 500,  // Limit cache to 500 files max
+    maxDependencyEntries: 1000, // Limit dependency graph size
+    memoryCheckIntervalMs: 5000, // Check memory every 5 seconds
+    maxMemoryMB: 256  // Trigger cleanup at 256MB
+  };
+  
   private useCompression: boolean;
   private projectPath: string;
   private originalPath: string;
   private symbolCache?: SymbolCache;
   private workerPool: WorkerPool<string, { filePath: string; symbols: any[]; error?: string }> | null = null;
   private quiet: boolean;
+  private memoryCheckTimer?: NodeJS.Timeout;
 
   constructor(projectPath: string, quiet = false) {
     // Store the original path and defer ALL path resolution to initialize()
     this.originalPath = projectPath;
     this.projectPath = projectPath; // Will be resolved in initialize()
     this.quiet = quiet;
+    this.db = DatabaseAdapter.getInstance();
     
     // Set a temporary cacheDir to avoid using unresolved file paths
     this.cacheDir = guruConfig.cacheDir.startsWith("/")
@@ -75,7 +108,13 @@ export class IncrementalAnalyzer {
    */
   async initialize(): Promise<void> {
     this.projectPath = path.resolve(this.originalPath);
-    this.cacheDir = await IncrementalAnalyzer.getBaseDirectory('.guru/cache');
+    
+    // Use the same cache directory as the global config to ensure database and file cache are aligned
+    if (guruConfig.cacheDir.startsWith("/")) {
+      this.cacheDir = guruConfig.cacheDir;
+    } else {
+      this.cacheDir = path.resolve(guruConfig.cacheDir);
+    }
 
     // Initialize symbol cache
     this.symbolCache = new SymbolCache(this.cacheDir);
@@ -104,6 +143,256 @@ export class IncrementalAnalyzer {
 
     await this.loadExistingCache();
     await this.buildDependencyGraphs();
+    
+    // Start memory monitoring
+    this.startMemoryMonitoring();
+  }
+
+  /**
+   * Start memory monitoring and periodic cleanup
+   */
+  private startMemoryMonitoring(): void {
+    this.memoryCheckTimer = setInterval(() => {
+      this.checkAndCleanupMemory();
+    }, this.memoryLimits.memoryCheckIntervalMs);
+  }
+
+  /**
+   * Check memory usage and cleanup if needed
+   */
+  private checkAndCleanupMemory(): void {
+    const memUsage = process.memoryUsage();
+    const heapUsedMB = memUsage.heapUsed / (1024 * 1024);
+    
+    if (heapUsedMB > this.memoryLimits.maxMemoryMB) {
+      if (!this.quiet) {
+        console.error(`[IncrementalAnalyzer][MEMORY] High memory usage detected: ${heapUsedMB.toFixed(2)}MB, cleaning up...`);
+      }
+      this.performMemoryCleanup();
+    }
+    
+    // Always check cache size limits
+    this.enforceCacheLimits();
+  }
+
+  /**
+   * Enforce cache size limits using LRU eviction
+   */
+  private enforceCacheLimits(): void {
+    // File cache LRU eviction
+    while (this.fileCache.size > this.memoryLimits.maxCacheEntries) {
+      const lruFile = this.fileCacheAccess.shift();
+      if (lruFile) {
+        this.fileCache.delete(lruFile);
+        if (!this.quiet) {
+          console.error(`[IncrementalAnalyzer][LRU] Evicted file cache entry: ${lruFile}`);
+        }
+      }
+    }
+    
+    // Dependency graph LRU eviction
+    while (this.dependencyGraph.size > this.memoryLimits.maxDependencyEntries) {
+      const lruDep = this.dependencyAccess.shift();
+      if (lruDep) {
+        this.dependencyGraph.delete(lruDep);
+        this.reverseDependencyGraph.delete(lruDep);
+        if (!this.quiet) {
+          console.error(`[IncrementalAnalyzer][LRU] Evicted dependency entry: ${lruDep}`);
+        }
+      }
+    }
+  }
+
+  /**
+   * Perform aggressive memory cleanup
+   */
+  private performMemoryCleanup(): void {
+    // Clear half of the least recently used entries
+    const fileCacheTarget = Math.floor(this.memoryLimits.maxCacheEntries / 2);
+    const depCacheTarget = Math.floor(this.memoryLimits.maxDependencyEntries / 2);
+    
+    while (this.fileCache.size > fileCacheTarget) {
+      const lruFile = this.fileCacheAccess.shift();
+      if (lruFile) {
+        this.fileCache.delete(lruFile);
+      }
+    }
+    
+    while (this.dependencyGraph.size > depCacheTarget) {
+      const lruDep = this.dependencyAccess.shift();
+      if (lruDep) {
+        this.dependencyGraph.delete(lruDep);
+        this.reverseDependencyGraph.delete(lruDep);
+      }
+    }
+    
+    // Force garbage collection if available
+    if (global.gc) {
+      global.gc();
+    }
+    
+    if (!this.quiet) {
+      const memUsage = process.memoryUsage();
+      const heapUsedMB = memUsage.heapUsed / (1024 * 1024);
+      console.error(`[IncrementalAnalyzer][MEMORY] Cleanup complete. Memory usage: ${heapUsedMB.toFixed(2)}MB`);
+    }
+  }
+
+  /**
+   * Update LRU access tracking for file cache
+   */
+  private trackFileCacheAccess(file: string): void {
+    // Remove from current position if exists
+    const index = this.fileCacheAccess.indexOf(file);
+    if (index > -1) {
+      this.fileCacheAccess.splice(index, 1);
+    }
+    // Add to end (most recently used)
+    this.fileCacheAccess.push(file);
+  }
+
+  /**
+   * Update LRU access tracking for dependency cache
+   */
+  private trackDependencyAccess(file: string): void {
+    // Remove from current position if exists
+    const index = this.dependencyAccess.indexOf(file);
+    if (index > -1) {
+      this.dependencyAccess.splice(index, 1);
+    }
+    // Add to end (most recently used)
+    this.dependencyAccess.push(file);
+  }
+
+  /**
+   * Get cached analysis with LRU tracking
+   */
+  getCachedAnalysis(file: string): FileAnalysisCache | null {
+    const cached = this.fileCache.get(file);
+    if (cached) {
+      this.trackFileCacheAccess(file);
+    }
+    return cached || null;
+  }
+
+  /**
+   * Update cache with new analysis results
+   */
+  async updateCache(
+    file: string,
+    symbols: SymbolNode[],
+    dependencies: string[],
+  ): Promise<void> {
+    const stat = await fs.stat(file);
+    const hash = await this.calculateFileHash(file);
+
+    const cacheEntry: FileAnalysisCache = {
+      hash,
+      lastModified: stat.mtimeMs,
+      symbols,
+      dependencies,
+      analysisTimestamp: Date.now(),
+      version: this.currentVersion,
+    };
+
+    this.fileCache.set(file, cacheEntry);
+    this.trackFileCacheAccess(file);
+
+    // Update dependency graphs with LRU tracking
+    this.updateDependencyGraphs(file, dependencies);
+
+    // Persist to both database and disk asynchronously (non-blocking)
+    setImmediate(() => {
+      this.persistCacheEntry(file, cacheEntry).catch(error => {
+        if (!this.quiet) {
+          console.error(`[IncrementalAnalyzer][ERROR] Failed to persist cache entry for ${file}:`, error);
+        }
+      });
+      
+      // Also save to database
+      this.db.saveFileAnalysis(
+        file,
+        hash,
+        symbols,
+        dependencies,
+        this.currentVersion
+      ).catch(error => {
+        if (!this.quiet) {
+          console.warn(`[IncrementalAnalyzer][WARN] Failed to save to database for ${file}:`, error);
+        }
+      });
+    });
+
+    // Enforce cache limits after update
+    this.enforceCacheLimits();
+  }
+
+  /**
+   * Update dependency graphs with LRU tracking
+   */
+  private updateDependencyGraphs(file: string, dependencies: string[]): void {
+    // Track access
+    this.trackDependencyAccess(file);
+    
+    // Clear old dependencies
+    const oldDeps = this.dependencyGraph.get(file) || new Set();
+    for (const dep of oldDeps) {
+      const reverseDeps = this.reverseDependencyGraph.get(dep);
+      if (reverseDeps) {
+        reverseDeps.delete(file);
+        if (reverseDeps.size === 0) {
+          this.reverseDependencyGraph.delete(dep);
+        }
+      }
+    }
+
+    // Set new dependencies
+    this.dependencyGraph.set(file, new Set(dependencies));
+
+    // Update reverse dependencies
+    for (const dep of dependencies) {
+      this.trackDependencyAccess(dep);
+      if (!this.reverseDependencyGraph.has(dep)) {
+        this.reverseDependencyGraph.set(dep, new Set());
+      }
+      this.reverseDependencyGraph.get(dep)!.add(file);
+    }
+  }
+
+  /**
+   * Flush all pending cache writes
+   */
+  async flush(): Promise<void> {
+    if (this.symbolCache) {
+      await this.symbolCache.flush();
+    }
+  }
+
+  /**
+   * Cleanup method to be called before analyzer is destroyed
+   */
+  async cleanup(): Promise<void> {
+    // Stop memory monitoring
+    if (this.memoryCheckTimer) {
+      clearInterval(this.memoryCheckTimer);
+    }
+    
+    // Flush all pending writes in symbol cache
+    if (this.symbolCache) {
+      await this.symbolCache.flush();
+    }
+    
+    // Cleanup worker pool
+    if (this.workerPool) {
+      await this.workerPool.destroy();
+    }
+    
+    // Clear memory caches
+    this.fileCache.clear();
+    this.dependencyGraph.clear();
+    this.reverseDependencyGraph.clear();
+    this.fileCacheAccess.length = 0;
+    this.dependencyAccess.length = 0;
   }
 
   /**
@@ -130,24 +419,28 @@ export class IncrementalAnalyzer {
     for (const file of allFiles) {
       try {
         const currentHash = await this.hashFile(file);
-        const cached = this.symbolCache.getSymbols(file, currentHash);
+        const cached = await this.symbolCache!.getSymbols(file, currentHash);
         
-        if (!cached) {
-          // Check if file is completely new or just changed
-          const anyVersionCached = this.symbolCache.hasFile(file);
-          if (anyVersionCached) {
-            changedFiles.push(file);
-          } else {
-            newFiles.push(file);
+
+        
+                  if (!cached) {
+            // Check if file is completely new or just changed
+            const anyVersionCached = await this.symbolCache!.hasFileAsync(file);
+            if (anyVersionCached) {
+              changedFiles.push(file);
+            } else {
+              newFiles.push(file);
+            }
           }
-        }
-      } catch (error) {
+        } catch (error) {
         newFiles.push(file);
       }
     }
     
     // For simplicity, affected files = changed + new
     const affectedFiles = [...changedFiles, ...newFiles];
+    
+
     
     return {
       changedFiles,
@@ -170,35 +463,6 @@ export class IncrementalAnalyzer {
     // TODO: implement dependency analysis to include dependent files
     const filesToAnalyze = changes.affectedFiles;
     return filesToAnalyze;
-  }
-
-  /**
-   * Update cache with new analysis results
-   */
-  async updateCache(
-    file: string,
-    symbols: SymbolNode[],
-    dependencies: string[],
-  ): Promise<void> {
-    const stat = await fs.stat(file);
-    const hash = await this.calculateFileHash(file);
-
-    const cacheEntry: FileAnalysisCache = {
-      hash,
-      lastModified: stat.mtimeMs,
-      symbols,
-      dependencies,
-      analysisTimestamp: Date.now(),
-      version: this.currentVersion,
-    };
-
-    this.fileCache.set(file, cacheEntry);
-
-    // Update dependency graphs
-    this.updateDependencyGraphs(file, dependencies);
-
-    // Persist to disk
-    await this.persistCacheEntry(file, cacheEntry);
   }
 
   /**
@@ -236,9 +500,6 @@ export class IncrementalAnalyzer {
     totalFiles: number,
     analyzedFiles: number,
   ): Promise<void> {
-    const baseDir = await IncrementalAnalyzer.getBaseDirectory(this.cacheDir);
-    const checkpointPath = path.join(baseDir, 'analysis-checkpoint.json');
-    await fs.mkdir(baseDir, { recursive: true });
     const checkpoint: AnalysisCheckpoint = {
       projectPath,
       totalFiles,
@@ -247,20 +508,71 @@ export class IncrementalAnalyzer {
       version: this.currentVersion,
       gitCommit: await this.getCurrentGitCommit(),
     };
-    await fs.writeFile(checkpointPath, JSON.stringify(checkpoint, null, 2));
+    
+    try {
+      const checkpointId = `checkpoint-${this.projectPath}`;
+      // Save to database (primary)
+      await this.db.saveAnalysisSession(
+        checkpointId,
+        checkpoint.projectPath,
+        'incremental',
+        { 
+          totalFiles, 
+          analyzedFiles, 
+          gitCommit: checkpoint.gitCommit,
+          version: this.currentVersion,
+          checkpoint: checkpoint
+        }
+      );
+      console.log(`📊 Saved analysis checkpoint: ${analyzedFiles}/${totalFiles} files analyzed`);
+    } catch (error) {
+      console.warn("Failed to save checkpoint to database:", error);
+      
+      // Fallback to file-based checkpoint
+      const baseDir = await IncrementalAnalyzer.getBaseDirectory(this.cacheDir);
+      const checkpointPath = path.join(baseDir, 'analysis-checkpoint.json');
+      await fs.mkdir(baseDir, { recursive: true });
+      await fs.writeFile(checkpointPath, JSON.stringify(checkpoint, null, 2));
+    }
   }
 
   /**
    * Load analysis checkpoint
    */
   async loadCheckpoint(): Promise<AnalysisCheckpoint | null> {
+    try {
+      const checkpointId = `checkpoint-${this.projectPath}`;
+      // Try loading from database first
+      const sessions = await this.db.getAnalysisSessions(checkpointId, 1);
+      if (sessions.length > 0) {
+        const session = sessions[0];
+        // The checkpoint is stored in the session_data.checkpoint field
+        if (session.session_data && session.session_data.checkpoint) {
+          return session.session_data.checkpoint as AnalysisCheckpoint;
+        }
+      }
+    } catch (error) {
+      console.warn("Failed to load checkpoint from database:", error);
+    }
+
+    // Fallback to file-based checkpoint
     const baseDir = await IncrementalAnalyzer.getBaseDirectory(this.cacheDir);
     const checkpointPath = path.join(baseDir, 'analysis-checkpoint.json');
     if (!fsSync.existsSync(checkpointPath)) {
       return null;
     }
-    const data = await fs.readFile(checkpointPath, 'utf-8');
-    return JSON.parse(data);
+    
+    try {
+      const data = await fs.readFile(checkpointPath, 'utf-8');
+      return JSON.parse(data);
+    } catch (error) {
+      console.warn("Failed to parse checkpoint JSON:", error);
+      // Delete corrupted checkpoint file
+      try {
+        await fs.unlink(checkpointPath);
+      } catch {}
+      return null;
+    }
   }
 
   /**
@@ -398,19 +710,6 @@ export class IncrementalAnalyzer {
   private async buildDependencyGraphs(): Promise<void> {
     for (const [file, cache] of this.fileCache.entries()) {
       this.updateDependencyGraphs(file, cache.dependencies);
-    }
-  }
-
-  private updateDependencyGraphs(file: string, dependencies: string[]): void {
-    // Update forward dependency graph
-    this.dependencyGraph.set(file, new Set(dependencies));
-
-    // Update reverse dependency graph
-    for (const dep of dependencies) {
-      if (!this.reverseDependencyGraph.has(dep)) {
-        this.reverseDependencyGraph.set(dep, new Set());
-      }
-      this.reverseDependencyGraph.get(dep)!.add(file);
     }
   }
 
@@ -623,7 +922,7 @@ export class IncrementalAnalyzer {
     const fileHash = await this.hashFile(filePath);
     
     // Check cache first
-    const cached = this.symbolCache.getSymbols(filePath, fileHash);
+    const cached = await this.symbolCache.getSymbols(filePath, fileHash);
     if (cached) {
       return cached;
     }
@@ -691,24 +990,83 @@ export class IncrementalAnalyzer {
 }
 
 /**
- * Factory for creating incremental analyzer instances
+ * Factory for creating incremental analyzer instances with memory management
  */
 export class IncrementalAnalyzerFactory {
   private static instances = new Map<string, IncrementalAnalyzer>();
+  private static maxInstances = 3; // Limit concurrent analyzer instances
+  private static accessOrder: string[] = []; // LRU tracking for instances
 
   static async create(projectPath: string): Promise<IncrementalAnalyzer> {
     const normalizedPath = path.resolve(projectPath);
 
     if (!this.instances.has(normalizedPath)) {
+      // Cleanup old instances if we're at the limit
+      if (this.instances.size >= this.maxInstances) {
+        await this.cleanupLRUInstance();
+      }
+
       const analyzer = new IncrementalAnalyzer(normalizedPath);
       await analyzer.initialize();
       this.instances.set(normalizedPath, analyzer);
     }
 
+    // Update access order
+    this.updateAccessOrder(normalizedPath);
+    
     return this.instances.get(normalizedPath)!;
   }
 
-  static clear(): void {
+  /**
+   * Update LRU access order for instances
+   */
+  private static updateAccessOrder(path: string): void {
+    const index = this.accessOrder.indexOf(path);
+    if (index > -1) {
+      this.accessOrder.splice(index, 1);
+    }
+    this.accessOrder.push(path);
+  }
+
+  /**
+   * Cleanup the least recently used instance
+   */
+  private static async cleanupLRUInstance(): Promise<void> {
+    if (this.accessOrder.length === 0) return;
+    
+    const lruPath = this.accessOrder.shift()!;
+    const analyzer = this.instances.get(lruPath);
+    
+    if (analyzer) {
+      await analyzer.cleanup();
+      this.instances.delete(lruPath);
+      console.error(`[Factory][MEMORY] Cleaned up LRU analyzer instance: ${lruPath}`);
+    }
+  }
+
+  /**
+   * Clear all instances with proper cleanup
+   */
+  static async clear(): Promise<void> {
+    // Cleanup all instances properly
+    for (const [path, analyzer] of this.instances) {
+      await analyzer.cleanup();
+    }
     this.instances.clear();
+    this.accessOrder.length = 0;
+  }
+
+  /**
+   * Get memory statistics for all instances
+   */
+  static getMemoryStats(): { instanceCount: number; totalCacheEntries: number } {
+    let totalCacheEntries = 0;
+    for (const analyzer of this.instances.values()) {
+      totalCacheEntries += analyzer.getCacheStats().totalCachedFiles;
+    }
+    return {
+      instanceCount: this.instances.size,
+      totalCacheEntries
+    };
   }
 }

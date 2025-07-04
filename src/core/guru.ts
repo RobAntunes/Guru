@@ -52,31 +52,129 @@ export interface FindRelatedCodeParams {
   limit?: number;
 }
 
+interface LazyLoadedComponents {
+  symbolGraphBuilder?: SymbolGraphBuilder;
+  executionTracer?: ExecutionTracer;
+  changeImpactAnalyzer?: ChangeImpactAnalyzer;
+  codeClusterer?: CodeClusterer;
+  patternDetector?: PatternDetector;
+}
+
 export class GuruCore {
-  private symbolGraphBuilder: SymbolGraphBuilder;
-  private executionTracer: ExecutionTracer;
-  private changeImpactAnalyzer: ChangeImpactAnalyzer;
+  private components: LazyLoadedComponents = {};
   private currentAnalysis?: AnalysisResult;
-  private patternDetector?: PatternDetector;
   private incrementalAnalyzer?: IncrementalAnalyzer;
-  private codeClusterer: CodeClusterer;
   private quiet: boolean;
+  private initializedComponents = new Set<string>();
 
   constructor(quiet = false) {
     this.quiet = quiet;
     if (!quiet) {
       console.error("🚀 Initializing Guru AI-native code intelligence...");
     }
-    this.symbolGraphBuilder = new SymbolGraphBuilder(quiet);
-    this.executionTracer = new ExecutionTracer();
-    this.changeImpactAnalyzer = new ChangeImpactAnalyzer();
-    this.codeClusterer = new CodeClusterer(quiet);
-    // IncrementalAnalyzer will be initialized on analyzeCodebase
+    // Only basic initialization - all heavy components are lazy-loaded
     if (!quiet) {
       console.error(
         "✅ Guru Core initialized with revolutionary intelligence components!",
       );
     }
+  }
+
+  /**
+   * Lazy-load SymbolGraphBuilder when first needed
+   */
+  private async getSymbolGraphBuilder(): Promise<SymbolGraphBuilder> {
+    if (!this.components.symbolGraphBuilder) {
+      if (!this.quiet && !this.initializedComponents.has('SymbolGraphBuilder')) {
+        console.error("📚 Loading SymbolGraphBuilder...");
+        this.initializedComponents.add('SymbolGraphBuilder');
+      }
+      this.components.symbolGraphBuilder = new SymbolGraphBuilder(this.quiet);
+    }
+    return this.components.symbolGraphBuilder;
+  }
+
+  /**
+   * Lazy-load ExecutionTracer when first needed
+   */
+  private async getExecutionTracer(): Promise<ExecutionTracer> {
+    if (!this.components.executionTracer) {
+      if (!this.quiet && !this.initializedComponents.has('ExecutionTracer')) {
+        console.error("🔍 Loading ExecutionTracer...");
+        this.initializedComponents.add('ExecutionTracer');
+      }
+      this.components.executionTracer = new ExecutionTracer();
+    }
+    return this.components.executionTracer;
+  }
+
+  /**
+   * Lazy-load ChangeImpactAnalyzer when first needed
+   */
+  private async getChangeImpactAnalyzer(): Promise<ChangeImpactAnalyzer> {
+    if (!this.components.changeImpactAnalyzer) {
+      if (!this.quiet && !this.initializedComponents.has('ChangeImpactAnalyzer')) {
+        console.error("⚡ Loading ChangeImpactAnalyzer...");
+        this.initializedComponents.add('ChangeImpactAnalyzer');
+      }
+      this.components.changeImpactAnalyzer = new ChangeImpactAnalyzer();
+    }
+    return this.components.changeImpactAnalyzer;
+  }
+
+  /**
+   * Lazy-load CodeClusterer when first needed
+   */
+  private async getCodeClusterer(): Promise<CodeClusterer> {
+    if (!this.components.codeClusterer) {
+      if (!this.quiet && !this.initializedComponents.has('CodeClusterer')) {
+        console.error("🧩 Loading CodeClusterer...");
+        this.initializedComponents.add('CodeClusterer');
+      }
+      this.components.codeClusterer = new CodeClusterer(this.quiet);
+    }
+    return this.components.codeClusterer;
+  }
+
+  /**
+   * Lazy-load PatternDetector when first needed
+   */
+  private async getPatternDetector(): Promise<PatternDetector> {
+    if (!this.components.patternDetector) {
+      if (!this.quiet && !this.initializedComponents.has('PatternDetector')) {
+        console.error("🎯 Loading PatternDetector...");
+        this.initializedComponents.add('PatternDetector');
+      }
+      this.components.patternDetector = new PatternDetector();
+    }
+    return this.components.patternDetector;
+  }
+
+  /**
+   * Preload commonly used components for better performance
+   */
+  async preloadComponents(components: string[] = ['symbolGraphBuilder', 'codeClusterer']): Promise<void> {
+    const preloadPromises = components.map(async (component) => {
+      switch (component) {
+        case 'symbolGraphBuilder':
+          await this.getSymbolGraphBuilder();
+          break;
+        case 'executionTracer':
+          await this.getExecutionTracer();
+          break;
+        case 'changeImpactAnalyzer':
+          await this.getChangeImpactAnalyzer();
+          break;
+        case 'codeClusterer':
+          await this.getCodeClusterer();
+          break;
+        case 'patternDetector':
+          await this.getPatternDetector();
+          break;
+      }
+    });
+
+    await Promise.all(preloadPromises);
   }
 
   /**
@@ -114,6 +212,8 @@ export class GuruCore {
       const importedScanMode = scanMode || (guruConfig as any).scanMode;
       const freshScanMode = importedScanMode || 'auto';
       let effectiveScanMode = freshScanMode;
+      
+
       
       let useIncremental = effectiveScanMode === 'incremental' && checkpoint;
 
@@ -163,8 +263,11 @@ export class GuruCore {
       // Run analysis
       const analysisResults = await this.incrementalAnalyzer.analyzeFilesParallel(filesToAnalyze);
       
+      // Lazy-load components as needed
+      const symbolGraphBuilder = await this.getSymbolGraphBuilder();
+      
       // Build symbol graph
-      const symbolGraph = await this.symbolGraphBuilder.build({
+      const symbolGraph = await symbolGraphBuilder.build({
         path: analysisBasePath,
         language: guruConfig.language || 'typescript',
         includeTests: guruConfig.includeTests,
@@ -174,8 +277,20 @@ export class GuruCore {
       // Find entry points
       const entryPoints = this.findEntryPoints(symbolGraph);
       
+      // Lazy-load clustering component
+      const codeClusterer = await this.getCodeClusterer();
+      
       // Build clusters
-      const clusters = await this.codeClusterer.clusterSymbols(symbolGraph);
+      const clusters = await codeClusterer.clusterSymbols(symbolGraph);
+
+      // Flush cache to ensure all writes are completed before returning
+      if (this.incrementalAnalyzer) {
+        try {
+          await this.incrementalAnalyzer.flush();
+        } catch (error) {
+          console.error('[GuruCore][ERROR] cache flush failed:', error);
+        }
+      }
 
       // Always save checkpoint after analysis for both file and directory analysis
       try {
@@ -218,7 +333,8 @@ export class GuruCore {
       );
     }
 
-    return await this.executionTracer.trace({
+    const executionTracer = await this.getExecutionTracer();
+    return await executionTracer.trace({
       symbolGraph: this.currentAnalysis.symbolGraph,
       entryPoint: params.entryPoint,
       maxDepth: params.maxDepth || 8,
@@ -263,30 +379,16 @@ export class GuruCore {
       );
     }
 
-    const targetSymbol = this.currentAnalysis.symbolGraph.symbols.get(symbolId);
-    if (!targetSymbol) {
-      throw new Error(
-        `Symbol with ID '${symbolId}' not found in current analysis.`,
-      );
-    }
-
-    console.error(
-      `🔍 Analyzing impact of ${type} change to ${targetSymbol.name || symbolId}...`,
-    );
-
-    const impact = await this.changeImpactAnalyzer.analyzeChangeImpact(
+    const changeImpactAnalyzer = await this.getChangeImpactAnalyzer();
+    return await changeImpactAnalyzer.analyzeChangeImpact(
       this.currentAnalysis.symbolGraph,
-      { type, targetSymbol: symbolId, description: "", rationale: "" },
+      {
+        type,
+        targetSymbol: symbolId,
+        description: `${type} change to ${symbolId}`,
+        rationale: `${type} change analysis`
+      }
     );
-
-    console.error(
-      `🎯 Change impact analysis complete: ${impact.risk.level} risk`,
-    );
-    console.error(
-      `📊 Found ${impact.directImpacts.length} direct impacts, ${impact.indirectImpacts.length} indirect impacts`,
-    );
-
-    return impact;
   }
 
   /**

@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import { getDatabase, DatabaseAdapter } from "../core/database-adapter.js";
 
 export interface DecisionPoint {
   symbolId: string;
@@ -209,7 +210,13 @@ export class SkepticalAnalyst {
   }
 }
 export class PeerReviewEngine {
-  private storagePath = path.join(process.cwd(), ".guru", "peer-reviews.json");
+  private db: DatabaseAdapter;
+
+  constructor() {
+    this.db = DatabaseAdapter.getInstance();
+    console.log("📊 Loading PeerReviewEngine with database integration...");
+  }
+
   async reviewAnalysis(
     analysis: any,
     reviewer: string,
@@ -261,16 +268,20 @@ export class PeerReviewEngine {
     await this.persistReview(review);
     return review;
   }
+
   async persistReview(review: PeerReview) {
     try {
-      const dir = path.dirname(this.storagePath);
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      let all: PeerReview[] = [];
-      if (fs.existsSync(this.storagePath)) {
-        all = JSON.parse(fs.readFileSync(this.storagePath, "utf-8"));
-      }
-      all.push(review);
-      fs.writeFileSync(this.storagePath, JSON.stringify(all, null, 2), "utf-8");
+      await this.db.storePeerReview(
+        review.reviewer,
+        review.analysis_id,
+        {
+          reviewee: review.reviewee,
+          critiques: review.critiques,
+          suggestions: review.suggestions,
+          confidence_adjustments: review.confidence_adjustments
+        }
+      );
+      console.log(`💾 Persisted peer review from ${review.reviewer} to database`);
     } catch (e) {
       console.error("Failed to persist peer review:", e);
     }
@@ -284,7 +295,13 @@ export interface ConsensusResult {
   consensus_confidence: number;
 }
 export class ConsensusEngine {
-  private storagePath = path.join(process.cwd(), ".guru", "consensus.json");
+  private db: DatabaseAdapter;
+
+  constructor() {
+    this.db = DatabaseAdapter.getInstance();
+    console.log("📊 Loading ConsensusEngine with database integration...");
+  }
+
   async buildConsensus(analyses: any[]): Promise<ConsensusResult> {
     // Find agreements: same decision, high confidence
     const symbolMap: {
@@ -337,15 +354,17 @@ export class ConsensusEngine {
     await this.persistConsensus(result);
     return result;
   }
+
   async persistConsensus(result: ConsensusResult) {
     try {
-      const dir = path.dirname(this.storagePath);
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(
-        this.storagePath,
-        JSON.stringify(result, null, 2),
-        "utf-8",
+      const analysisId = `consensus-${Date.now()}`;
+      await this.db.storeConsensusResult(
+        analysisId,
+        result,
+        result.consensus_confidence,
+        result.high_confidence.length + result.needs_review.length
       );
+      console.log(`💾 Persisted consensus result for ${analysisId} to database`);
     } catch (e) {
       console.error("Failed to persist consensus:", e);
     }
@@ -359,16 +378,7 @@ export interface FeedbackEvent {
   source: FeedbackSource;
 }
 export class AdaptiveTuning {
-  private storagePath = path.join(
-    process.cwd(),
-    ".guru",
-    "adaptive-params.json",
-  );
-  private historyPath = path.join(
-    process.cwd(),
-    ".guru",
-    "adaptive-history.json",
-  );
+  private db: DatabaseAdapter;
   private confidence_thresholds: Record<FeedbackSource, number> = {
     naming: 0.6,
     clustering: 0.7,
@@ -376,23 +386,34 @@ export class AdaptiveTuning {
   };
   private adjustment_history: any[] = [];
   private learning_rate = 0.05;
+  private isInitialized = false;
 
   constructor() {
-    // Load adjustment history if present
-    if (fs.existsSync(this.historyPath)) {
-      try {
-        this.adjustment_history = JSON.parse(
-          fs.readFileSync(this.historyPath, "utf-8"),
-        );
-      } catch (e) {
-        this.adjustment_history = [];
-      }
+    this.db = DatabaseAdapter.getInstance();
+    console.log("📊 Loading AdaptiveTuning with database integration...");
+  }
+
+  private async ensureInitialized() {
+    if (this.isInitialized) return;
+
+    try {
+      // Load adjustment history from database
+      const history = await this.db.getAdaptiveHistory('*', 1000);
+      this.adjustment_history = history;
+      console.log(`✅ Loaded ${history.length} adaptive tuning entries from database`);
+    } catch (e) {
+      console.error("Failed to load adaptive tuning history:", e);
+      this.adjustment_history = [];
     }
+
+    this.isInitialized = true;
   }
 
   async adjustParameters(
     feedback: FeedbackEvent & { confidence?: number; actual?: boolean },
   ) {
+    await this.ensureInitialized();
+    
     let changed = false;
     const { type, source, confidence, actual } = feedback;
     let prev = this.confidence_thresholds[source];
@@ -444,26 +465,28 @@ export class AdaptiveTuning {
         confidence,
         actual,
       });
+      console.log(`🎛️ Adjusted ${source} threshold: ${prev.toFixed(3)} → ${this.confidence_thresholds[source].toFixed(3)} (Δ${adjustment.toFixed(3)})`);
     }
     return { ...this.confidence_thresholds };
   }
 
   async getThresholds() {
-    if (fs.existsSync(this.storagePath)) {
-      return JSON.parse(fs.readFileSync(this.storagePath, "utf-8"));
-    }
+    await this.ensureInitialized();
     return { ...this.confidence_thresholds };
   }
 
   async persistParams() {
     try {
-      const dir = path.dirname(this.storagePath);
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(
-        this.storagePath,
-        JSON.stringify(this.confidence_thresholds, null, 2),
-        "utf-8",
-      );
+      for (const [paramName, value] of Object.entries(this.confidence_thresholds)) {
+        await this.db.storeAdaptiveTuning(
+          paramName,
+          value,
+          'confidence_threshold',
+          undefined,
+          { type: 'threshold_update' }
+        );
+      }
+      console.log(`💾 Persisted ${Object.keys(this.confidence_thresholds).length} adaptive parameters to database`);
     } catch (e) {
       console.error("Failed to persist adaptive params:", e);
     }
@@ -472,76 +495,54 @@ export class AdaptiveTuning {
   async recordHistory(entry: any) {
     this.adjustment_history.push(entry);
     try {
-      const dir = path.dirname(this.historyPath);
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(
-        this.historyPath,
-        JSON.stringify(this.adjustment_history, null, 2),
-        "utf-8",
+      await this.db.storeAdaptiveHistory(
+        entry.source,
+        entry.prev,
+        entry.new,
+        `${entry.type} adjustment`,
+        entry.adjustment
       );
+      console.log(`📊 Recorded adaptive history: ${entry.source} ${entry.prev?.toFixed(3)} → ${entry.new?.toFixed(3)} (Δ${entry.adjustment?.toFixed(3)})`);
     } catch (e) {
       console.error("Failed to persist adaptive history:", e);
     }
   }
 
   async getAdjustmentHistory() {
-    if (fs.existsSync(this.historyPath)) {
-      try {
-        this.adjustment_history = JSON.parse(
-          fs.readFileSync(this.historyPath, "utf-8"),
-        );
-      } catch (e) {
-        // fallback to in-memory
-      }
-    }
+    await this.ensureInitialized();
     return this.adjustment_history;
   }
 }
 
 // --- Pattern Weight Learning ---
 export class PatternLearning {
-  private storagePath = path.join(
-    process.cwd(),
-    ".guru",
-    "pattern-weights.json",
-  );
-  private historyPath = path.join(
-    process.cwd(),
-    ".guru",
-    "pattern-weights-history.json",
-  );
-  private metadataPath = path.join(
-    process.cwd(),
-    ".guru",
-    "pattern-weights-meta.json",
-  );
+  private db: DatabaseAdapter;
   private pattern_weights = new Map<string, number>();
   private update_history: any[] = [];
   private pattern_metadata: Record<string, any> = {};
   private minWeight = 0.1;
   private maxWeight = 10;
+  private isInitialized = false;
 
   constructor() {
-    // Load weights, history, and metadata if present
-    if (fs.existsSync(this.storagePath)) {
-      try {
-        const obj = JSON.parse(fs.readFileSync(this.storagePath, "utf-8"));
-        for (const k in obj) this.pattern_weights.set(k, obj[k]);
-      } catch {}
-    }
-    if (fs.existsSync(this.historyPath)) {
-      try {
-        this.update_history = JSON.parse(
-          fs.readFileSync(this.historyPath, "utf-8"),
-        );
-      } catch {}
-    }
-    if (fs.existsSync(this.metadataPath)) {
-      try {
-        this.pattern_metadata = JSON.parse(
-          fs.readFileSync(this.metadataPath, "utf-8"),
-        );
-      } catch {}
+    this.db = getDatabase();
+    // Lazy load on first use to avoid blocking construction
+  }
+
+  private async ensureInitialized() {
+    if (this.isInitialized) return;
+    
+    try {
+      console.log('📊 Loading PatternLearning from database...');
+      
+      // Load weights from database
+      this.pattern_weights = await this.db.loadPatternWeights();
+      
+      console.log(`✅ Loaded ${this.pattern_weights.size} pattern weights from database`);
+      this.isInitialized = true;
+    } catch (error) {
+      console.warn('⚠️ Failed to load pattern weights from database, using defaults:', error);
+      this.isInitialized = true;
     }
   }
 
@@ -549,35 +550,43 @@ export class PatternLearning {
     successful_patterns: string[],
     failed_patterns: string[],
   ) {
+    await this.ensureInitialized();
+    
     const now = new Date().toISOString();
+    const updates: Array<{pattern: string, weight: number, type: string, delta: number}> = [];
+    
     // Successes
     successful_patterns.forEach((pattern) => {
       const current = this.pattern_weights.get(pattern) || 1.0;
       const newWeight = Math.min(this.maxWeight, current * 1.05);
       this.pattern_weights.set(pattern, newWeight);
-      this.update_history.push({
+      updates.push({
         pattern,
+        weight: newWeight,
         type: "success",
-        delta: newWeight - current,
-        timestamp: now,
+        delta: newWeight - current
       });
       this._updateMeta(pattern, true, now);
     });
+    
     // Fails
     failed_patterns.forEach((pattern) => {
       const current = this.pattern_weights.get(pattern) || 1.0;
       const newWeight = Math.max(this.minWeight, current * 0.95);
       this.pattern_weights.set(pattern, newWeight);
-      this.update_history.push({
+      updates.push({
         pattern,
+        weight: newWeight,
         type: "fail",
-        delta: newWeight - current,
-        timestamp: now,
+        delta: newWeight - current
       });
       this._updateMeta(pattern, false, now);
     });
+    
     this._normalizeWeights();
     await this.persistAll();
+    
+    console.log(`🔄 Updated ${updates.length} pattern weights: ${updates.map(u => `${u.pattern}=${u.weight.toFixed(3)}`).join(', ')}`);
   }
 
   _normalizeWeights() {
@@ -608,11 +617,18 @@ export class PatternLearning {
   }
 
   async decayWeights(rate = 0.99) {
+    await this.ensureInitialized();
+    
+    const updates: Array<{pattern: string, oldWeight: number, newWeight: number}> = [];
+    
     for (const [k, v] of this.pattern_weights.entries()) {
       const decayed = Math.max(this.minWeight, v * rate);
+      updates.push({pattern: k, oldWeight: v, newWeight: decayed});
       this.pattern_weights.set(k, decayed);
     }
+    
     this._normalizeWeights();
+    
     // Clamp again after normalization
     for (const [k, v] of this.pattern_weights.entries()) {
       this.pattern_weights.set(
@@ -620,84 +636,79 @@ export class PatternLearning {
         Math.max(this.minWeight, Math.min(this.maxWeight, v)),
       );
     }
+    
     await this.persistAll();
+    
+    if (updates.length > 0) {
+      const avgDecay = updates.reduce((sum, u) => sum + (u.oldWeight - u.newWeight), 0) / updates.length;
+      console.log(`⏰ Decayed ${updates.length} pattern weights by ${(1-rate)*100}% (avg: ${avgDecay.toFixed(4)})`);
+    }
   }
 
   async getWeights() {
-    if (fs.existsSync(this.storagePath)) {
-      try {
-        const obj = JSON.parse(fs.readFileSync(this.storagePath, "utf-8"));
-        for (const k in obj) this.pattern_weights.set(k, obj[k]);
-      } catch {}
-    }
+    await this.ensureInitialized();
+    
+    // Always return fresh data from database
+    this.pattern_weights = await this.db.loadPatternWeights();
+    
     const obj: any = {};
     for (const [k, v] of this.pattern_weights.entries()) obj[k] = v;
     return obj;
   }
 
-  async getHistory() {
-    if (fs.existsSync(this.historyPath)) {
-      try {
-        this.update_history = JSON.parse(
-          fs.readFileSync(this.historyPath, "utf-8"),
-        );
-      } catch {}
+  async getHistory(pattern?: string, limit: number = 100) {
+    if (pattern) {
+      return await this.db.getPatternHistory(pattern, limit);
     }
-    return this.update_history;
+    
+    // For all patterns, we'd need to aggregate - for now return empty
+    return [];
   }
 
   async getMetadata() {
-    if (fs.existsSync(this.metadataPath)) {
-      try {
-        this.pattern_metadata = JSON.parse(
-          fs.readFileSync(this.metadataPath, "utf-8"),
-        );
-      } catch {}
-    }
+    // Pattern metadata is stored as part of pattern weights in database
+    // For now, return the in-memory metadata
     return this.pattern_metadata;
   }
 
   async persistAll() {
     try {
-      const obj: any = {};
-      for (const [k, v] of this.pattern_weights.entries()) obj[k] = v;
-      const dir = path.dirname(this.storagePath);
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(this.storagePath, JSON.stringify(obj, null, 2), "utf-8");
-      fs.writeFileSync(
-        this.historyPath,
-        JSON.stringify(this.update_history, null, 2),
-        "utf-8",
-      );
-      fs.writeFileSync(
-        this.metadataPath,
-        JSON.stringify(this.pattern_metadata, null, 2),
-        "utf-8",
-      );
+      // Save all current weights to database
+      await this.db.savePatternWeights(this.pattern_weights, {
+        timestamp: Date.now(),
+        source: 'pattern_learning',
+        metadata: this.pattern_metadata
+      });
+      
+      console.log(`💾 Persisted ${this.pattern_weights.size} pattern weights to database`);
     } catch (e) {
-      console.error("Failed to persist pattern weights/history/meta:", e);
+      console.error("Failed to persist pattern weights to database:", e);
     }
   }
 }
 
 // --- Adversarial Self-Testing ---
 export class AdversarialTester {
-  private storagePath = path.join(process.cwd(), ".guru", "adversarial.json");
-  private historyPath = path.join(
-    process.cwd(),
-    ".guru",
-    "adversarial-history.json",
-  );
+  private db: DatabaseAdapter;
   private test_history: any[] = [];
+  private isInitialized = false;
 
   constructor() {
-    if (fs.existsSync(this.historyPath)) {
-      try {
-        this.test_history = JSON.parse(
-          fs.readFileSync(this.historyPath, "utf-8"),
-        );
-      } catch {}
+    this.db = DatabaseAdapter.getInstance();
+    console.log("📊 Loading AdversarialTester with database integration...");
+  }
+
+  private async ensureInitialized() {
+    if (this.isInitialized) return;
+
+    try {
+      // Load test history from database - we'll implement when we have test IDs
+      console.log("✅ AdversarialTester initialized with database");
+    } catch (e) {
+      console.error("Failed to initialize AdversarialTester:", e);
     }
+
+    this.isInitialized = true;
   }
 
   // Generate adversarial cases based on analysis
@@ -723,6 +734,8 @@ export class AdversarialTester {
   }
 
   async challengeAnalysis(analysis: any): Promise<any> {
+    await this.ensureInitialized();
+    
     const adversarialCases = this.generateAdversarialCases(analysis);
     const weaknesses = adversarialCases
       .filter(
@@ -750,44 +763,29 @@ export class AdversarialTester {
     };
     this.test_history.push(result);
     await this.persistAdversarial(result);
-    await this.persistHistory();
     return result;
   }
 
   async persistAdversarial(result: any) {
     try {
-      const dir = path.dirname(this.storagePath);
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(
-        this.storagePath,
-        JSON.stringify(result, null, 2),
-        "utf-8",
+      await this.db.saveAdversarialTest(
+        'adversarial-challenge',
+        result,
+        0.8, // Default confidence for adversarial tests
+        {
+          weaknesses: result.weaknesses,
+          strengths: result.strengths,
+          improvement_areas: result.improvement_areas
+        }
       );
+      console.log(`💾 Persisted adversarial test with ${result.weaknesses.length} weaknesses and ${result.strengths.length} strengths`);
     } catch (e) {
       console.error("Failed to persist adversarial test:", e);
     }
   }
-  async persistHistory() {
-    try {
-      const dir = path.dirname(this.historyPath);
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(
-        this.historyPath,
-        JSON.stringify(this.test_history, null, 2),
-        "utf-8",
-      );
-    } catch (e) {
-      console.error("Failed to persist adversarial history:", e);
-    }
-  }
+
   async getHistory() {
-    if (fs.existsSync(this.historyPath)) {
-      try {
-        this.test_history = JSON.parse(
-          fs.readFileSync(this.historyPath, "utf-8"),
-        );
-      } catch {}
-    }
+    await this.ensureInitialized();
     return this.test_history;
   }
   getStats() {
@@ -808,32 +806,34 @@ export interface CalibrationEvent {
   timestamp: string;
 }
 export class ConfidenceCalibrator {
-  private storagePath = path.join(
-    process.cwd(),
-    ".guru",
-    "confidence-calibration.json",
-  );
-  private historyPath = path.join(
-    process.cwd(),
-    ".guru",
-    "confidence-calibration-history.json",
-  );
+  private db: DatabaseAdapter;
   private calibration_history: CalibrationEvent[] = [];
+  private isInitialized = false;
 
   constructor() {
-    if (fs.existsSync(this.historyPath)) {
-      try {
-        this.calibration_history = JSON.parse(
-          fs.readFileSync(this.historyPath, "utf-8"),
-        );
-      } catch {}
+    this.db = DatabaseAdapter.getInstance();
+    console.log("📊 Loading ConfidenceCalibrator with database integration...");
+  }
+
+  private async ensureInitialized() {
+    if (this.isInitialized) return;
+
+    try {
+      // Load calibration history from database - we'll load when needed
+      console.log("✅ ConfidenceCalibrator initialized with database");
+    } catch (e) {
+      console.error("Failed to initialize ConfidenceCalibrator:", e);
     }
+
+    this.isInitialized = true;
   }
 
   async calibrateConfidence(
     prediction: { confidence: number; module?: string; symbolId?: string },
     outcome: { correct: boolean },
   ) {
+    await this.ensureInitialized();
+    
     const calibration: CalibrationEvent = {
       predicted_confidence: prediction.confidence,
       actual_outcome: outcome.correct,
@@ -842,16 +842,20 @@ export class ConfidenceCalibrator {
       timestamp: new Date().toISOString(),
     };
     this.calibration_history.push(calibration);
-    await this.persistCalibration();
-    await this.persistHistory();
+    
+    await this.db.saveConfidenceCalibration(
+      prediction.confidence,
+      outcome.correct ? 1 : 0,
+      `${prediction.module || 'unknown'}:${prediction.symbolId || 'unknown'}`,
+      prediction.confidence
+    );
+    
+    console.log(`📊 Calibrated confidence: predicted=${prediction.confidence.toFixed(3)}, actual=${outcome.correct ? 1 : 0} for ${prediction.symbolId || 'unknown'}`);
     return calibration;
   }
   async getCalibrationStats(windowSize: number = 100, since?: string) {
-    if (fs.existsSync(this.storagePath)) {
-      this.calibration_history = JSON.parse(
-        fs.readFileSync(this.storagePath, "utf-8"),
-      );
-    }
+    await this.ensureInitialized();
+    
     let history = this.calibration_history;
     if (since) {
       const sinceDate = new Date(since);
@@ -881,67 +885,44 @@ export class ConfidenceCalibrator {
     else if (overall > 0.95) bias = "overconfident";
     return { stats, overall, bias };
   }
-  async persistCalibration() {
-    try {
-      const dir = path.dirname(this.storagePath);
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(
-        this.storagePath,
-        JSON.stringify(this.calibration_history, null, 2),
-        "utf-8",
-      );
-    } catch (e) {
-      console.error("Failed to persist calibration:", e);
-    }
-  }
-  async persistHistory() {
-    try {
-      const dir = path.dirname(this.historyPath);
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(
-        this.historyPath,
-        JSON.stringify(this.calibration_history, null, 2),
-        "utf-8",
-      );
-    } catch (e) {
-      console.error("Failed to persist calibration history:", e);
-    }
-  }
   async getHistory() {
-    if (fs.existsSync(this.historyPath)) {
-      try {
-        this.calibration_history = JSON.parse(
-          fs.readFileSync(this.historyPath, "utf-8"),
-        );
-      } catch {}
-    }
+    await this.ensureInitialized();
     return this.calibration_history;
   }
 }
 
 // --- Meta-Learning ---
 export class MetaLearner {
-  private storagePath = path.join(process.cwd(), ".guru", "meta-learning.json");
-  private historyPath = path.join(
-    process.cwd(),
-    ".guru",
-    "meta-learning-history.json",
-  );
+  private db: DatabaseAdapter;
   private learning_history: any[] = [];
   private strategy_stats: Record<string, { count: number; success: number }> =
     {};
+  private isInitialized = false;
 
   constructor() {
-    if (fs.existsSync(this.historyPath)) {
-      try {
-        this.learning_history = JSON.parse(
-          fs.readFileSync(this.historyPath, "utf-8"),
-        );
-      } catch {}
+    this.db = DatabaseAdapter.getInstance();
+    console.log("📊 Loading MetaLearner with database integration...");
+  }
+
+  private async ensureInitialized() {
+    if (this.isInitialized) return;
+
+    try {
+      // Load meta-learning history from database
+      const history = await this.db.getMetaLearning('*', 1000);
+      this.learning_history = history;
+      console.log(`✅ Loaded ${history.length} meta-learning entries from database`);
+    } catch (e) {
+      console.error("Failed to initialize MetaLearner:", e);
+      this.learning_history = [];
     }
+
+    this.isInitialized = true;
   }
 
   async learnLearningPatterns(feedbackEvents: any[] = []) {
+    await this.ensureInitialized();
+    
     const now = new Date().toISOString();
     let effectiveness = "no data";
     let optimal_strategy = "default";
@@ -969,50 +950,26 @@ export class MetaLearner {
       strategy_stats: this.strategy_stats,
     };
     this.learning_history.push({ ...result, feedbackEvents });
-    await this.persistMetaLearning(result);
-    await this.persistHistory();
+    
+    await this.db.storeMetaLearning(
+      'learning-patterns',
+      result,
+      success / Math.max(count, 1),
+      optimal_strategy,
+      success / Math.max(count, 1),
+      { feedbackEvents, strategy_stats: this.strategy_stats }
+    );
+    
+    console.log(`🧠 Meta-learned from ${count} feedback events: ${effectiveness}, optimal strategy: ${optimal_strategy}`);
     return result;
   }
   async getMetaLearning() {
-    if (fs.existsSync(this.storagePath)) {
-      return JSON.parse(fs.readFileSync(this.storagePath, "utf-8"));
-    }
-    return null;
+    await this.ensureInitialized();
+    return this.learning_history.length > 0 ? this.learning_history[this.learning_history.length - 1] : null;
   }
-  async persistMetaLearning(result: any) {
-    try {
-      const dir = path.dirname(this.storagePath);
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(
-        this.storagePath,
-        JSON.stringify(result, null, 2),
-        "utf-8",
-      );
-    } catch (e) {
-      console.error("Failed to persist meta-learning:", e);
-    }
-  }
-  async persistHistory() {
-    try {
-      const dir = path.dirname(this.historyPath);
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(
-        this.historyPath,
-        JSON.stringify(this.learning_history, null, 2),
-        "utf-8",
-      );
-    } catch (e) {
-      console.error("Failed to persist meta-learning history:", e);
-    }
-  }
+
   async getHistory() {
-    if (fs.existsSync(this.historyPath)) {
-      try {
-        this.learning_history = JSON.parse(
-          fs.readFileSync(this.historyPath, "utf-8"),
-        );
-      } catch {}
-    }
+    await this.ensureInitialized();
     return this.learning_history;
   }
   recommendStrategy() {

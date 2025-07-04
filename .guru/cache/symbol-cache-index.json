@@ -1,0 +1,17 @@
+{
+  "ai-native-incremental-test-persistent/a.ts": {
+    "fileHash": "8fa5d4943227bb2d88d6e74035c73304eb123eca04960d8c958aa9ebac5e2ab6",
+    "position": 992,
+    "size": 141
+  },
+  "ai-native-incremental-test-persistent/b.ts": {
+    "fileHash": "489ce188e7b9167bc10d33c174ffa5762b6911facb7f34277060592dd933f7dd",
+    "position": 1133,
+    "size": 142
+  },
+  "ai-native-incremental-test-persistent/c.ts": {
+    "fileHash": "d01d3894d2f6ce1a298efe9046d331d2e783ff17c5d4cc2b8558333a1c3d476b",
+    "position": 1275,
+    "size": 143
+  }
+}

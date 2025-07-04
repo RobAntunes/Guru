@@ -16,6 +16,40 @@ export interface GuruConfig {
   includeTests: boolean;
   maxParallelism?: string;
   excludedDirs?: string[];
+  maxFileSize: number;
+  excludePatterns: string[];
+  includeExtensions: string[];
+  workerPoolSize: number;
+  chunkSize: number;
+  memoryLimit: number;
+  
+  // Database configuration
+  database: {
+    enabled: boolean;
+    path?: string;
+    enableWAL: boolean;
+    memoryOptimized: boolean;
+    pragmas: Record<string, any>;
+    maxConnections: number;
+    busyTimeout: number;
+  };
+  
+  // Memory optimization settings
+  memory: {
+    symbolCacheSize: number;
+    fileCacheSize: number;
+    dependencyGraphSize: number;
+    workerMemoryThreshold: number;
+    gcThreshold: number;
+  };
+  
+  // Performance settings
+  performance: {
+    enableStreaming: boolean;
+    batchSize: number;
+    concurrentAnalysis: boolean;
+    adaptiveWorkerScaling: boolean;
+  };
 }
 
 const DEFAULT_CONFIG: GuruConfig = {
@@ -25,6 +59,66 @@ const DEFAULT_CONFIG: GuruConfig = {
   aiOutputFormat: "json",
   language: "typescript",
   includeTests: false,
+  maxFileSize: 10 * 1024 * 1024, // 10MB
+  excludePatterns: [
+    '**/node_modules/**',
+    '**/dist/**',
+    '**/build/**',
+    '**/.git/**',
+    '**/.vscode/**',
+    '**/.idea/**',
+    '**/target/**',
+    '**/out/**',
+    '**/.next/**',
+    '**/*.log',
+    '**/*.tmp',
+    '**/*.temp'
+  ],
+  includeExtensions: [
+    '.js', '.jsx', '.ts', '.tsx', '.vue', '.svelte',
+    '.py', '.rb', '.go', '.rs', '.java', '.kt', '.scala',
+    '.cpp', '.c', '.h', '.hpp', '.cs', '.php', '.swift',
+    '.dart', '.lua', '.r', '.m', '.pl', '.sh', '.ps1',
+    '.json', '.yaml', '.yml', '.toml', '.xml', '.md',
+    '.sql', '.graphql', '.proto', '.thrift'
+  ],
+  workerPoolSize: Math.max(2, Math.min(8, os.cpus().length)),
+  chunkSize: 100,
+  memoryLimit: 512 * 1024 * 1024, // 512MB
+
+  // Database configuration
+  database: {
+    enabled: true,
+    enableWAL: true,
+    memoryOptimized: true,
+    pragmas: {
+      cache_size: 64000,        // 64MB cache
+      temp_store: 'memory',
+      mmap_size: 268435456,     // 256MB
+      synchronous: 'NORMAL',
+      journal_size_limit: 67108864, // 64MB journal
+      auto_vacuum: 'INCREMENTAL'
+    },
+    maxConnections: 10,
+    busyTimeout: 5000
+  },
+
+  // Memory optimization settings
+  memory: {
+    symbolCacheSize: 100,        // LRU cache entries
+    fileCacheSize: 500,          // File analysis cache entries
+    dependencyGraphSize: 1000,   // Dependency graph entries
+    workerMemoryThreshold: 256 * 1024 * 1024, // 256MB
+    gcThreshold: 384 * 1024 * 1024 // 384MB
+  },
+
+  // Performance settings
+  performance: {
+    enableStreaming: true,
+    batchSize: 50,
+    concurrentAnalysis: true,
+    adaptiveWorkerScaling: true
+  }
 };
 
 export const DEFAULT_EXCLUDED_DIRS = [
@@ -62,44 +156,43 @@ function loadEnvOverrides(): Partial<GuruConfig> {
     env.aiOutputFormat = process.env.GURU_AI_OUTPUT_FORMAT as AIOutputFormat;
   if (process.env.GURU_MAX_PARALLELISM) env.maxParallelism = process.env.GURU_MAX_PARALLELISM;
   if (process.env.GURU_EXCLUDED_DIRS) env.excludedDirs = process.env.GURU_EXCLUDED_DIRS.split(',');
+  if (process.env.GURU_WORKER_POOL_SIZE) env.workerPoolSize = parseInt(process.env.GURU_WORKER_POOL_SIZE, 10);
+  if (process.env.GURU_MEMORY_LIMIT) env.memoryLimit = parseInt(process.env.GURU_MEMORY_LIMIT, 10);
+  if (process.env.GURU_DB_DISABLED === 'true') env.database = { ...DEFAULT_CONFIG.database, enabled: false };
   return env;
 }
 
 function validateConfig(config: Partial<GuruConfig>): GuruConfig {
-  return {
-    scanMode: ["full", "incremental", "auto"].indexOf(config.scanMode as string) !== -1
-      ? (config.scanMode as ScanMode)
-      : DEFAULT_CONFIG.scanMode,
-    cacheCompression:
-      typeof config.cacheCompression === "boolean"
-        ? config.cacheCompression
-        : DEFAULT_CONFIG.cacheCompression,
-    cacheDir: typeof config.cacheDir === "string" && config.cacheDir.length > 0
-      ? config.cacheDir
-      : DEFAULT_CONFIG.cacheDir,
-    aiOutputFormat: ["json", "protobuf"].indexOf(config.aiOutputFormat as string) !== -1
-      ? (config.aiOutputFormat as AIOutputFormat)
-      : DEFAULT_CONFIG.aiOutputFormat,
-    language: typeof config.language === "string" && config.language.length > 0
-      ? config.language
-      : DEFAULT_CONFIG.language,
-    includeTests: typeof config.includeTests === "boolean" 
-      ? config.includeTests 
-      : DEFAULT_CONFIG.includeTests,
-    maxParallelism: typeof config.maxParallelism === "string" && config.maxParallelism.length > 0
-      ? config.maxParallelism
-      : DEFAULT_CONFIG.maxParallelism,
-    excludedDirs: typeof config.excludedDirs === "object" && config.excludedDirs.length > 0
-      ? config.excludedDirs
-      : DEFAULT_CONFIG.excludedDirs,
-  };
+  const validated = { ...DEFAULT_CONFIG, ...config };
+  
+  // Ensure cache directory exists
+  if (!fs.existsSync(validated.cacheDir)) {
+    fs.mkdirSync(validated.cacheDir, { recursive: true });
+  }
+  
+  // Validate worker pool size
+  validated.workerPoolSize = Math.max(1, Math.min(validated.workerPoolSize, 16));
+  
+  // Validate memory limits
+  validated.memoryLimit = Math.max(128 * 1024 * 1024, validated.memoryLimit); // Min 128MB
+  validated.memory.workerMemoryThreshold = Math.min(
+    validated.memory.workerMemoryThreshold,
+    validated.memoryLimit * 0.8
+  );
+  
+  // Validate database settings
+  if (validated.database.enabled && !validated.database.path) {
+    validated.database.path = path.join(validated.cacheDir, 'guru.db');
+  }
+  
+  return validated;
 }
 
 function loadGuruConfig(projectRoot: string = process.cwd()): GuruConfig {
   const fileConfig = loadConfigFile(projectRoot);
   const envConfig = loadEnvOverrides();
-  const merged = { ...DEFAULT_CONFIG, ...fileConfig, ...envConfig };
-  return validateConfig(merged);
+  const merged = validateConfig(fileConfig);
+  return merged;
 }
 
 export let guruConfig = loadGuruConfig();
