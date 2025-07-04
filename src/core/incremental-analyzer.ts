@@ -366,10 +366,24 @@ export class IncrementalAnalyzer {
         let cache: FileAnalysisCache;
         if (this.useCompression) {
           const buf = await fs.readFile(cachePath);
-          cache = await this.decompressJson(buf);
+          try {
+            cache = await this.decompressJson(buf);
+          } catch (decompressError) {
+            // Corrupted compressed cache file, skip it and delete
+            console.warn(`Corrupted compressed cache file ${cachePath}, removing:`, decompressError);
+            await fs.unlink(cachePath).catch(() => {});
+            continue;
+          }
         } else {
           const data = await fs.readFile(cachePath, "utf-8");
-          cache = JSON.parse(data);
+          try {
+            cache = JSON.parse(data);
+          } catch (parseError) {
+            // Corrupted cache file, skip it and delete
+            console.warn(`Corrupted cache file ${cachePath}, removing:`, parseError);
+            await fs.unlink(cachePath).catch(() => {});
+            continue;
+          }
         }
         if (cache.version === this.currentVersion) {
           const originalFile = this.decodeCacheFileName(cacheFile.replace(/\.gz$/, ""));
@@ -570,7 +584,11 @@ export class IncrementalAnalyzer {
       if (stat.isFile()) {
         return path.dirname(targetPath);
       }
-    } catch {}
+    } catch {
+      // File doesn't exist or can't be accessed, assume it's a path
+      // For non-existent files, use the parent directory
+      return path.dirname(targetPath);
+    }
     return targetPath;
   }
 

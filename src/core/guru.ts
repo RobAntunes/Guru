@@ -93,7 +93,13 @@ export class GuruCore {
     metadata: any;
   }> {
     try {
-      const isFile = (await fs.promises.stat(path)).isFile();
+      let isFile = false;
+      try {
+        isFile = (await fs.promises.stat(path)).isFile();
+      } catch {
+        // File doesn't exist - assume it's a path and continue with empty analysis
+        // This allows graceful handling of non-existent files
+      }
       
       const analysisBasePath = isFile ? dirname(path) : path;
 
@@ -123,7 +129,8 @@ export class GuruCore {
         filesToAnalyze = [path];
         allFilesArr = [path];
         filesAnalyzedCount = 1;
-      } else {
+      } else if (await this.fileExists(path)) {
+        // Directory exists, proceed normally
         try {
           allFilesArr = await this.incrementalAnalyzer.getAllSourceFiles(path);
         } catch (err) {
@@ -142,6 +149,14 @@ export class GuruCore {
         } else {
           filesToAnalyze = allFilesArr;
           filesAnalyzedCount = filesToAnalyze.length;
+        }
+      } else {
+        // Path doesn't exist (file or directory) - create empty analysis
+        filesToAnalyze = [];
+        allFilesArr = [];
+        filesAnalyzedCount = 0;
+        if (!this.quiet) {
+          console.error(`[GuruCore][WARNING] Path does not exist: ${path}`);
         }
       }
 
@@ -520,6 +535,15 @@ export class GuruCore {
       }
     } else {
       console.error(`[Guru] Failed to analyze dependencies for ${file}:`, err);
+    }
+  }
+
+  private async fileExists(filePath: string): Promise<boolean> {
+    try {
+      await fs.promises.access(filePath);
+      return true;
+    } catch {
+      return false;
     }
   }
 }

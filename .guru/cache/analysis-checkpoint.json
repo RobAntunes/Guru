@@ -1,8 +1,8 @@
 {
-  "projectPath": ".",
+  "projectPath": "project/src",
   "totalFiles": 1,
   "analyzedFiles": 1,
-  "timestamp": 1751630599222,
+  "timestamp": 1751640750777,
   "version": "1.0.0",
-  "gitCommit": "35aa149b69f1014de0b818661f23695949b15fb8"
+  "gitCommit": "0d0bd78d3eba1d585a6a481b81d836792855cf30"
 }
