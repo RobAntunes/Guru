@@ -10,6 +10,7 @@ import { SymbolGraphBuilder } from "../parsers/symbol-graph.js";
 import { ExecutionTracer } from "../intelligence/execution-tracer.js";
 import { PatternDetector } from "../intelligence/pattern-detector.js";
 import { ChangeImpactAnalyzer } from "../intelligence/change-impact-analyzer.js";
+import { CodeClusterer } from "../intelligence/code-clusterer.js";
 import YAML from "yaml";
 import { PatternMiningEngine } from "../intelligence/pattern-mining-engine.js";
 import { PerformanceAnalyzer } from "../intelligence/performance-analyzer.js";
@@ -23,6 +24,7 @@ import fs from "fs";
 import { IncrementalAnalyzer } from "./incremental-analyzer.js";
 import { guruConfig } from "./config.js";
 import pathLib from "path";
+import { dirname } from "path";
 
 export interface AnalyzeCodebaseParams {
   path: string;
@@ -57,78 +59,57 @@ export class GuruCore {
   private currentAnalysis?: AnalysisResult;
   private patternDetector?: PatternDetector;
   private incrementalAnalyzer?: IncrementalAnalyzer;
+  private codeClusterer: CodeClusterer;
+  private quiet: boolean;
 
-  constructor() {
-    console.error("🚀 Initializing Guru AI-native code intelligence...");
-    this.symbolGraphBuilder = new SymbolGraphBuilder();
+  constructor(quiet = false) {
+    this.quiet = quiet;
+    if (!quiet) {
+      console.error("🚀 Initializing Guru AI-native code intelligence...");
+    }
+    this.symbolGraphBuilder = new SymbolGraphBuilder(quiet);
     this.executionTracer = new ExecutionTracer();
     this.changeImpactAnalyzer = new ChangeImpactAnalyzer();
+    this.codeClusterer = new CodeClusterer(quiet);
     // IncrementalAnalyzer will be initialized on analyzeCodebase
-    console.error(
-      "✅ Guru Core initialized with revolutionary intelligence components!",
-    );
+    if (!quiet) {
+      console.error(
+        "✅ Guru Core initialized with revolutionary intelligence components!",
+      );
+    }
   }
 
   /**
    * Analyze a codebase to build comprehensive understanding (incremental, checkpointed)
    */
-  async analyzeCodebase(params: {
-    path: string;
-    goalSpec?: string;
-    scanMode?: 'auto' | 'incremental' | 'full';
-  }): Promise<AnalysisResult> {
-    const { path, goalSpec, scanMode: overrideScanMode } = params;
-    console.error('[GuruCore][DEBUG-ENTRY] analyzeCodebase called with:', params);
-
+  async analyzeCodebase(
+    path: string,
+    goalSpec?: string,
+    scanMode?: 'auto' | 'incremental' | 'full'
+  ): Promise<{
+    symbolGraph: any;
+    clusters: any;
+    entryPoints: any;
+    metadata: any;
+  }> {
     try {
-      // Detect if path is file or directory
-      let isFile = false;
-      console.error('[GuruCore][DEBUG] Checking if path is file or directory:', path);
-      try {
-        const stat = await fs.promises.stat(path);
-        isFile = stat.isFile();
-        console.error('[GuruCore][DEBUG] stat result - isFile:', isFile, 'isDirectory:', stat.isDirectory());
-      } catch (err) {
-        console.error('[GuruCore][DEBUG] stat failed:', err);
-        // If file/directory doesn't exist, fallback to previous logic (will error later)
-      }
-
-      // Always use parent directory for all cache/checkpoint and directory logic if input is a file
-      const analysisBasePath = isFile ? pathLib.dirname(path) : path;
-      console.error('[GuruCore][DEBUG] analysisBasePath for IncrementalAnalyzer:', analysisBasePath);
+      const isFile = (await fs.promises.stat(path)).isFile();
       
-      // Always create a fresh IncrementalAnalyzer for each analysis to ensure correct cache directory
-      console.error('[GuruCore][DEBUG] Creating new IncrementalAnalyzer...');
-      this.incrementalAnalyzer = new IncrementalAnalyzer(analysisBasePath);
-      console.error('[GuruCore][DEBUG] Calling initialize...');
+      const analysisBasePath = isFile ? dirname(path) : path;
+
+      // Create new IncrementalAnalyzer for this analysis
+      this.incrementalAnalyzer = new IncrementalAnalyzer(analysisBasePath, this.quiet);
       await this.incrementalAnalyzer.initialize();
-      console.error('[GuruCore][DEBUG] Initialize completed');
 
-      // Always load checkpoint for both file and directory analysis
-      console.error('[GuruCore][DEBUG] About to call loadCheckpoint()');
-      let checkpoint = null;
-      try {
-        checkpoint = await this.incrementalAnalyzer.loadCheckpoint();
-        console.error('[GuruCore][DEBUG] loadCheckpoint returned:', checkpoint);
-      } catch (error) {
-        console.error('[GuruCore][DEBUG] loadCheckpoint failed:', error);
-        checkpoint = null;
-      }
-
-      // Import config at runtime to get latest values
-      const { guruConfig: currentConfig } = await import('./config.js');
-      console.error('[GuruCore][DEBUG] Config import scanMode:', currentConfig.scanMode);
+      // Load checkpoint
+      const checkpoint = await this.incrementalAnalyzer.loadCheckpoint();
       
-      // Force cache bust by deleting from require cache
-      const configPath = require.resolve('./config.js');
-      delete require.cache[configPath];
-      const { guruConfig: freshConfig } = require('./config.js');
-      console.error('[GuruCore][DEBUG] Fresh config scanMode:', freshConfig.scanMode);
+      // Determine incremental mode
+      const importedScanMode = scanMode || (guruConfig as any).scanMode;
+      const freshScanMode = importedScanMode || 'auto';
+      let effectiveScanMode = freshScanMode;
       
-      // Use override scanMode if provided, otherwise use config
-      const effectiveScanMode = overrideScanMode || freshConfig.scanMode;
       let useIncremental = effectiveScanMode === 'incremental' && checkpoint;
-      console.error('[GuruCore][DEBUG] useIncremental:', useIncremental, '| scanMode:', effectiveScanMode, '| checkpoint:', !!checkpoint);
 
       let filesToAnalyze: string[] = [];
       let allFilesArr: string[] = [];
@@ -143,7 +124,12 @@ export class GuruCore {
         allFilesArr = [path];
         filesAnalyzedCount = 1;
       } else {
-        allFilesArr = await this.incrementalAnalyzer.getAllSourceFiles(path);
+        try {
+          allFilesArr = await this.incrementalAnalyzer.getAllSourceFiles(path);
+        } catch (err) {
+          console.error('[GuruCore][ERROR] getAllSourceFiles failed:', err);
+          throw err;
+        }
         if (useIncremental) {
           // Detect changes
           const changes = await this.incrementalAnalyzer.detectChanges(allFilesArr);
@@ -151,7 +137,7 @@ export class GuruCore {
           deletedFiles = changes.deletedFiles;
           newFiles = changes.newFiles;
           affectedFiles = changes.affectedFiles;
-          filesToAnalyze = this.incrementalAnalyzer.getFilesRequiringAnalysis(changes);
+          filesToAnalyze = affectedFiles;
           filesAnalyzedCount = filesToAnalyze.length;
         } else {
           filesToAnalyze = allFilesArr;
@@ -159,128 +145,51 @@ export class GuruCore {
         }
       }
 
-      // --- Build real symbol graph ---
-      let symbolGraph: SymbolGraph;
-      try {
-        // Trigger symbol cache usage by analyzing files with the incremental analyzer
-        if (this.incrementalAnalyzer) {
-          console.error('[GuruCore][DEBUG] Triggering symbol cache analysis for:', filesToAnalyze.length, 'files');
-          for (const file of filesToAnalyze) {
-            try {
-              await this.incrementalAnalyzer.analyzeFile(file);
-            } catch (error) {
-              console.error('[GuruCore][DEBUG] Symbol cache analysis failed for', file, ':', error);
-            }
-          }
-        }
-        
-        // Always pass the analysisBasePath (directory) to SymbolGraphBuilder, never a file path
-        console.error('[GuruCore][DEBUG] symbolGraphBuilder.build path:', analysisBasePath);
-        symbolGraph = await this.symbolGraphBuilder.build({
-          path: analysisBasePath,
-          language: guruConfig.language || 'typescript',
-          includeTests: guruConfig.includeTests,
-          expandFiles: filesToAnalyze,
-        });
-        console.error('[GuruCore][DEBUG] Real symbol graph built:', {
-          symbolCount: symbolGraph.symbols.size,
-          edgeCount: symbolGraph.edges.length,
-        });
-      } catch (err) {
-        console.error('[GuruCore][ERROR] Failed to build symbol graph:', err);
-        symbolGraph = {
-          symbols: new Map(),
-          edges: [],
-          metadata: {
-            language: guruConfig.language || 'typescript',
-            rootPath: path,
-            analyzedFiles: filesToAnalyze,
-            timestamp: new Date(),
-            version: '1.0.0',
-          },
-        };
-      }
-
-      // --- Simulate analysis results ---
-      const executionTraces: any[] = [];
-      const confidenceMetrics = {
-        symbolConfidence: new Map(),
-        edgeConfidence: new Map(),
-        overallQuality: 1,
-        analysisDepth: '1',
-      };
-
-      const analysisMetadata = {
-        timestamp: new Date().toISOString(),
-        analysisVersion: "2.0-ai-native",
-        targetPath: path,
-        goalSpec: goalSpec || "ai-native-analysis",
-        incremental: useIncremental,
-        filesAnalyzed: filesAnalyzedCount,
-        totalFiles: allFilesArr.length,
-        changedFiles,
-        deletedFiles,
-        newFiles,
-        affectedFiles,
-      };
+      // Run analysis
+      const analysisResults = await this.incrementalAnalyzer.analyzeFilesParallel(filesToAnalyze);
+      
+      // Build symbol graph
+      const symbolGraph = await this.symbolGraphBuilder.build({
+        path: analysisBasePath,
+        language: guruConfig.language || 'typescript',
+        includeTests: guruConfig.includeTests,
+        expandFiles: filesToAnalyze,
+      });
+      
+      // Find entry points
+      const entryPoints = this.findEntryPoints(symbolGraph);
+      
+      // Build clusters
+      const clusters = await this.codeClusterer.clusterSymbols(symbolGraph);
 
       // Always save checkpoint after analysis for both file and directory analysis
-      console.error('[GuruCore][DEBUG] About to call saveCheckpoint()');
       try {
         await this.incrementalAnalyzer.saveCheckpoint(analysisBasePath, allFilesArr.length, filesAnalyzedCount);
-        console.error('[GuruCore][DEBUG] saveCheckpoint completed successfully');
       } catch (error) {
-        console.error('[GuruCore][DEBUG] saveCheckpoint failed:', error);
+        console.error('[GuruCore][ERROR] saveCheckpoint failed:', error);
       }
 
-      const result: AnalysisResult = {
-        symbolGraph,
-        executionTraces,
-        confidenceMetrics,
-        analysisMetadata,
-      };
-      console.error('[GuruCore][DEBUG-RETURN] analysisMetadata:', analysisMetadata);
-      return result;
-    } catch (err) {
-      // On error, return a complete but empty analysisMetadata object
-      const analysisMetadata = {
-        timestamp: new Date().toISOString(),
-        analysisVersion: "2.0-ai-native",
-        targetPath: path,
-        goalSpec: goalSpec || "ai-native-analysis",
-        incremental: false,
-        filesAnalyzed: 0,
-        totalFiles: 0,
-        changedFiles: [],
-        deletedFiles: [],
-        newFiles: [],
-        affectedFiles: [],
-      };
-      const symbolGraph = {
-        symbols: new Map(),
-        edges: [],
-        metadata: {
-          language: 'typescript',
-          rootPath: path,
-          analyzedFiles: [],
-          timestamp: new Date(),
-          version: '1.0.0',
-        },
-      };
-      const confidenceMetrics = {
-        symbolConfidence: new Map(),
-        edgeConfidence: new Map(),
-        overallQuality: 0,
-        analysisDepth: '0',
-      };
-      const executionTraces: any[] = [];
-      console.error('[GuruCore][DEBUG-ERROR-RETURN] analysisMetadata:', analysisMetadata, 'Error:', err);
       return {
         symbolGraph,
-        executionTraces,
-        confidenceMetrics,
-        analysisMetadata,
+        clusters,
+        entryPoints,
+        metadata: {
+          timestamp: new Date().toISOString(),
+          analysisVersion: '2.0-ai-native',
+          targetPath: path,
+          goalSpec: 'ai-native-analysis',
+          incremental: useIncremental,
+          filesAnalyzed: filesAnalyzedCount,
+          totalFiles: allFilesArr.length,
+          changedFiles,
+          deletedFiles,
+          newFiles,
+          affectedFiles,
+        },
       };
+    } catch (err) {
+      console.error('[GuruCore][ERROR] Analysis failed:', err);
+      throw err;
     }
   }
 
@@ -524,7 +433,7 @@ export class GuruCore {
    * Run full E2E analysis and feedback loop orchestration
    */
   async runFullE2EFeedback(params: AnalyzeCodebaseParams) {
-    const analysis = await this.analyzeCodebase(params);
+    const analysis = await this.analyzeCodebase(params.path, params.goalSpec, params.scanMode);
     let feedbackResults = null;
     try {
       const orchestrator = new FeedbackOrchestrator();

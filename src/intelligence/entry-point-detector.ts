@@ -20,6 +20,11 @@ import path from "path";
 
 export class EntryPointDetector {
   private packageJsonCache = new Map<string, any>();
+  private quiet: boolean;
+
+  constructor(quiet = false) {
+    this.quiet = quiet;
+  }
 
   /**
    * Detect entry points from a symbol graph
@@ -28,7 +33,9 @@ export class EntryPointDetector {
     symbolGraph: SymbolGraph,
     rootPath: string,
   ): Promise<EntryPointAnalysis> {
-    console.log("🎯 Detecting entry points...");
+    if (!this.quiet) {
+      console.log("🎯 Detecting entry points...");
+    }
 
     const candidates = await this.findCandidates(symbolGraph, rootPath);
     if (candidates.length === 0) {
@@ -77,9 +84,11 @@ export class EntryPointDetector {
       },
     };
 
-    console.log(
-      `🎯 Found ${entryPoints.length} entry points (${analysis.analysisMetadata.highConfidenceCount} high confidence)`,
-    );
+    if (!this.quiet) {
+      console.log(
+        `🎯 Found ${entryPoints.length} entry points (${analysis.analysisMetadata.highConfidenceCount} high confidence)`,
+      );
+    }
     return analysis;
   }
 
@@ -177,7 +186,9 @@ export class EntryPointDetector {
         }
       }
     } catch (error) {
-      console.warn(`Warning: Could not read file ${symbol.location.file}`);
+      if (!this.quiet) {
+        console.warn(`Warning: Could not read file ${symbol.location.file}`);
+      }
     }
 
     // Only consider candidates with at least one indicator
@@ -301,7 +312,9 @@ export class EntryPointDetector {
         }
       }
     } catch (error) {
-      console.warn("Warning: Could not read package.json");
+      if (!this.quiet) {
+        console.warn("Warning: Could not read package.json");
+      }
     }
 
     return candidates;
@@ -421,9 +434,11 @@ export class EntryPointDetector {
         context.triggers.push("dom_ready");
       if (content.includes("app.listen")) context.triggers.push("server_start");
     } catch (error) {
-      console.warn(
-        `Warning: Could not analyze execution context for ${filePath}`,
-      );
+      if (!this.quiet) {
+        console.warn(
+          `Warning: Could not analyze execution context for ${filePath}`,
+        );
+      }
     }
 
     return context;

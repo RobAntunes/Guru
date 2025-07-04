@@ -22,8 +22,17 @@ import {
 } from "../types/index.js";
 import { SymbolGraph, SymbolNode } from "../types/index.js";
 import path from "path";
+import { MemoryIntelligenceEngine } from "../intelligence/memory-intelligence-engine.js";
 
 export class CodeClusterer {
+  private memoryManager: MemoryIntelligenceEngine;
+  private quiet: boolean;
+
+  constructor(quiet = false) {
+    this.quiet = quiet;
+    this.memoryManager = new MemoryIntelligenceEngine();
+  }
+
   /**
    * Main clustering function - uses multiple algorithms and combines results
    */
@@ -36,7 +45,9 @@ export class CodeClusterer {
       confidenceThreshold?: number;
     } = {},
   ): Promise<ClusteringAnalysis> {
-    console.log("🧩 Starting code clustering analysis...");
+    if (!this.quiet) {
+      console.log("🧩 Starting code clustering analysis...");
+    }
 
     const startTime = Date.now();
 
@@ -60,18 +71,24 @@ export class CodeClusterer {
         (a) => a.name === algorithmName,
       );
       if (algorithm) {
-        console.log(`🔍 Running ${algorithmName} clustering...`);
+        if (!this.quiet) {
+          console.log(`🔍 Running ${algorithmName} clustering...`);
+        }
         const candidates = await this.runClusteringAlgorithm(
           symbolGraph,
           algorithm,
         );
         algorithmResults.set(algorithmName, candidates);
-        console.log(`  Found ${candidates.length} cluster candidates`);
+        if (!this.quiet) {
+          console.log(`  Found ${candidates.length} cluster candidates`);
+        }
       }
     }
 
     // Combine and refine clusters
-    console.log("🔄 Combining algorithm results...");
+    if (!this.quiet) {
+      console.log("🔄 Combining algorithm results...");
+    }
     const combinedClusters = await this.combineClusteringResults(
       algorithmResults,
       symbolGraph,
@@ -79,7 +96,9 @@ export class CodeClusterer {
     );
 
     // Build final clusters with full metadata
-    console.log("🎯 Building final clusters...");
+    if (!this.quiet) {
+      console.log("🎯 Building final clusters...");
+    }
     const clusters = await this.buildFinalClusters(
       combinedClusters,
       symbolGraph,
@@ -119,9 +138,11 @@ export class CodeClusterer {
       },
     };
 
-    console.log(
-      `✅ Clustering complete! Found ${clusters.length} clusters in ${processingTime}ms`,
-    );
+    if (!this.quiet) {
+      console.log(
+        `✅ Clustering complete! Found ${clusters.length} clusters in ${processingTime}ms`,
+      );
+    }
     return analysis;
   }
 

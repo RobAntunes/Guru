@@ -20,10 +20,72 @@ import {
 import { GuruCore } from "./core/guru.js";
 import { z } from "zod";
 
-// Only run MCP server if this file is the main module
-const isMainModule = process.argv[1] && process.argv[1].includes("index.js");
+// Check if running as CLI vs MCP server
+const args = process.argv.slice(2);
+const isCliMode = args.length > 0 && (args[0] === 'analyze' || args[0] === 'trace' || args[0] === 'graph');
 
-if (isMainModule) {
+if (isCliMode) {
+  // CLI mode - handle command line arguments
+  console.error("🚀 Guru CLI mode activated");
+  
+  async function runCli() {
+    const guru = new GuruCore();
+    
+    try {
+      if (args[0] === 'analyze') {
+        // Parse CLI arguments for analyze command
+        let path = '';
+        let debug = false;
+        let scanMode = 'auto';
+        
+        for (let i = 1; i < args.length; i++) {
+          if (args[i] === '--path' && i + 1 < args.length) {
+            path = args[i + 1];
+            i++; // skip next arg
+          } else if (args[i] === '--debug') {
+            debug = true;
+          } else if (args[i] === '--scan-mode' && i + 1 < args.length) {
+            scanMode = args[i + 1];
+            i++; // skip next arg
+          }
+        }
+        
+        if (!path) {
+          console.error("❌ Error: --path argument is required");
+          process.exit(1);
+        }
+        
+        console.error(`📁 Analyzing codebase at: ${path}`);
+        if (debug) {
+          console.error("🐛 Debug mode enabled");
+        }
+        
+        const result = await guru.analyzeCodebase(
+          path,
+          undefined,
+          scanMode as any
+        );
+        
+        console.log(JSON.stringify(result, null, 2));
+        
+      } else {
+        console.error(`❌ Unknown command: ${args[0]}`);
+        console.error("Usage: guru analyze --path <path> [--debug] [--scan-mode <mode>]");
+        process.exit(1);
+      }
+    } catch (error) {
+      console.error("❌ CLI Error:", error);
+      process.exit(1);
+    }
+  }
+  
+  runCli().catch(error => {
+    console.error("❌ Fatal CLI Error:", error);
+    process.exit(1);
+  });
+  
+} else {
+  // MCP server mode - original functionality
   console.error("Guru MCP server running in Node.js version:", process.version);
 
   // Zod schemas for validation
@@ -41,6 +103,10 @@ if (isMainModule) {
       .string()
       .optional()
       .describe("YAML string with goal specification"),
+    scanMode: z
+      .string()
+      .optional()
+      .describe("Scan mode"),
   });
 
   const TraceExecutionZod = z.object({
@@ -98,6 +164,10 @@ if (isMainModule) {
       goalSpec: {
         type: "string",
         description: "YAML string with goal specification",
+      },
+      scanMode: {
+        type: "string",
+        description: "Scan mode",
       },
     },
     required: ["path"],
@@ -221,7 +291,11 @@ if (isMainModule) {
       switch (name) {
         case "analyze_codebase": {
           const params = AnalyzeCodebaseZod.parse(args);
-          const result = await guru.analyzeCodebase(params);
+          const result = await guru.analyzeCodebase(
+            params.path,
+            params.goalSpec,
+            params.scanMode as 'auto' | 'incremental' | 'full' | undefined
+          );
           return {
             content: [
               {
@@ -289,6 +363,8 @@ if (isMainModule) {
   async function main() {
     const transport = new StdioServerTransport();
     await server.connect(transport);
+    console.error("🚀 Initializing Guru AI-native code intelligence...");
+    console.error("✅ Guru Core initialized with revolutionary intelligence components!");
     console.error("Guru MCP server running on stdio");
   }
 

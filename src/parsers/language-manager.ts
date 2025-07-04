@@ -76,13 +76,20 @@ export class LanguageManager {
   parserMap!: Record<string, any>;
   supportedLanguages!: string[];
   private isInitialized = false;
+  private quiet: boolean;
+
+  constructor(quiet = false) {
+    this.quiet = quiet;
+  }
 
   async initialize() {
     if (this.isInitialized) return;
 
     try {
       // Load languages directly in this method for reliability
-      console.error("[LANG][DEBUG] Loading tree-sitter languages directly...");
+      if (!this.quiet) {
+        console.error("[LANG][DEBUG] Loading tree-sitter languages directly...");
+      }
 
       let localJavaScript: any = null;
       let localTypeScript: any = null;
@@ -92,12 +99,16 @@ export class LanguageManager {
       // Load each language with individual error handling
       try {
         localJavaScript = (await import("tree-sitter-javascript")).default;
-        console.error("[LANG][DEBUG] ✅ JavaScript parser loaded");
+        if (!this.quiet) {
+          console.error("[LANG][DEBUG] ✅ JavaScript parser loaded");
+        }
       } catch (error) {
-        console.error(
-          "[LANG][ERROR] Failed to load tree-sitter-javascript:",
-          error instanceof Error ? error.message : String(error),
-        );
+        if (!this.quiet) {
+          console.error(
+            "[LANG][ERROR] Failed to load tree-sitter-javascript:",
+            error instanceof Error ? error.message : String(error),
+          );
+        }
       }
 
       try {
@@ -106,22 +117,30 @@ export class LanguageManager {
 
         localTypeScript = tsModule.default.typescript;
         localTSX = tsModule.default.tsx;
-        console.error("[LANG][DEBUG] ✅ TypeScript parsers loaded");
+        if (!this.quiet) {
+          console.error("[LANG][DEBUG] ✅ TypeScript parsers loaded");
+        }
       } catch (error) {
-        console.error(
-          "[LANG][ERROR] Failed to load tree-sitter-typescript:",
-          error instanceof Error ? error.message : String(error),
-        );
+        if (!this.quiet) {
+          console.error(
+            "[LANG][ERROR] Failed to load tree-sitter-typescript:",
+            error instanceof Error ? error.message : String(error),
+          );
+        }
       }
 
       try {
         localPython = (await import("tree-sitter-python")).default;
-        console.error("[LANG][DEBUG] ✅ Python parser loaded");
+        if (!this.quiet) {
+          console.error("[LANG][DEBUG] ✅ Python parser loaded");
+        }
       } catch (error) {
-        console.error(
-          "[LANG][ERROR] Failed to load tree-sitter-python:",
-          error instanceof Error ? error.message : String(error),
-        );
+        if (!this.quiet) {
+          console.error(
+            "[LANG][ERROR] Failed to load tree-sitter-python:",
+            error instanceof Error ? error.message : String(error),
+          );
+        }
       }
 
       // Initialize parsers for each language with safe error handling
@@ -133,9 +152,11 @@ export class LanguageManager {
           jsParser.setLanguage(localJavaScript);
           this.parsers.set("javascript", jsParser);
           this.parsers.set("js", jsParser);
-          console.error(
-            "[LANG][DEBUG] ✅ JavaScript parser created and registered",
-          );
+          if (!this.quiet) {
+            console.error(
+              "[LANG][DEBUG] ✅ JavaScript parser created and registered",
+            );
+          }
           parsersCreated++;
         } catch (error) {
           console.error(
@@ -147,14 +168,18 @@ export class LanguageManager {
 
       if (localTypeScript) {
         try {
-          console.error("[LANG][DEBUG] Creating TypeScript parser...");
+          if (!this.quiet) {
+            console.error("[LANG][DEBUG] Creating TypeScript parser...");
+          }
           const tsParser = new Parser();
           tsParser.setLanguage(localTypeScript);
           this.parsers.set("typescript", tsParser);
           this.parsers.set("ts", tsParser);
-          console.error(
-            "[LANG][DEBUG] ✅ TypeScript parser created and registered",
-          );
+          if (!this.quiet) {
+            console.error(
+              "[LANG][DEBUG] ✅ TypeScript parser created and registered",
+            );
+          }
           parsersCreated++;
         } catch (error) {
           console.error(
@@ -204,9 +229,11 @@ export class LanguageManager {
         }
       }
 
-      console.error(
-        `🌳 Initialized ${parsersCreated} language parsers successfully`,
-      );
+      if (!this.quiet) {
+        console.error(
+          `🌳 Initialized ${parsersCreated} language parsers successfully`,
+        );
+      }
       this.isInitialized = true;
     } catch (error) {
       console.error(

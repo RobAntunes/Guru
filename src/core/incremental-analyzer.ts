@@ -9,8 +9,10 @@ import * as path from "path";
 import * as crypto from "crypto";
 import { SymbolNode, SymbolGraph } from "../types/index.js";
 import * as zlib from "zlib";
-import { guruConfig } from "./config.js";
+import { guruConfig, guruExcludedDirs } from "./config.js";
 import { SymbolCache, CachedSymbol } from "./symbol-cache.js";
+import { WorkerPool } from './worker-pool.js';
+import * as os from 'os';
 
 export interface FileAnalysisCache {
   hash: string;
@@ -48,11 +50,14 @@ export class IncrementalAnalyzer {
   private projectPath: string;
   private originalPath: string;
   private symbolCache?: SymbolCache;
+  private workerPool: WorkerPool<string, { filePath: string; symbols: any[]; error?: string }> | null = null;
+  private quiet: boolean;
 
-  constructor(projectPath: string) {
+  constructor(projectPath: string, quiet = false) {
     // Store the original path and defer ALL path resolution to initialize()
     this.originalPath = projectPath;
     this.projectPath = projectPath; // Will be resolved in initialize()
+    this.quiet = quiet;
     
     // Set a temporary cacheDir to avoid using unresolved file paths
     this.cacheDir = guruConfig.cacheDir.startsWith("/")
@@ -60,37 +65,45 @@ export class IncrementalAnalyzer {
       : "/tmp/guru-cache-temp"; // Temporary, will be resolved in initialize()
       
     this.useCompression = guruConfig.cacheCompression;
-    console.error('[IncrementalAnalyzer][DEBUG] constructor originalPath:', this.originalPath);
+    if (!quiet) {
+      console.error('[IncrementalAnalyzer][DEBUG] constructor originalPath:', this.originalPath);
+    }
   }
 
   /**
-   * Initialize incremental analysis system
+   * Initialize the incremental analyzer
    */
   async initialize(): Promise<void> {
-    // Resolve file vs directory asynchronously
-    let basePath = this.originalPath;
-    try {
-      const stat = await fs.stat(this.originalPath);
-      if (stat.isFile()) {
-        basePath = path.dirname(this.originalPath);
-      }
-    } catch {
-      // If stat fails, fallback to original logic
-    }
-    this.projectPath = basePath;
-    
-    // Update cacheDir with resolved basePath BEFORE calling ensureCacheDirectory
-    this.cacheDir = guruConfig.cacheDir.startsWith("/")
-      ? guruConfig.cacheDir
-      : path.join(basePath, guruConfig.cacheDir);
-    
-    console.error('[IncrementalAnalyzer][DEBUG] initialize resolved projectPath:', this.projectPath);
-    console.error('[IncrementalAnalyzer][DEBUG] initialize resolved cacheDir:', this.cacheDir);
+    this.projectPath = path.resolve(this.originalPath);
+    this.cacheDir = await IncrementalAnalyzer.getBaseDirectory('.guru/cache');
 
+    // Initialize symbol cache
+    this.symbolCache = new SymbolCache(this.cacheDir);
+
+    // Ensure cache directory exists
     await this.ensureCacheDirectory();
+
+    // Initialize worker pool for parallel analysis
+    const maxWorkers = (globalThis as any).guruMaxParallelism || os.cpus().length;
+    try {
+      // Try to resolve the worker script path - handle both dev and compiled versions
+      let workerPath;
+      try {
+        // First try the compiled version (for production)
+        workerPath = require.resolve('./worker-symbol-analyze.js');
+      } catch {
+        // Fallback to the same directory where this file was compiled from
+        workerPath = path.join(__dirname, 'worker-symbol-analyze.js');
+      }
+      
+      this.workerPool = new WorkerPool(workerPath, maxWorkers);
+    } catch (error) {
+      console.error('[IncrementalAnalyzer][ERROR] Failed to initialize worker pool:', error);
+      // Continue without worker pool - analysis will still work without parallelism
+    }
+
     await this.loadExistingCache();
     await this.buildDependencyGraphs();
-    this.symbolCache = new SymbolCache(this.cacheDir);
   }
 
   /**
@@ -102,10 +115,7 @@ export class IncrementalAnalyzer {
     newFiles: string[];
     affectedFiles: string[];
   }> {
-    console.error('[IncrementalAnalyzer][DEBUG] detectChanges called for', allFiles.length, 'files');
-    
     if (!this.symbolCache) {
-      console.error('[IncrementalAnalyzer][DEBUG] No symbol cache, treating all files as new');
       return {
         changedFiles: [],
         deletedFiles: [],
@@ -127,26 +137,17 @@ export class IncrementalAnalyzer {
           const anyVersionCached = this.symbolCache.hasFile(file);
           if (anyVersionCached) {
             changedFiles.push(file);
-            console.error('[IncrementalAnalyzer][DEBUG] File changed:', file);
           } else {
             newFiles.push(file);
-            console.error('[IncrementalAnalyzer][DEBUG] New file:', file);
           }
         }
       } catch (error) {
-        console.error('[IncrementalAnalyzer][DEBUG] Error checking file', file, ':', error);
         newFiles.push(file);
       }
     }
     
     // For simplicity, affected files = changed + new
     const affectedFiles = [...changedFiles, ...newFiles];
-    
-    console.error('[IncrementalAnalyzer][DEBUG] detectChanges result:', {
-      changed: changedFiles.length,
-      new: newFiles.length,
-      affected: affectedFiles.length
-    });
     
     return {
       changedFiles,
@@ -165,17 +166,9 @@ export class IncrementalAnalyzer {
     newFiles: string[];
     affectedFiles: string[];
   }): string[] {
-    console.error('[IncrementalAnalyzer][DEBUG] getFilesRequiringAnalysis called with:', {
-      changed: changes.changedFiles.length,
-      deleted: changes.deletedFiles.length,
-      new: changes.newFiles.length,
-      affected: changes.affectedFiles.length
-    });
-    
     // For now, just return the affected files
     // TODO: implement dependency analysis to include dependent files
     const filesToAnalyze = changes.affectedFiles;
-    console.error('[IncrementalAnalyzer][DEBUG] Files requiring analysis:', filesToAnalyze.length);
     return filesToAnalyze;
   }
 
@@ -245,7 +238,6 @@ export class IncrementalAnalyzer {
   ): Promise<void> {
     const baseDir = await IncrementalAnalyzer.getBaseDirectory(this.cacheDir);
     const checkpointPath = path.join(baseDir, 'analysis-checkpoint.json');
-    console.error('[IncrementalAnalyzer][DEBUG] saveCheckpoint path:', checkpointPath);
     await fs.mkdir(baseDir, { recursive: true });
     const checkpoint: AnalysisCheckpoint = {
       projectPath,
@@ -256,7 +248,6 @@ export class IncrementalAnalyzer {
       gitCommit: await this.getCurrentGitCommit(),
     };
     await fs.writeFile(checkpointPath, JSON.stringify(checkpoint, null, 2));
-    console.error('[IncrementalAnalyzer][DEBUG] saveCheckpoint completed for:', checkpointPath);
   }
 
   /**
@@ -265,13 +256,10 @@ export class IncrementalAnalyzer {
   async loadCheckpoint(): Promise<AnalysisCheckpoint | null> {
     const baseDir = await IncrementalAnalyzer.getBaseDirectory(this.cacheDir);
     const checkpointPath = path.join(baseDir, 'analysis-checkpoint.json');
-    console.error('[IncrementalAnalyzer][DEBUG] loadCheckpoint path:', checkpointPath);
     if (!fsSync.existsSync(checkpointPath)) {
-      console.error('[IncrementalAnalyzer][DEBUG] no checkpoint file found');
       return null;
     }
     const data = await fs.readFile(checkpointPath, 'utf-8');
-    console.error('[IncrementalAnalyzer][DEBUG] checkpoint loaded successfully');
     return JSON.parse(data);
   }
 
@@ -329,15 +317,32 @@ export class IncrementalAnalyzer {
       }
     }
     const results: string[] = [];
+    const excluded = new Set(guruExcludedDirs);
+    let fileCount = 0;
     const walk = async (dir: string) => {
-      const list = await fs.readdir(dir);
+      let list: string[];
+      try {
+        list = await fs.readdir(dir);
+      } catch (err) {
+        // Only log errors, not debug info in hot paths
+        return;
+      }
       for (const file of list) {
         const fullPath = path.join(dir, file);
-        const stat = await fs.stat(fullPath);
+        let stat;
+        try {
+          stat = await fs.stat(fullPath);
+        } catch (err) {
+          continue;
+        }
         if (stat.isDirectory()) {
+          if (excluded.has(file)) {
+            continue;
+          }
           await walk(fullPath);
         } else if (fullPath.endsWith('.js') || fullPath.endsWith('.ts')) {
           results.push(fullPath);
+          fileCount++;
         }
       }
     };
@@ -349,7 +354,6 @@ export class IncrementalAnalyzer {
 
   private async ensureCacheDirectory(): Promise<void> {
     const baseDir = await IncrementalAnalyzer.getBaseDirectory(this.cacheDir);
-    console.error('[IncrementalAnalyzer][DEBUG] ensureCacheDirectory using:', baseDir);
     await fs.mkdir(baseDir, { recursive: true });
   }
 
@@ -594,24 +598,17 @@ export class IncrementalAnalyzer {
   }
 
   async analyzeFile(filePath: string): Promise<CachedSymbol[]> {
-    console.error('[IncrementalAnalyzer][DEBUG] analyzeFile called for:', filePath);
-    
     if (!this.symbolCache) {
-      console.error('[IncrementalAnalyzer][DEBUG] No symbol cache available');
       return [];
     }
     
     const fileHash = await this.hashFile(filePath);
-    console.error('[IncrementalAnalyzer][DEBUG] File hash calculated:', fileHash.substring(0, 8));
     
     // Check cache first
     const cached = this.symbolCache.getSymbols(filePath, fileHash);
     if (cached) {
-      console.error('[IncrementalAnalyzer][DEBUG] Cache hit for:', filePath);
       return cached;
     }
-    
-    console.error('[IncrementalAnalyzer][DEBUG] Cache miss, generating symbols for:', filePath);
     
     // Basic symbol extraction - return mock symbols for now
     // TODO: integrate with actual symbol extraction logic
@@ -621,9 +618,57 @@ export class IncrementalAnalyzer {
     
     // Store in cache
     this.symbolCache.setSymbols(filePath, fileHash, symbols);
-    console.error('[IncrementalAnalyzer][DEBUG] Symbols cached for:', filePath);
     
     return symbols;
+  }
+
+  async analyzeFilesParallel(files: string[]): Promise<any[]> {
+    if (!this.workerPool) {
+      // Fallback to sequential analysis using analyzeFile method
+      const results = [];
+      for (const file of files) {
+        try {
+          const symbols = await this.analyzeFile(file);
+          results.push({ filePath: file, symbols, error: null });
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          results.push({ filePath: file, symbols: [], error: errorMessage });
+        }
+      }
+      return results;
+    }
+    
+    const results = await Promise.all(
+      files.map(file =>
+        this.workerPool!.runTask(file)
+      )
+    );
+    
+    // Cache the results from worker analysis
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const result = results[i];
+      
+      if (result && !result.error && this.symbolCache) {
+        try {
+          const fileHash = await this.hashFile(file);
+          
+          // Transform worker result to CachedSymbol format if needed
+          const symbols = result.symbols || [];
+          
+          // Save to symbol cache
+          this.symbolCache.setSymbols(file, fileHash, symbols);
+          
+          // Also update our internal cache for consistency
+          await this.updateCache(file, symbols, []); // TODO: extract dependencies from results
+          
+        } catch (error) {
+          console.error('[IncrementalAnalyzer][ERROR] Failed to cache results for', file, ':', error);
+        }
+      }
+    }
+    
+    return results;
   }
 }
 

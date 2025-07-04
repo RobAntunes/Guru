@@ -20,6 +20,7 @@ import { CodeClusterer } from "../intelligence/code-clusterer.js";
 import { readFile, readdir, stat } from "fs/promises";
 import path from "node:path";
 import Parser from "tree-sitter";
+import { LanguageManager } from "./language-manager.js";
 
 export interface BuildParams {
   path: string;
@@ -28,15 +29,22 @@ export interface BuildParams {
 }
 
 export class SymbolGraphBuilder {
-  /**
-   * Tracks which files have been indexed for incremental/on-demand expansion
-   */
+  private languageManager: LanguageManager;
+  private parsedFiles: Map<string, ParseResult> = new Map();
   private indexedFiles: Set<string> = new Set();
   private indexedSymbols: Set<string> = new Set();
   private _currentGraph?: SymbolGraph;
   private smartNamer = new SmartSymbolNamer();
-  private entryPointDetector = new EntryPointDetector();
-  private codeClusterer = new CodeClusterer();
+  private entryPointDetector: EntryPointDetector;
+  private codeClusterer: CodeClusterer;
+  private quiet: boolean;
+
+  constructor(quiet = false) {
+    this.quiet = quiet;
+    this.languageManager = new LanguageManager(quiet);
+    this.entryPointDetector = new EntryPointDetector(quiet);
+    this.codeClusterer = new CodeClusterer(quiet);
+  }
 
   /**
    * Main entry: Hybrid + Incremental symbol graph build
@@ -47,7 +55,9 @@ export class SymbolGraphBuilder {
   async build(
     params: BuildParams & { expandFiles?: string[]; expandSymbols?: string[] },
   ): Promise<SymbolGraph> {
-    console.error(`🌳 Building symbol graph for ${params.path}`);
+    if (!this.quiet) {
+      console.error(`🌳 Building symbol graph for ${params.path}`);
+    }
     const languageManager = await languageManagerReady;
 
     // 1. Recursively find all source files from the given path
@@ -222,7 +232,9 @@ export class SymbolGraphBuilder {
     );
 
     // Perform code clustering
-    console.log("🧩 Analyzing code clusters...");
+    if (!this.quiet) {
+      console.log("🧩 Analyzing code clusters...");
+    }
     const clusteringAnalysis = await this.codeClusterer.clusterSymbols(
       this._currentGraph,
     );
@@ -324,10 +336,14 @@ export class SymbolGraphBuilder {
             ) {
               await traverse(fullPath);
             } else {
-              console.error(`[FS] Skipping test directory: ${fullPath}`);
+              if (!this.quiet) {
+                console.error(`[FS] Skipping test directory: ${fullPath}`);
+              }
             }
           } else {
-            console.error(`[FS] Skipping excluded directory: ${fullPath}`);
+            if (!this.quiet) {
+              console.error(`[FS] Skipping excluded directory: ${fullPath}`);
+            }
           }
         } else if (stats.isFile()) {
           const ext = path.extname(entry).toLowerCase();
@@ -342,7 +358,9 @@ export class SymbolGraphBuilder {
             } else {
             }
           } else {
-            console.error(`[FS] Skipping excluded directory: ${fullPath}`);
+            if (!this.quiet) {
+              console.error(`[FS] Skipping excluded directory: ${fullPath}`);
+            }
           }
         }
       }
@@ -789,9 +807,11 @@ export class SymbolGraphBuilder {
   ): Promise<SymbolEdge[]> {
     const edges: SymbolEdge[] = [];
 
-    console.error(
-      `🔗 Building dependency edges for ${analyzedFiles.length} files...`,
-    );
+    if (!this.quiet) {
+      console.error(
+        `🔗 Building dependency edges for ${analyzedFiles.length} files...`,
+      );
+    }
 
     // Re-parse files to analyze dependencies
     for (const filePath of analyzedFiles) {
@@ -820,7 +840,9 @@ export class SymbolGraphBuilder {
     // Update symbol dependency lists for AI consumption
     this.populateSymbolDependencies(symbols, edges);
 
-    console.error(`🔗 Built ${edges.length} dependency edges`);
+    if (!this.quiet) {
+      console.error(`🔗 Built ${edges.length} dependency edges`);
+    }
     return edges;
   }
 
