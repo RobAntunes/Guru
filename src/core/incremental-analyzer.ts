@@ -3,10 +3,10 @@
  * Only reanalyzes changed files and affected dependencies
  */
 
-import { promises as fs } from 'fs';
-import * as path from 'path';
-import * as crypto from 'crypto';
-import { SymbolNode, SymbolGraph } from '../types/index.js';
+import { promises as fs } from "fs";
+import * as path from "path";
+import * as crypto from "crypto";
+import { SymbolNode, SymbolGraph } from "../types/index.js";
 
 export interface FileAnalysisCache {
   hash: string;
@@ -36,13 +36,13 @@ export interface ChangeDetectionResult {
 
 export class IncrementalAnalyzer {
   private cacheDir: string;
-  private currentVersion = '1.0.0';
+  private currentVersion = "1.0.0";
   private fileCache = new Map<string, FileAnalysisCache>();
   private dependencyGraph = new Map<string, Set<string>>();
   private reverseDependencyGraph = new Map<string, Set<string>>();
 
   constructor(projectPath: string) {
-    this.cacheDir = path.join(projectPath, '.guru', 'cache');
+    this.cacheDir = path.join(projectPath, ".guru", "cache");
   }
 
   /**
@@ -65,34 +65,44 @@ export class IncrementalAnalyzer {
     // Identify file changes
     const changedFiles: string[] = [];
     const newFiles: string[] = [];
-    
+
     for (const file of files) {
       if (!cachedFiles.has(file)) {
         newFiles.push(file);
       } else {
         const cached = this.fileCache.get(file)!;
         const current = currentFileInfo.get(file)!;
-        
-        if (cached.hash !== current.hash || cached.lastModified !== current.lastModified) {
+
+        if (
+          cached.hash !== current.hash ||
+          cached.lastModified !== current.lastModified
+        ) {
           changedFiles.push(file);
         }
       }
     }
 
     // Identify deleted files
-    const deletedFiles = Array.from(cachedFiles).filter(file => !currentFiles.has(file));
+    const deletedFiles = Array.from(cachedFiles).filter(
+      (file) => !currentFiles.has(file),
+    );
 
     // Calculate affected files through dependency propagation
-    const affectedFiles = this.calculateAffectedFiles([...changedFiles, ...newFiles, ...deletedFiles]);
+    const affectedFiles = this.calculateAffectedFiles([
+      ...changedFiles,
+      ...newFiles,
+      ...deletedFiles,
+    ]);
 
-    const analysisRequired = changedFiles.length > 0 || newFiles.length > 0 || deletedFiles.length > 0;
+    const analysisRequired =
+      changedFiles.length > 0 || newFiles.length > 0 || deletedFiles.length > 0;
 
     return {
       changedFiles,
       newFiles,
       deletedFiles,
       affectedFiles,
-      analysisRequired
+      analysisRequired,
     };
   }
 
@@ -103,11 +113,11 @@ export class IncrementalAnalyzer {
     const filesToAnalyze = new Set([
       ...changes.changedFiles,
       ...changes.newFiles,
-      ...changes.affectedFiles
+      ...changes.affectedFiles,
     ]);
 
     // Remove deleted files
-    changes.deletedFiles.forEach(file => filesToAnalyze.delete(file));
+    changes.deletedFiles.forEach((file) => filesToAnalyze.delete(file));
 
     return Array.from(filesToAnalyze);
   }
@@ -116,9 +126,9 @@ export class IncrementalAnalyzer {
    * Update cache with new analysis results
    */
   async updateCache(
-    file: string, 
-    symbols: SymbolNode[], 
-    dependencies: string[]
+    file: string,
+    symbols: SymbolNode[],
+    dependencies: string[],
   ): Promise<void> {
     const stat = await fs.stat(file);
     const hash = await this.calculateFileHash(file);
@@ -129,11 +139,11 @@ export class IncrementalAnalyzer {
       symbols,
       dependencies,
       analysisTimestamp: Date.now(),
-      version: this.currentVersion
+      version: this.currentVersion,
     };
 
     this.fileCache.set(file, cacheEntry);
-    
+
     // Update dependency graphs
     this.updateDependencyGraphs(file, dependencies);
 
@@ -172,9 +182,9 @@ export class IncrementalAnalyzer {
    * Save analysis checkpoint
    */
   async saveCheckpoint(
-    projectPath: string, 
-    totalFiles: number, 
-    analyzedFiles: number
+    projectPath: string,
+    totalFiles: number,
+    analyzedFiles: number,
   ): Promise<void> {
     const checkpoint: AnalysisCheckpoint = {
       projectPath,
@@ -182,10 +192,10 @@ export class IncrementalAnalyzer {
       analyzedFiles,
       timestamp: Date.now(),
       version: this.currentVersion,
-      gitCommit: await this.getCurrentGitCommit()
+      gitCommit: await this.getCurrentGitCommit(),
     };
 
-    const checkpointPath = path.join(this.cacheDir, 'checkpoint.json');
+    const checkpointPath = path.join(this.cacheDir, "checkpoint.json");
     await fs.writeFile(checkpointPath, JSON.stringify(checkpoint, null, 2));
   }
 
@@ -194,8 +204,8 @@ export class IncrementalAnalyzer {
    */
   async loadCheckpoint(): Promise<AnalysisCheckpoint | null> {
     try {
-      const checkpointPath = path.join(this.cacheDir, 'checkpoint.json');
-      const data = await fs.readFile(checkpointPath, 'utf-8');
+      const checkpointPath = path.join(this.cacheDir, "checkpoint.json");
+      const data = await fs.readFile(checkpointPath, "utf-8");
       return JSON.parse(data);
     } catch {
       return null;
@@ -212,12 +222,18 @@ export class IncrementalAnalyzer {
     newestCache: number;
   } {
     const cached = Array.from(this.fileCache.values());
-    
+
     return {
       totalCachedFiles: cached.length,
       cacheSize: this.calculateCacheSize(),
-      oldestCache: cached.length > 0 ? Math.min(...cached.map(c => c.analysisTimestamp)) : 0,
-      newestCache: cached.length > 0 ? Math.max(...cached.map(c => c.analysisTimestamp)) : 0
+      oldestCache:
+        cached.length > 0
+          ? Math.min(...cached.map((c) => c.analysisTimestamp))
+          : 0,
+      newestCache:
+        cached.length > 0
+          ? Math.max(...cached.map((c) => c.analysisTimestamp))
+          : 0,
     };
   }
 
@@ -246,13 +262,13 @@ export class IncrementalAnalyzer {
   private async loadExistingCache(): Promise<void> {
     try {
       const files = await fs.readdir(this.cacheDir);
-      const cacheFiles = files.filter(f => f.endsWith('.cache.json'));
+      const cacheFiles = files.filter((f) => f.endsWith(".cache.json"));
 
       for (const cacheFile of cacheFiles) {
         const cachePath = path.join(this.cacheDir, cacheFile);
-        const data = await fs.readFile(cachePath, 'utf-8');
+        const data = await fs.readFile(cachePath, "utf-8");
         const cache: FileAnalysisCache = JSON.parse(data);
-        
+
         // Only load cache entries with compatible version
         if (cache.version === this.currentVersion) {
           const originalFile = this.decodeCacheFileName(cacheFile);
@@ -260,7 +276,7 @@ export class IncrementalAnalyzer {
         }
       }
     } catch (error) {
-      console.warn('Failed to load existing cache:', error);
+      console.warn("Failed to load existing cache:", error);
     }
   }
 
@@ -308,7 +324,7 @@ export class IncrementalAnalyzer {
   private calculateAffectedFiles(changedFiles: string[]): string[] {
     const affected = new Set<string>();
     const visited = new Set<string>();
-    
+
     const traverse = (file: string, depth = 0) => {
       if (visited.has(file) || depth > 10) return; // Prevent infinite loops
       visited.add(file);
@@ -329,7 +345,9 @@ export class IncrementalAnalyzer {
     return Array.from(affected);
   }
 
-  private async getCurrentFileInfo(files: string[]): Promise<Map<string, { hash: string; lastModified: number }>> {
+  private async getCurrentFileInfo(
+    files: string[],
+  ): Promise<Map<string, { hash: string; lastModified: number }>> {
     const fileInfo = new Map<string, { hash: string; lastModified: number }>();
 
     for (const file of files) {
@@ -347,26 +365,29 @@ export class IncrementalAnalyzer {
 
   private async calculateFileHash(file: string): Promise<string> {
     const content = await fs.readFile(file);
-    return crypto.createHash('sha256').update(content).digest('hex');
+    return crypto.createHash("sha256").update(content).digest("hex");
   }
 
   private encodeCacheFileName(file: string): string {
-    return crypto.createHash('md5').update(file).digest('hex') + '.cache.json';
+    return crypto.createHash("md5").update(file).digest("hex") + ".cache.json";
   }
 
   private decodeCacheFileName(cacheFile: string): string {
     // This is a limitation - we'd need to store a mapping
     // For now, we'll store the original path in the cache entry
-    return cacheFile.replace('.cache.json', '');
+    return cacheFile.replace(".cache.json", "");
   }
 
-  private async persistCacheEntry(file: string, cache: FileAnalysisCache): Promise<void> {
+  private async persistCacheEntry(
+    file: string,
+    cache: FileAnalysisCache,
+  ): Promise<void> {
     const fileName = this.encodeCacheFileName(file);
     const cachePath = path.join(this.cacheDir, fileName);
-    
+
     // Add original file path to cache entry for decoding
     const cacheWithPath = { ...cache, originalPath: file };
-    
+
     await fs.writeFile(cachePath, JSON.stringify(cacheWithPath, null, 2));
   }
 
@@ -390,11 +411,11 @@ export class IncrementalAnalyzer {
 
   private async getCurrentGitCommit(): Promise<string | undefined> {
     try {
-      const { exec } = await import('child_process');
-      const { promisify } = await import('util');
+      const { exec } = await import("child_process");
+      const { promisify } = await import("util");
       const execAsync = promisify(exec);
-      
-      const { stdout } = await execAsync('git rev-parse HEAD');
+
+      const { stdout } = await execAsync("git rev-parse HEAD");
       return stdout.trim();
     } catch {
       return undefined;
@@ -410,7 +431,7 @@ export class IncrementalAnalyzerFactory {
 
   static async create(projectPath: string): Promise<IncrementalAnalyzer> {
     const normalizedPath = path.resolve(projectPath);
-    
+
     if (!this.instances.has(normalizedPath)) {
       const analyzer = new IncrementalAnalyzer(normalizedPath);
       await analyzer.initialize();
@@ -423,4 +444,4 @@ export class IncrementalAnalyzerFactory {
   static clear(): void {
     this.instances.clear();
   }
-} 
+}

@@ -3,10 +3,13 @@
  */
 
 // Import smart naming types first
-import type { ConfidenceScore, SymbolContext } from './smart-naming.js';
-import type { EntryPointAnalysis, ApplicationEntryPoint } from './entry-point.js';
-import type { ClusteringAnalysis } from './clustering.js';
-import type { PerformanceAnalysisResult } from './performance.js';
+import type { ConfidenceScore, SymbolContext } from "./smart-naming.js";
+import type {
+  EntryPointAnalysis,
+  ApplicationEntryPoint,
+} from "./entry-point.js";
+import type { ClusteringAnalysis } from "./clustering.js";
+import type { PerformanceAnalysisResult } from "./performance.js";
 
 export interface SymbolNode {
   /**
@@ -19,7 +22,7 @@ export interface SymbolNode {
   location: SourceLocation;
   scope: string;
   dependencies: string[]; // IDs of symbols this depends on
-  dependents: string[];   // IDs of symbols that depend on this
+  dependents: string[]; // IDs of symbols that depend on this
   metadata: SymbolMetadata;
   /**
    * Optional vector embedding for this symbol (for model-native queries)
@@ -34,17 +37,17 @@ export interface SymbolNode {
   // };
 }
 
-export type SymbolType = 
-  | 'function'
-  | 'class' 
-  | 'variable'
-  | 'constant'
-  | 'interface'
-  | 'type'
-  | 'module'
-  | 'namespace'
-  | 'method'
-  | 'object';
+export type SymbolType =
+  | "function"
+  | "class"
+  | "variable"
+  | "constant"
+  | "interface"
+  | "type"
+  | "module"
+  | "namespace"
+  | "method"
+  | "object";
 
 export interface SourceLocation {
   file: string;
@@ -55,7 +58,7 @@ export interface SourceLocation {
 }
 
 export interface SymbolMetadata {
-  accessibility?: 'public' | 'private' | 'protected';
+  accessibility?: "public" | "private" | "protected";
   isAsync?: boolean;
   isStatic?: boolean;
   returnType?: string;
@@ -87,14 +90,14 @@ export interface SymbolEdge {
   weight: number; // Strength of relationship
 }
 
-export type EdgeType = 
-  | 'calls'
-  | 'imports'
-  | 'inherits'
-  | 'implements'
-  | 'uses'
-  | 'defines'
-  | 'references';
+export type EdgeType =
+  | "calls"
+  | "imports"
+  | "inherits"
+  | "implements"
+  | "uses"
+  | "defines"
+  | "references";
 
 export interface GraphMetadata {
   language: string;
@@ -127,7 +130,7 @@ export interface StackFrame {
 export interface Variable {
   name: string;
   type?: string;
-  scope: 'local' | 'parameter' | 'closure' | 'global';
+  scope: "local" | "parameter" | "closure" | "global";
   lifetime: VariableLifetime;
 }
 
@@ -146,7 +149,7 @@ export interface DataFlowEdge {
 
 export interface ControlFlowNode {
   id: string;
-  type: 'entry' | 'exit' | 'decision' | 'loop' | 'call' | 'return';
+  type: "entry" | "exit" | "decision" | "loop" | "call" | "return";
   condition?: string;
   children: string[];
 }
@@ -180,19 +183,19 @@ export interface AnalysisMetadata {
 }
 
 // Smart naming types
-export * from './smart-naming.js';
+export * from "./smart-naming.js";
 
 // Entry point detection types
-export * from './entry-point.js';
+export * from "./entry-point.js";
 
 // Code clustering types
-export * from './clustering.js';
+export * from "./clustering.js";
 
 export interface Recommendation {
-  type: 'improvement' | 'refactor' | 'optimization' | 'clarification';
+  type: "improvement" | "refactor" | "optimization" | "clarification";
   description: string;
-  impact: 'low' | 'medium' | 'high';
-  effort: 'low' | 'medium' | 'high';
+  impact: "low" | "medium" | "high";
+  effort: "low" | "medium" | "high";
   rationale: string;
 }
 
@@ -230,7 +233,12 @@ export interface PatternDetectionResult {
 
 // Change Impact Analysis Types
 export interface CodeChange {
-  type: 'signature_change' | 'behavior_change' | 'modification' | 'addition' | 'deletion';
+  type:
+    | "signature_change"
+    | "behavior_change"
+    | "modification"
+    | "addition"
+    | "deletion";
   targetSymbol: string;
   description: string;
   rationale?: string;
@@ -253,7 +261,7 @@ export interface ChangeImpactAnalysis {
 }
 
 // Add missing types for change impact and pattern detection
-export type ImpactLevel = 'low' | 'medium' | 'high';
+export type ImpactLevel = "low" | "medium" | "high";
 export interface ChangeRisk {
   level: ImpactLevel;
   score: number;
@@ -267,12 +275,12 @@ export interface RippleEffect {
 }
 export interface ChangeRecommendation {
   type: string;
-  priority: 'low' | 'medium' | 'high';
+  priority: "low" | "medium" | "high";
   description: string;
   action: string;
   confidence: number;
 }
-export type PatternConfidence = 'low' | 'medium' | 'high';
+export type PatternConfidence = "low" | "medium" | "high";
 export interface PatternEvidence {
   type: string;
   description: string;

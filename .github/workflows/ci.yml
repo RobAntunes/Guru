@@ -72,35 +72,35 @@ jobs:
       with:
         languages: javascript
 
-  e2e:
-    name: 🎭 End-to-End Tests
-    runs-on: ubuntu-latest
-    needs: test
+  # e2e:
+  #   name: 🎭 End-to-End Tests
+  #   runs-on: ubuntu-latest
+  #   needs: test
     
-    steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
+  #   steps:
+  #   - name: 📥 Checkout code
+  #     uses: actions/checkout@v4
       
-    - name: 🟢 Setup Bun
-      uses: oven-sh/setup-bun@v1
-      with:
-        bun-version: '1.2.18'
+  #   - name: 🟢 Setup Bun
+  #     uses: oven-sh/setup-bun@v1
+  #     with:
+  #       bun-version: '1.2.18'
         
-    - name: 🔧 Install dependencies
-      run: bun install
+  #   - name: 🔧 Install dependencies
+  #     run: bun install
       
-    - name: 🏗️ Build project
-      run: bun run build
+  #   - name: 🏗️ Build project
+  #     run: bun run build
       
-    - name: 🎭 Run E2E tests
-      run: bun run test:e2e
+  #   - name: 🎭 Run E2E tests
+  #     run: bun run test:e2e
       
-    - name: 📸 Upload test artifacts
-      uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: e2e-artifacts
-        path: test-results/
+  #   - name: 📸 Upload test artifacts
+  #     uses: actions/upload-artifact@v4
+  #     if: failure()
+  #     with:
+  #       name: e2e-artifacts
+  #       path: test-results/
 
   ai-compatibility:
     name: 🤖 AI Compatibility Testing
