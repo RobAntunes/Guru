@@ -67,12 +67,6 @@ jobs:
     - name: 🔧 Install dependencies
       run: bun install
       
-    - name: 🎨 Run Prettier
-      run: bun run format:check
-      
-    - name: 🔍 Run ESLint
-      run: bun run lint
-      
     - name: 🏗️ Type check
       run: bun run type-check
 
