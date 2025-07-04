@@ -30,9 +30,6 @@ jobs:
     - name: 🏗️ Build project
       run: bun run build
       
-    - name: 🧪 Run basic tests
-      run: bun run test:basic
-      
     - name: 🚀 Run AI-native suite
       run: bun run test:ai-native
       

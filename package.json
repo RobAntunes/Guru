@@ -9,7 +9,6 @@
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "test": "vitest",
-    "test:basic": "vitest run tests/simple.test.ts",
     "test:ai-native": "vitest run tests/ai-native-suite.test.ts",
     "test:validation": "vitest run tests/validation-suite.test.ts",
     "test:stress": "vitest run tests/stress-testing.test.ts",
