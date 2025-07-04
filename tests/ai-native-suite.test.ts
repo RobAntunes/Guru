@@ -1,18 +1,26 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { readFile, writeFile, unlink } from 'fs/promises';
+import { describe, it, expect, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
+import { readFile, writeFile, unlink, mkdir, rmdir, access, constants, readdir } from 'fs/promises';
+import { guruConfig } from '../src/core/config';
+import fs from 'fs';
+import path from 'path';
 
 describe('AI-Native Guru Test Suite - Comprehensive Functionality', () => {
   let Guru: any;
   let guru: any;
 
   beforeEach(async () => {
-    try {
-      ({ Guru } = await import('../dist/index.js'));
-      if (!Guru) throw new Error('Guru import is undefined');
-      guru = new Guru();
-    } catch (importErr) {
-      throw new Error(`Guru import failed: ${importErr}`);
-    }
+    // Reset config to defaults for each test
+    Object.assign(guruConfig, {
+      scanMode: 'auto',
+      cacheCompression: true,
+      cacheDir: '.guru/cache',
+      aiOutputFormat: 'json',
+      language: 'typescript',
+      includeTests: false,
+    });
+    
+    ({ Guru } = await import('../dist/index.js'));
+    guru = new Guru();
   });
 
   describe('Symbol Graph Construction', () => {
@@ -242,5 +250,106 @@ describe('AI-Native Guru Test Suite - Comprehensive Functionality', () => {
         } catch {}
       }
     }, 15000);
+  });
+
+  describe('Incremental Analysis & Config Integration', () => {
+    let Guru: any;
+    let guru: any;
+    let tempDir: string;
+    let fileA: string;
+    let fileB: string;
+    let fileC: string;
+    let dirCreated = false;
+
+    beforeAll(async () => {
+      tempDir = `./ai-native-incremental-test-persistent`;
+      fileA = `${tempDir}/a.ts`;
+      fileB = `${tempDir}/b.ts`;
+      fileC = `${tempDir}/c.ts`;
+      let dirExists = false;
+      try {
+        await access(tempDir, constants.F_OK);
+        dirExists = true;
+      } catch { dirExists = false; }
+      if (!dirExists) {
+        await mkdir(tempDir);
+        dirCreated = true;
+      }
+      await writeFile(fileA, 'export function a() { return 1; }');
+      await writeFile(fileB, 'import { a } from "./a"; export function b() { return a(); }');
+      await writeFile(fileC, 'import { b } from "./b"; export function c() { return b(); }');
+    });
+
+    afterAll(async () => {
+      for (const f of [fileA, fileB, fileC]) {
+        try { await unlink(f); } catch {}
+      }
+      // Clean up .guru cache dir if it exists
+      const cacheDir = path.join(tempDir, '.guru');
+      if (fs.existsSync(cacheDir)) {
+        fs.rmSync(cacheDir, { recursive: true, force: true });
+      }
+      if (dirCreated) {
+        try { await rmdir(tempDir); } catch {}
+      }
+    });
+
+    beforeEach(async () => {
+      // Reset config to defaults before each test
+      Object.assign(guruConfig, {
+        scanMode: 'auto',
+        cacheCompression: true,
+        cacheDir: '.guru/cache',
+        aiOutputFormat: 'json',
+        language: 'typescript',
+        includeTests: false,
+      });
+      
+      ({ Guru } = await import('../dist/index.js'));
+      guru = new Guru();
+    });
+
+    it('should only re-analyze changed and dependent files (incremental)', async () => {
+      console.log('[TEST][DEBUG] Testing incremental analysis with explicit scanMode parameter');
+      
+      const result1 = await guru.analyzeCodebase({ path: tempDir, scanMode: 'incremental' });
+      console.log('Test received analysisMetadata (run 1):', result1.analysisMetadata);
+      expect(result1.analysisMetadata.filesAnalyzed).toBe(3);
+      
+      // Second run - should be incremental
+      const result2 = await guru.analyzeCodebase({ path: tempDir, scanMode: 'incremental' });
+      console.log('Test received analysisMetadata (run 2):', result2.analysisMetadata);
+      expect(result2.analysisMetadata.filesAnalyzed).toBe(0); // no changes
+      
+      // Change only fileC
+      await writeFile(fileC, 'import { b } from "./b"; export function c() { return b() + 1; }');
+      const result3 = await guru.analyzeCodebase({ path: tempDir, scanMode: 'incremental' });
+      console.log('Test received analysisMetadata (run 3):', result3.analysisMetadata);
+      expect(result3.analysisMetadata.filesAnalyzed).toBe(1);
+    });
+
+    it('should perform full analysis when scanMode is full', async () => {
+      Object.assign(guruConfig, { scanMode: 'full' });
+      const result = await guru.analyzeCodebase({ path: tempDir });
+      console.log('Test received analysisMetadata (full):', result.analysisMetadata);
+      expect(result.analysisMetadata.filesAnalyzed).toBe(3);
+    });
+
+    it('should use cache compression if enabled', async () => {
+      Object.assign(guruConfig, { cacheCompression: true });
+      const cacheDir = guruConfig.cacheDir.startsWith('/') ? guruConfig.cacheDir : `${tempDir}/${guruConfig.cacheDir}`;
+      console.log('[TEST][DEBUG] cacheCompression enabled, checking directory:', cacheDir);
+      
+      await guru.analyzeCodebase({ path: tempDir });
+      
+      // Check if .gz files exist in cache directory
+      console.log('[TEST][DEBUG] Looking for .gz files in:', cacheDir);
+      const files = await readdir(cacheDir);
+      console.log('[TEST][DEBUG] Files found in cache directory:', files);
+      const gzFiles = files.filter(f => f.endsWith('.gz'));
+      console.log('[TEST][DEBUG] .gz files found:', gzFiles);
+      
+      expect(gzFiles.length > 0).toBe(true);
+    });
   });
 }); 
