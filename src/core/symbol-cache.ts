@@ -52,44 +52,53 @@ export class SymbolCache {
     console.log("📊 SymbolCache initialized with database integration");
   }
 
+  /**
+   * Normalize file path to absolute path for consistent storage/lookup
+   */
+  private normalizePath(filePath: string): string {
+    return path.resolve(filePath);
+  }
+
   async getSymbols(filePath: string, fileHash: string): Promise<CachedSymbol[] | null> {
+    const normalizedPath = this.normalizePath(filePath);
+    
     // Check memory cache first
-    const memCached = this.memoryCache.get(filePath);
+    const memCached = this.memoryCache.get(normalizedPath);
     if (memCached) {
-      this.updateAccessOrder(filePath);
+      this.updateAccessOrder(normalizedPath);
       if (memCached.fileHash === fileHash) {
         return memCached.symbols;
       } else {
         // Hash mismatch - file changed, invalidate
-        this.invalidate(filePath);
+        this.invalidate(normalizedPath);
         return null;
       }
     }
 
     // Check database cache first (but skip if pending invalidation)
-    if (this.useDatabase && (!this.pendingInvalidations || !this.pendingInvalidations.has(filePath))) {
+    if (this.useDatabase && (!this.pendingInvalidations || !this.pendingInvalidations.has(normalizedPath))) {
       try {
-        const dbEntry = await this.db.loadFileAnalysis(filePath);
+        const dbEntry = await this.db.loadFileAnalysis(normalizedPath);
         if (dbEntry && dbEntry.hash === fileHash) {
           const entry: CacheEntry = { 
             fileHash: dbEntry.hash, 
             symbols: dbEntry.symbols as CachedSymbol[] 
           };
-          this.putInMemoryCache(filePath, entry);
+          this.putInMemoryCache(normalizedPath, entry);
           return entry.symbols;
         }
       } catch (error) {
-        console.warn(`[SymbolCache] Database lookup failed for ${filePath}:`, error);
+        console.warn(`[SymbolCache] Database lookup failed for ${normalizedPath}:`, error);
       }
     }
 
     // Fallback to file-based cache
     if (this.useFileBackup) {
-      const indexEntry = this.cacheIndex[filePath];
+      const indexEntry = this.cacheIndex[normalizedPath];
       if (indexEntry && indexEntry.fileHash === fileHash) {
-        const diskEntry = await this.loadFromDisk(filePath);
+        const diskEntry = await this.loadFromDisk(normalizedPath);
         if (diskEntry) {
-          this.putInMemoryCache(filePath, diskEntry);
+          this.putInMemoryCache(normalizedPath, diskEntry);
           return diskEntry.symbols;
         }
       }
@@ -99,19 +108,21 @@ export class SymbolCache {
   }
 
   setSymbols(filePath: string, fileHash: string, symbols: CachedSymbol[]): void {
+    const normalizedPath = this.normalizePath(filePath);
     const entry: CacheEntry = { fileHash, symbols };
-    this.putInMemoryCache(filePath, entry);
-    this.dirty.add(filePath);
+    this.putInMemoryCache(normalizedPath, entry);
+    this.dirty.add(normalizedPath);
     
     // Async write to database (primary) and disk (backup)
-    this.scheduleWrite(filePath, entry);
+    this.scheduleWrite(normalizedPath, entry);
   }
 
   invalidate(filePath: string): void {
-    this.memoryCache.delete(filePath);
-    this.accessOrder = this.accessOrder.filter(p => p !== filePath);
-    delete this.cacheIndex[filePath];
-    this.dirty.delete(filePath);
+    const normalizedPath = this.normalizePath(filePath);
+    this.memoryCache.delete(normalizedPath);
+    this.accessOrder = this.accessOrder.filter(p => p !== normalizedPath);
+    delete this.cacheIndex[normalizedPath];
+    this.dirty.delete(normalizedPath);
     
     // Also remove from database synchronously
     if (this.useDatabase) {
@@ -119,39 +130,42 @@ export class SymbolCache {
       if (!this.pendingInvalidations) {
         this.pendingInvalidations = new Set();
       }
-      this.pendingInvalidations.add(filePath);
+      this.pendingInvalidations.add(normalizedPath);
     }
     
     this.saveIndex();
   }
 
   hasFile(filePath: string): boolean {
-    return this.memoryCache.has(filePath) || (filePath in this.cacheIndex);
+    const normalizedPath = this.normalizePath(filePath);
+    return this.memoryCache.has(normalizedPath) || (normalizedPath in this.cacheIndex);
   }
 
   async hasFileAsync(filePath: string): Promise<boolean> {
+    const normalizedPath = this.normalizePath(filePath);
+    
     // Check if pending invalidation
-    if (this.pendingInvalidations && this.pendingInvalidations.has(filePath)) {
+    if (this.pendingInvalidations && this.pendingInvalidations.has(normalizedPath)) {
       return false;
     }
 
     // Check memory cache first
-    if (this.memoryCache.has(filePath)) {
+    if (this.memoryCache.has(normalizedPath)) {
       return true;
     }
 
     // Check database
     if (this.useDatabase) {
       try {
-        const dbEntry = await this.db.loadFileAnalysis(filePath);
+        const dbEntry = await this.db.loadFileAnalysis(normalizedPath);
         return dbEntry !== null;
       } catch (error) {
-        console.warn(`[SymbolCache] Database check failed for ${filePath}:`, error);
+        console.warn(`[SymbolCache] Database check failed for ${normalizedPath}:`, error);
       }
     }
 
     // Check file-based index
-    return filePath in this.cacheIndex;
+    return normalizedPath in this.cacheIndex;
   }
 
   /**
@@ -234,7 +248,8 @@ export class SymbolCache {
 
   private async loadFromDisk(filePath: string): Promise<CacheEntry | null> {
     try {
-      const indexEntry = this.cacheIndex[filePath];
+      const normalizedPath = this.normalizePath(filePath);
+      const indexEntry = this.cacheIndex[normalizedPath];
       if (!indexEntry || !fs.existsSync(this.cacheFile)) {
         return null;
       }
@@ -260,43 +275,46 @@ export class SymbolCache {
   }
 
   private scheduleWrite(filePath: string, entry: CacheEntry): void {
+    const normalizedPath = this.normalizePath(filePath);
     // Use setImmediate to batch writes and avoid blocking
     setImmediate(() => {
-      if (this.dirty.has(filePath)) {
-        this.writeToStorage(filePath, entry);
+      if (this.dirty.has(normalizedPath)) {
+        this.writeToStorage(normalizedPath, entry);
       }
     });
   }
 
   private async writeToStorage(filePath: string, entry: CacheEntry): Promise<void> {
+    const normalizedPath = this.normalizePath(filePath);
     let dbSuccess = false;
     
     // Primary: Write to database
     if (this.useDatabase) {
       try {
         await this.db.saveFileAnalysis(
-          filePath,
+          normalizedPath,
           entry.fileHash,
           entry.symbols,
           [], // dependencies - can be populated later
           "1.0" // version
         );
         dbSuccess = true;
-        this.dirty.delete(filePath);
-        console.log(`💾 Cached symbols for ${filePath} in database (${entry.symbols.length} symbols)`);
+        this.dirty.delete(normalizedPath);
+        console.log(`💾 Cached symbols for ${normalizedPath} in database (${entry.symbols.length} symbols)`);
       } catch (error) {
-        console.warn(`[SymbolCache] Failed to write ${filePath} to database:`, error);
+        console.warn(`[SymbolCache] Failed to write ${normalizedPath} to database:`, error);
       }
     }
     
     // Backup: Write to disk if database failed or as backup
     if (this.useFileBackup && (!dbSuccess || this.useDatabase)) {
-      await this.writeToDisk(filePath, entry);
+      await this.writeToDisk(normalizedPath, entry);
     }
   }
 
   private async writeToDisk(filePath: string, entry: CacheEntry): Promise<void> {
     try {
+      const normalizedPath = this.normalizePath(filePath);
       const data = JSON.stringify(entry);
       let buffer: Buffer;
       
@@ -313,13 +331,13 @@ export class SymbolCache {
       fs.closeSync(fd);
 
       // Update index
-      this.cacheIndex[filePath] = {
+      this.cacheIndex[normalizedPath] = {
         fileHash: entry.fileHash,
         position,
         size: buffer.length
       };
 
-      this.dirty.delete(filePath);
+      this.dirty.delete(normalizedPath);
       this.saveIndex();
 
     } catch (error) {

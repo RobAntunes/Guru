@@ -348,5 +348,25 @@
     "fileHash": "566496d7fd3b59c6057b3ef0fb5e75c05f795fb6f8a17281017970063ed9c144",
     "position": 13660,
     "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-QGudnR/file2.js": {
+    "fileHash": "f32e9bde10e8aafea3d82dac765eec4ce93adcf9533bc4e26466457f90b021f8",
+    "position": 14001,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-QGudnR/file3.js": {
+    "fileHash": "566496d7fd3b59c6057b3ef0fb5e75c05f795fb6f8a17281017970063ed9c144",
+    "position": 14105,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-GmEeoy/file2.js": {
+    "fileHash": "f32e9bde10e8aafea3d82dac765eec4ce93adcf9533bc4e26466457f90b021f8",
+    "position": 14446,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-GmEeoy/file3.js": {
+    "fileHash": "566496d7fd3b59c6057b3ef0fb5e75c05f795fb6f8a17281017970063ed9c144",
+    "position": 14550,
+    "size": 104
   }
 }
