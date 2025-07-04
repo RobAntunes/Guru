@@ -6,6 +6,7 @@
 
 // Export main classes and types for external usage
 export { GuruCore as Guru } from "./core/guru.js";
+export { IncrementalAnalyzer } from "./core/incremental-analyzer.js";
 export * from "./types/index.js";
 export * from "./parsers/symbol-graph.js";
 export * from "./intelligence/execution-tracer.js";

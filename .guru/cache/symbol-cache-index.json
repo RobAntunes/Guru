@@ -218,5 +218,135 @@
     "fileHash": "b66dc6a0f48f92baeda0ef772c1e6c20ce31218790cffcccb56f87685155b8b8",
     "position": 11686,
     "size": 150
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-JtBd0V/file2.js": {
+    "fileHash": "f32e9bde10e8aafea3d82dac765eec4ce93adcf9533bc4e26466457f90b021f8",
+    "position": 9011,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-JtBd0V/file3.js": {
+    "fileHash": "566496d7fd3b59c6057b3ef0fb5e75c05f795fb6f8a17281017970063ed9c144",
+    "position": 9115,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-aTsoeG/moduleA.js": {
+    "fileHash": "d5c50759865b28cba249970df71269cde740de3a8f44ce4d3d79990c41d61407",
+    "position": 9219,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-aTsoeG/moduleB.js": {
+    "fileHash": "d70fd5dea442672d72ad27cd45b1e02adc9e81f90477f0f34d67d3e7f227a277",
+    "position": 9323,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-aTsoeG/moduleC.js": {
+    "fileHash": "eb86edf8ec06ecd55e7386b6a7b0c5b4f9472686089418cda5f0a805300943ea",
+    "position": 9427,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-OIqzYF/cycleB.js": {
+    "fileHash": "a8d16db7093ad3873a2448f6e6f53bc075ca9d534d1266ee34b5269ef8ed6dba",
+    "position": 9740,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-q04Yg7/file2.js": {
+    "fileHash": "f32e9bde10e8aafea3d82dac765eec4ce93adcf9533bc4e26466457f90b021f8",
+    "position": 10081,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-q04Yg7/file3.js": {
+    "fileHash": "566496d7fd3b59c6057b3ef0fb5e75c05f795fb6f8a17281017970063ed9c144",
+    "position": 10185,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-D1f9jQ/moduleA.js": {
+    "fileHash": "d5c50759865b28cba249970df71269cde740de3a8f44ce4d3d79990c41d61407",
+    "position": 10289,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-D1f9jQ/moduleB.js": {
+    "fileHash": "d70fd5dea442672d72ad27cd45b1e02adc9e81f90477f0f34d67d3e7f227a277",
+    "position": 10393,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-D1f9jQ/moduleC.js": {
+    "fileHash": "eb86edf8ec06ecd55e7386b6a7b0c5b4f9472686089418cda5f0a805300943ea",
+    "position": 10497,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-qMDkGe/cycleB.js": {
+    "fileHash": "a8d16db7093ad3873a2448f6e6f53bc075ca9d534d1266ee34b5269ef8ed6dba",
+    "position": 10810,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-5eApts/file2.js": {
+    "fileHash": "f32e9bde10e8aafea3d82dac765eec4ce93adcf9533bc4e26466457f90b021f8",
+    "position": 11151,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-5eApts/file3.js": {
+    "fileHash": "566496d7fd3b59c6057b3ef0fb5e75c05f795fb6f8a17281017970063ed9c144",
+    "position": 11255,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-8GE5t6/file2.js": {
+    "fileHash": "f32e9bde10e8aafea3d82dac765eec4ce93adcf9533bc4e26466457f90b021f8",
+    "position": 11596,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-8GE5t6/file3.js": {
+    "fileHash": "566496d7fd3b59c6057b3ef0fb5e75c05f795fb6f8a17281017970063ed9c144",
+    "position": 11700,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-vliiP6/moduleA.js": {
+    "fileHash": "d5c50759865b28cba249970df71269cde740de3a8f44ce4d3d79990c41d61407",
+    "position": 11804,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-vliiP6/moduleB.js": {
+    "fileHash": "d70fd5dea442672d72ad27cd45b1e02adc9e81f90477f0f34d67d3e7f227a277",
+    "position": 11908,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-vliiP6/moduleC.js": {
+    "fileHash": "eb86edf8ec06ecd55e7386b6a7b0c5b4f9472686089418cda5f0a805300943ea",
+    "position": 12012,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-v0tLvR/cycleB.js": {
+    "fileHash": "a8d16db7093ad3873a2448f6e6f53bc075ca9d534d1266ee34b5269ef8ed6dba",
+    "position": 12325,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-HAYZr4/file2.js": {
+    "fileHash": "f32e9bde10e8aafea3d82dac765eec4ce93adcf9533bc4e26466457f90b021f8",
+    "position": 12666,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-HAYZr4/file3.js": {
+    "fileHash": "566496d7fd3b59c6057b3ef0fb5e75c05f795fb6f8a17281017970063ed9c144",
+    "position": 12770,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-6cFRX6/file2.js": {
+    "fileHash": "f32e9bde10e8aafea3d82dac765eec4ce93adcf9533bc4e26466457f90b021f8",
+    "position": 13111,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-6cFRX6/file3.js": {
+    "fileHash": "566496d7fd3b59c6057b3ef0fb5e75c05f795fb6f8a17281017970063ed9c144",
+    "position": 13215,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-Wyfoaw/file2.js": {
+    "fileHash": "f32e9bde10e8aafea3d82dac765eec4ce93adcf9533bc4e26466457f90b021f8",
+    "position": 13556,
+    "size": 104
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-Wyfoaw/file3.js": {
+    "fileHash": "566496d7fd3b59c6057b3ef0fb5e75c05f795fb6f8a17281017970063ed9c144",
+    "position": 13660,
+    "size": 104
   }
 }

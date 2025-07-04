@@ -865,4 +865,13 @@ export class GuruDatabase {
     const result = stmt.run(Date.now());
     return result.changes;
   }
+
+  /**
+   * Get all file paths that have been analyzed
+   */
+  async getAllAnalyzedFiles(): Promise<string[]> {
+    const stmt = this.db.prepare('SELECT file_path FROM file_analysis_cache');
+    const results = stmt.all() as { file_path: string }[];
+    return results.map(row => row.file_path);
+  }
 } 

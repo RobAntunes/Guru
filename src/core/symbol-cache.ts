@@ -155,6 +155,32 @@ export class SymbolCache {
   }
 
   /**
+   * Get all files that have been cached
+   */
+  async getAllCachedFiles(): Promise<string[]> {
+    const cachedFiles: string[] = [];
+    
+    // Get from memory cache (these are absolute paths)
+    cachedFiles.push(...this.memoryCache.keys());
+    
+    // Get from database if available (these should also be absolute paths)
+    if (this.useDatabase) {
+      try {
+        const dbFiles = await this.db.getAllAnalyzedFiles();
+        cachedFiles.push(...dbFiles);
+      } catch (error) {
+        console.warn('[SymbolCache] Failed to get cached files from database:', error);
+      }
+    }
+    
+    // Get from file-based index (these are absolute paths)
+    cachedFiles.push(...Object.keys(this.cacheIndex));
+    
+    // Remove duplicates and return
+    return Array.from(new Set(cachedFiles));
+  }
+
+  /**
    * Flush all pending writes and clean up
    */
   async flush(): Promise<void> {

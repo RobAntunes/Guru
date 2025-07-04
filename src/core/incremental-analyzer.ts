@@ -380,11 +380,29 @@ export class IncrementalAnalyzer {
   }
 
   /**
-   * Flush all pending cache writes
+   * Flush all pending writes and clean up
    */
   async flush(): Promise<void> {
+    // Flush symbol cache
     if (this.symbolCache) {
       await this.symbolCache.flush();
+    }
+    
+    // Flush in-memory cache to ensure consistency
+    const flushPromises = Array.from(this.fileCache.entries()).map(async ([file, cache]) => {
+      try {
+        await this.persistCacheEntry(file, cache);
+      } catch (error) {
+        if (!this.quiet) {
+          console.warn(`Failed to persist cache entry for ${file}:`, error);
+        }
+      }
+    });
+    
+    await Promise.all(flushPromises);
+    
+    if (!this.quiet) {
+      console.log(`🔄 IncrementalAnalyzer flush completed`);
     }
   }
 
@@ -425,6 +443,9 @@ export class IncrementalAnalyzer {
     affectedFiles: string[];
   }> {
     if (!this.symbolCache) {
+      if (!this.quiet) {
+        console.log('🔍 No symbol cache available, treating all files as new');
+      }
       return {
         changedFiles: [],
         deletedFiles: [],
@@ -435,36 +456,87 @@ export class IncrementalAnalyzer {
     
     const changedFiles: string[] = [];
     const newFiles: string[] = [];
+    const deletedFiles: string[] = [];
     
+    // Build current file set for deletion detection
+    const currentFiles = new Set(allFiles);
+    
+    // Get previously cached files to detect deletions
+    const previousFiles = await this.getPreviouslyCachedFiles();
+    
+    if (!this.quiet) {
+      console.log(`🔍 Delta Detection Debug:`);
+      console.log(`  📋 Current files: ${allFiles.length}`);
+      console.log(`  📦 Previously cached files: ${previousFiles.length}`);
+    }
+    
+    // Detect deleted files
+    for (const cachedFile of previousFiles) {
+      if (!currentFiles.has(cachedFile)) {
+        deletedFiles.push(cachedFile);
+        if (!this.quiet) {
+          console.log(`  🗑️  Deleted: ${path.basename(cachedFile)}`);
+        }
+      }
+    }
+    
+    // Detect new and changed files
     for (const file of allFiles) {
       try {
         const currentHash = await this.hashFile(file);
         const cached = await this.symbolCache!.getSymbols(file, currentHash);
         
-
+        if (!this.quiet) {
+          console.log(`  🔍 Checking ${path.basename(file)} (hash: ${currentHash.substring(0, 8)}...)`);
+        }
         
-                  if (!cached) {
-            // Check if file is completely new or just changed
-            const anyVersionCached = await this.symbolCache!.hasFileAsync(file);
-            if (anyVersionCached) {
-              changedFiles.push(file);
-            } else {
-              newFiles.push(file);
+        if (!cached) {
+          // Check if file is completely new or just changed
+          const anyVersionCached = await this.symbolCache!.hasFileAsync(file);
+          
+          if (!this.quiet) {
+            console.log(`    📦 File cached (any version): ${anyVersionCached}`);
+          }
+          
+          if (anyVersionCached) {
+            changedFiles.push(file);
+            if (!this.quiet) {
+              console.log(`    ✏️  Detected as CHANGED: ${path.basename(file)}`);
+            }
+          } else {
+            newFiles.push(file);
+            if (!this.quiet) {
+              console.log(`    ✨ Detected as NEW: ${path.basename(file)}`);
             }
           }
-        } catch (error) {
+        } else {
+          if (!this.quiet) {
+            console.log(`    ✅ Unchanged: ${path.basename(file)}`);
+          }
+        }
+      } catch (error) {
+        // File access error, treat as new
         newFiles.push(file);
+        if (!this.quiet) {
+          console.log(`    ❌ Error accessing ${path.basename(file)}, treating as new: ${error}`);
+        }
       }
     }
     
-    // For simplicity, affected files = changed + new
-    const affectedFiles = [...changedFiles, ...newFiles];
+    // Calculate affected files using dependency analysis
+    const affectedFiles = this.calculateAffectedFiles([...changedFiles, ...newFiles, ...deletedFiles]);
     
-
+    if (!this.quiet) {
+      console.log(`🔍 Delta Analysis Complete:`);
+      console.log(`  📝 Changed files: ${changedFiles.length} - ${changedFiles.map(f => path.basename(f)).join(', ')}`);
+      console.log(`  ✨ New files: ${newFiles.length} - ${newFiles.map(f => path.basename(f)).join(', ')}`);
+      console.log(`  🗑️  Deleted files: ${deletedFiles.length} - ${deletedFiles.map(f => path.basename(f)).join(', ')}`);
+      console.log(`  📊 Affected files: ${affectedFiles.length} - ${affectedFiles.map(f => path.basename(f)).join(', ')}`);
+    }
     
     return {
       changedFiles,
-      deletedFiles: [], // TODO: implement deleted file detection
+      deletedFiles,
       newFiles,
       affectedFiles,
     };
@@ -479,10 +551,49 @@ export class IncrementalAnalyzer {
     newFiles: string[];
     affectedFiles: string[];
   }): string[] {
-    // For now, just return the affected files
-    // TODO: implement dependency analysis to include dependent files
+    // Include all affected files which already includes dependency analysis
     const filesToAnalyze = changes.affectedFiles;
-    return filesToAnalyze;
+    
+    // Ensure we analyze new files even if they're not in dependencies yet
+    const newFilesNotInAffected = changes.newFiles.filter(file => !changes.affectedFiles.includes(file));
+    filesToAnalyze.push(...newFilesNotInAffected);
+    
+    return Array.from(new Set(filesToAnalyze)); // Remove duplicates
+  }
+
+  /**
+   * Get all files that were previously cached (for deletion detection)
+   */
+  private async getPreviouslyCachedFiles(): Promise<string[]> {
+    const cachedFiles: string[] = [];
+    
+    // Get from in-memory cache
+    cachedFiles.push(...this.fileCache.keys());
+    
+    // Get from symbol cache if available
+    if (this.symbolCache) {
+      try {
+        const cachedFromSymbolCache = await this.symbolCache.getAllCachedFiles();
+        cachedFiles.push(...cachedFromSymbolCache);
+      } catch (error) {
+        if (!this.quiet) {
+          console.warn('Warning: Could not retrieve cached files from symbol cache:', error);
+        }
+      }
+    }
+    
+    // Get from database
+    try {
+      const dbFiles = await this.db.getAllAnalyzedFiles();
+      cachedFiles.push(...dbFiles);
+    } catch (error) {
+      if (!this.quiet) {
+        console.warn('Warning: Could not retrieve cached files from database:', error);
+      }
+    }
+    
+    // Remove duplicates and return
+    return Array.from(new Set(cachedFiles));
   }
 
   /**
@@ -758,22 +869,47 @@ export class IncrementalAnalyzer {
   private calculateAffectedFiles(changedFiles: string[]): string[] {
     const affected = new Set<string>();
     const visited = new Set<string>();
+    const currentPath = new Set<string>(); // For cycle detection
 
     const traverse = (file: string, depth = 0) => {
-      if (visited.has(file) || depth > 10) return; // Prevent infinite loops
+      if (visited.has(file) || depth > 20) return; // Prevent infinite loops with deeper traversal
+      if (currentPath.has(file)) {
+        // Cycle detected, log and skip
+        if (!this.quiet) {
+          console.warn(`🔄 Dependency cycle detected involving: ${file}`);
+        }
+        return;
+      }
+      
       visited.add(file);
+      currentPath.add(file);
 
       const dependents = this.reverseDependencyGraph.get(file);
       if (dependents) {
         for (const dependent of dependents) {
+          // Skip if already processed
+          if (affected.has(dependent)) continue;
+          
           affected.add(dependent);
           traverse(dependent, depth + 1);
         }
       }
+      
+      currentPath.delete(file);
     };
 
+    // Start traversal from all changed files
     for (const file of changedFiles) {
       traverse(file);
+    }
+
+    // Also include the originally changed files themselves
+    for (const file of changedFiles) {
+      affected.add(file);
+    }
+
+    if (!this.quiet && affected.size > 0) {
+      console.log(`📊 Dependency impact: ${changedFiles.length} changed files affect ${affected.size} total files`);
     }
 
     return Array.from(affected);

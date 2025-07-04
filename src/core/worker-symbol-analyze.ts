@@ -1,7 +1,7 @@
 import { parentPort, workerData } from 'worker_threads';
 import * as fs from 'fs';
 import * as path from 'path';
-import { SymbolNode } from '../types/index.js';
+import { SymbolNode, Parameter, SymbolType } from '../types/index.js';
 import { LanguageManager } from '../parsers/language-manager.js';
 
 // Initialize language manager for this worker
@@ -302,7 +302,6 @@ function createSymbol(
 ): SymbolNode {
   const startPoint = node.startPosition;
   const endPoint = node.endPosition;
-  const location = `${startPoint.row + 1}:${startPoint.column + 1}`;
   
   // Extract references from the node
   const references = extractReferences(node, source);
@@ -312,23 +311,20 @@ function createSymbol(
   const complexity = calculateComplexity(symbolText, kind);
   
   return {
+    id: `${path.relative(rootPath, filePath)}:${startPoint.row + 1}:${startPoint.column + 1}:${name}`,
     name,
-    kind,
-    location,
-    file: path.relative(rootPath, filePath),
-    absoluteFile: filePath,
-    startLine: startPoint.row + 1,
-    startColumn: startPoint.column + 1,
-    endLine: endPoint.row + 1,
-    endColumn: endPoint.column + 1,
-    text: symbolText,
-    references,
-    complexity,
+    type: kind as SymbolType,
+    location: {
+      file: path.relative(rootPath, filePath),
+      startLine: startPoint.row + 1,
+      startColumn: startPoint.column + 1,
+      endLine: endPoint.row + 1,
+      endColumn: endPoint.column + 1,
+    },
+    scope: 'global', // TODO: Implement proper scope detection
     dependencies: [], // Will be populated later
+    dependents: [], // Will be populated later
     metadata: {
-      nodeType: node.type,
-      scope: 'global', // TODO: Implement proper scope detection
-      isExported: isExported(node, source),
       isAsync: isAsync(node),
       parameters: extractParameters(node),
       returnType: extractReturnType(node),
@@ -410,8 +406,8 @@ function isAsync(node: any): boolean {
 }
 
 // Extract parameters from function nodes
-function extractParameters(node: any): string[] {
-  const parameters: string[] = [];
+function extractParameters(node: any): Parameter[] {
+  const parameters: Parameter[] = [];
   
   // Look for parameter lists
   for (let i = 0; i < node.childCount; i++) {
@@ -425,11 +421,15 @@ function extractParameters(node: any): string[] {
 }
 
 // Extract parameter names from parameter list
-function extractParameterNames(node: any, parameters: string[]): void {
+function extractParameterNames(node: any, parameters: Parameter[]): void {
   for (let i = 0; i < node.childCount; i++) {
     const child = node.child(i);
     if (child && child.type === 'identifier') {
-      parameters.push(child.text);
+      parameters.push({
+        name: child.text,
+        type: undefined,
+        optional: false
+      });
     } else if (child && child.type === 'parameter') {
       extractParameterNames(child, parameters);
     }
@@ -437,7 +437,7 @@ function extractParameterNames(node: any, parameters: string[]): void {
 }
 
 // Extract return type information (simplified)
-function extractReturnType(node: any): string | null {
+function extractReturnType(node: any): string | undefined {
   // Look for type annotations
   for (let i = 0; i < node.childCount; i++) {
     const child = node.child(i);
@@ -445,7 +445,7 @@ function extractReturnType(node: any): string | null {
       return child.text;
     }
   }
-  return null;
+  return undefined;
 }
 
 if (parentPort) {

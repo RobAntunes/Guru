@@ -110,6 +110,13 @@ export class DatabaseAdapter {
   }
 
   /**
+   * Get all file paths that have been analyzed
+   */
+  async getAllAnalyzedFiles(): Promise<string[]> {
+    return await this.db.getAllAnalyzedFiles();
+  }
+
+  /**
    * Symbol Storage
    */
   async saveSymbol(symbol: any): Promise<void> {
