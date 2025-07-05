@@ -120,9 +120,8 @@ export class SymbolCache {
     const entry: CacheEntry = { fileHash, symbols };
     this.putInMemoryCache(normalizedPath, entry);
     this.dirty.add(normalizedPath);
-    // Async write to database (primary) and disk (backup)
-    this.scheduleWrite(normalizedPath, entry);
-    console.log(`[DEBUG][SymbolCache.setSymbols] Scheduled write for ${filePath}`);
+    // Write will be handled by flush() to avoid race conditions
+    console.log(`[DEBUG][SymbolCache.setSymbols] Added to dirty set for ${filePath}`);
   }
 
   invalidate(filePath: string): void {
