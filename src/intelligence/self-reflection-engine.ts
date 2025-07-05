@@ -516,7 +516,6 @@ export class AdaptiveTuning {
 
 // --- Pattern Weight Learning ---
 export class PatternLearning {
-  private db: DatabaseAdapter;
   private pattern_weights = new Map<string, number>();
   private update_history: any[] = [];
   private pattern_metadata: Record<string, any> = {};
@@ -525,8 +524,13 @@ export class PatternLearning {
   private isInitialized = false;
 
   constructor() {
-    this.db = getDatabase();
+    // Don't store database reference in constructor - get fresh one each time
     // Lazy load on first use to avoid blocking construction
+  }
+
+  private getDatabase(): DatabaseAdapter {
+    // Always get fresh database instance to handle resets properly
+    return getDatabase();
   }
 
   private async ensureInitialized() {
@@ -536,7 +540,7 @@ export class PatternLearning {
       console.log('📊 Loading PatternLearning from database...');
       
       // Load weights from database
-      this.pattern_weights = await this.db.loadPatternWeights();
+      this.pattern_weights = await this.getDatabase().loadPatternWeights();
       
       console.log(`✅ Loaded ${this.pattern_weights.size} pattern weights from database`);
       this.isInitialized = true;
@@ -590,16 +594,28 @@ export class PatternLearning {
   }
 
   _normalizeWeights() {
-    const sum = Array.from(this.pattern_weights.values()).reduce(
-      (a, b) => a + b,
-      0,
+    const values = Array.from(this.pattern_weights.values());
+    if (values.length === 0) return;
+    
+    // Only normalize if weights are getting too extreme (either too high or too low)
+    const maxWeight = Math.max(...values);
+    const minWeight = Math.min(...values);
+    
+    // If all weights are within reasonable bounds, don't normalize
+    if (maxWeight <= this.maxWeight && minWeight >= this.minWeight) {
+      return;
+    }
+    
+    // If we need to normalize, scale to fit within bounds while preserving relationships
+    const scale = Math.min(
+      this.maxWeight / maxWeight,
+      this.minWeight / minWeight
     );
-    const N = this.pattern_weights.size || 1;
-    if (sum === 0) return;
+    
     for (const [k, v] of this.pattern_weights.entries()) {
-      let norm = (v * N) / sum;
-      norm = Math.max(this.minWeight, Math.min(this.maxWeight, norm));
-      this.pattern_weights.set(k, norm);
+      const scaled = v * scale;
+      const clamped = Math.max(this.minWeight, Math.min(this.maxWeight, scaled));
+      this.pattern_weights.set(k, clamped);
     }
   }
 
@@ -649,7 +665,7 @@ export class PatternLearning {
     await this.ensureInitialized();
     
     // Always return fresh data from database
-    this.pattern_weights = await this.db.loadPatternWeights();
+    this.pattern_weights = await this.getDatabase().loadPatternWeights();
     
     const obj: any = {};
     for (const [k, v] of this.pattern_weights.entries()) obj[k] = v;
@@ -658,7 +674,7 @@ export class PatternLearning {
 
   async getHistory(pattern?: string, limit: number = 100) {
     if (pattern) {
-      return await this.db.getPatternHistory(pattern, limit);
+      return await this.getDatabase().getPatternHistory(pattern, limit);
     }
     
     // For all patterns, we'd need to aggregate - for now return empty
@@ -674,7 +690,7 @@ export class PatternLearning {
   async persistAll() {
     try {
       // Save all current weights to database
-      await this.db.savePatternWeights(this.pattern_weights, {
+      await this.getDatabase().savePatternWeights(this.pattern_weights, {
         timestamp: Date.now(),
         source: 'pattern_learning',
         metadata: this.pattern_metadata

@@ -12,4 +12,4 @@ coverage/
 .cache/
 temp/
 tmp/
-.guru/cache
+.guru/cache/

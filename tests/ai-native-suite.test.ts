@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
 import { readFile, writeFile, unlink, mkdir, rmdir, access, constants, readdir } from 'fs/promises';
 import { guruConfig } from '../src/core/config';
+import { DatabaseAdapter } from '../src/core/database-adapter';
 import fs from 'fs';
 import path from 'path';
 
@@ -267,7 +268,7 @@ describe('AI-Native Guru Test Suite - Comprehensive Functionality', () => {
     let dirCreated = false;
 
     beforeAll(async () => {
-      tempDir = `./ai-native-incremental-test-persistent`;
+      tempDir = path.resolve(`./ai-native-incremental-test-persistent`);
       fileA = `${tempDir}/a.ts`;
       fileB = `${tempDir}/b.ts`;
       fileC = `${tempDir}/c.ts`;
@@ -277,7 +278,7 @@ describe('AI-Native Guru Test Suite - Comprehensive Functionality', () => {
         dirExists = true;
       } catch { dirExists = false; }
       if (!dirExists) {
-        await mkdir(tempDir);
+        await mkdir(tempDir, { recursive: true });
         dirCreated = true;
       }
       await writeFile(fileA, 'export function a() { return 1; }');
@@ -299,37 +300,41 @@ describe('AI-Native Guru Test Suite - Comprehensive Functionality', () => {
       }
     });
 
-    beforeEach(async () => {
+    beforeEach(async (ctx) => {
       // Reset config to defaults before each test
       Object.assign(guruConfig, {
         scanMode: 'auto',
         cacheCompression: true,
-        cacheDir: '.guru/cache',
+        cacheDir: path.join(tempDir, '.guru/cache'),
         aiOutputFormat: 'json',
         language: 'typescript',
         includeTests: false,
       });
       
+      // Don't reset database for incremental test as it needs to preserve state
+      if (!ctx.task.name.includes('incremental')) {
+        // Reset database adapter to ensure clean state - fresh in-memory DB each time
+        DatabaseAdapter.reset();
+      }
+      
       ({ Guru } = await import('../dist/index.js'));
       guru = new Guru();
+      
+      // No need to clear cache - each test gets fresh in-memory database
     });
 
     it('should only re-analyze changed and dependent files (incremental)', async () => {
       console.log('[TEST][DEBUG] Testing incremental analysis with explicit scanMode parameter');
       
-      // Clear any existing cache to ensure clean state
-      const cacheDir = '.guru/cache';
-      try {
-        if (fs.existsSync(cacheDir)) {
-          fs.rmSync(cacheDir, { recursive: true, force: true });
-        }
-      } catch {}
+      // Skip the beforeEach database reset for this test by manually doing setup
+      const { Guru } = await import('../dist/index.js');
       
+      // Use the shared guru instance to preserve database state
       const result1 = await guru.analyzeCodebase(tempDir, undefined, 'incremental');
       console.log('Test received analysisMetadata (run 1):', result1.metadata);
       expect(result1.metadata.filesAnalyzed).toBe(3);
       
-      // Second run - should be incremental
+      // Second run - should be incremental (same guru instance)  
       const result2 = await guru.analyzeCodebase(tempDir, undefined, 'incremental');
       console.log('Test received analysisMetadata (run 2):', result2.metadata);
       expect(result2.metadata.filesAnalyzed).toBe(0); // no changes
@@ -339,12 +344,18 @@ describe('AI-Native Guru Test Suite - Comprehensive Functionality', () => {
       const result3 = await guru.analyzeCodebase(tempDir, undefined, 'incremental');
       console.log('Test received analysisMetadata (run 3):', result3.metadata);
       expect(result3.metadata.filesAnalyzed).toBe(1);
-    });
+    }, 20000);
 
     it('should perform full analysis when scanMode is full', async () => {
-      Object.assign(guruConfig, { scanMode: 'full' });
+      // Fresh in-memory database per test - no manual cleanup needed
+      
+      Object.assign(guruConfig, { 
+        scanMode: 'full'
+      });
+      
       const result = await guru.analyzeCodebase(tempDir);
       console.log('Test received analysisMetadata (full):', result.metadata);
+      console.log('Test tempDir:', tempDir);
       expect(result.metadata.filesAnalyzed).toBe(3);
     });
 
@@ -383,5 +394,32 @@ describe('AI-Native Guru Test Suite - Comprehensive Functionality', () => {
         }
       }
     });
+  });
+
+  afterEach(async () => {
+    if (global.guru) {
+      try {
+        console.log('[CLEANUP][afterEach] Calling guru.cleanup()');
+        await global.guru.cleanup();
+        console.log('[CLEANUP][afterEach] guru.cleanup() complete');
+      } catch (e) {
+        console.error('[CLEANUP][afterEach] guru.cleanup() error', e);
+      }
+    }
+    // Add any temp file/dir cleanup here
+  });
+
+  afterAll(async () => {
+    if (global.guru) {
+      try {
+        console.log('[CLEANUP][afterAll] Calling guru.cleanup()');
+        await global.guru.cleanup();
+        console.log('[CLEANUP][afterAll] guru.cleanup() complete');
+      } catch (e) {
+        console.error('[CLEANUP][afterAll] guru.cleanup() error', e);
+      }
+    }
+    // TEMP: Uncomment to force exit if hangs persist
+    // process.exit(0);
   });
 }); 

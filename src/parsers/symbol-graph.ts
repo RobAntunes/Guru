@@ -470,7 +470,8 @@ export class SymbolGraphBuilder {
         break;
       }
 
-      case "variable_declaration": {
+      case "variable_declaration":
+      case "lexical_declaration": {
         const vars = this.createVariableSymbols(
           node,
           filePath,
@@ -492,6 +493,26 @@ export class SymbolGraphBuilder {
           scope,
         );
         symbols.push(sym);
+        break;
+      }
+
+      case "assignment_expression": {
+        // Handle module.exports and other assignments
+        const left = node.child(0);
+        if (left && left.type === "member_expression") {
+          const memberText = left.text;
+          if (memberText === "module.exports") {
+            // This is a module.exports assignment - extract as an export symbol
+            const sym = this.createVariableSymbols(
+              node,
+              filePath,
+              source,
+              rootPath,
+              scope,
+            );
+            symbols.push(...sym);
+          }
+        }
         break;
       }
     }
@@ -612,9 +633,9 @@ export class SymbolGraphBuilder {
     scope: string,
   ): SymbolNode[] {
     const symbols: SymbolNode[] = [];
-    // JS/TS: variable_declaration, Python: assignment
+    // JS/TS: variable_declaration, lexical_declaration, Python: assignment
     // For JS/TS, look for variable declarators
-    if (node.type === "variable_declaration") {
+    if (node.type === "variable_declaration" || node.type === "lexical_declaration") {
       for (let i = 0; i < node.childCount; i++) {
         const child = node.child(i);
         if (child && child.type === "variable_declarator") {
@@ -687,6 +708,28 @@ export class SymbolGraphBuilder {
         });
       }
     }
+    
+    // For JavaScript assignment_expression (module.exports)
+    if (node.type === "assignment_expression") {
+      const left = node.child(0);
+      if (left && left.type === "member_expression" && left.text === "module.exports") {
+        const location = this.createLocation(node, filePath, rootPath);
+        symbols.push({
+          id: `${path.relative(rootPath, filePath)}:exports:${location.startLine}`,
+          name: "exports",
+          type: "variable",
+          location,
+          scope,
+          dependencies: [],
+          dependents: [],
+          metadata: {
+            accessibility: "public",
+          },
+          embedding: undefined,
+        });
+      }
+    }
+    
     return symbols;
   }
 
@@ -1008,6 +1051,7 @@ export class SymbolGraphBuilder {
           );
           if (callerSymbol) {
             edges.push({
+          id: `${callerSymbol}-uses-jsx:${tagName}`,
               from: callerSymbol,
               to: `jsx:${tagName}`,
               type: "uses",
@@ -1102,6 +1146,7 @@ export class SymbolGraphBuilder {
       if (fromSymbolId) {
         // Create import edge (AI models love explicit import tracking)
         edges.push({
+          id: `${fromSymbolId}-imports-external:${importName}`,
           from: fromSymbolId,
           to: `external:${importName}`, // External dependency marker
           type: "imports",
@@ -1135,6 +1180,7 @@ export class SymbolGraphBuilder {
 
     for (const targetId of targetSymbols) {
       edges.push({
+        id: `${callerSymbol}-calls-${targetId}`,
         from: callerSymbol,
         to: targetId,
         type: "calls",
@@ -1166,6 +1212,7 @@ export class SymbolGraphBuilder {
       const objectSymbols = symbolLookup.get(object) || [];
       for (const objectId of objectSymbols) {
         edges.push({
+          id: `${callerSymbol}-uses-${objectId}`,
           from: callerSymbol,
           to: objectId,
           type: "uses",
@@ -1198,6 +1245,7 @@ export class SymbolGraphBuilder {
         if (refId !== callerSymbol) {
           // Don't self-reference
           edges.push({
+            id: `${callerSymbol}-references-${refId}`,
             from: callerSymbol,
             to: refId,
             type: "references",
@@ -1228,6 +1276,7 @@ export class SymbolGraphBuilder {
     const targetSymbols = symbolLookup.get(constructorTarget) || [];
     for (const targetId of targetSymbols) {
       edges.push({
+        id: `${callerSymbol}-uses-${targetId}`,
         from: callerSymbol,
         to: targetId,
         type: "uses", // Constructor usage

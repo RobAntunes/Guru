@@ -28,6 +28,7 @@ export class WorkerPool<T, R> {
   private memoryCheckInterval: NodeJS.Timeout | null = null;
   private lastMemoryCheck = 0;
   private memoryPressureLevel: 'low' | 'medium' | 'high' | 'critical' = 'low';
+  private workerJobMap: Map<Worker, { data: T; resolve: (r: R) => void; reject: (e: any) => void }> = new Map();
 
   constructor(workerScript: string, maxWorkers: number = 4, memoryLimits?: Partial<MemoryLimits>) {
     this.workerScript = workerScript;
@@ -57,28 +58,32 @@ export class WorkerPool<T, R> {
     if (this.workers.length >= this.maxWorkers) {
       return; // Already at max capacity
     }
-
     const worker = new Worker(this.workerScript);
-    
-    worker.on('message', (result: R) => {
-      const job = this.queue.shift();
+    worker.on('message', (result: any) => {
+      const job = this.workerJobMap.get(worker);
       if (job) {
         job.resolve(result);
+        this.workerJobMap.delete(worker);
+        this.idleWorkers.push(worker);
+        this.processQueue();
       }
-      this.idleWorkers.push(worker);
-      this.processQueue();
     });
-    
-    worker.on('error', (err) => {
-      const job = this.queue.shift();
+    worker.on('error', (err: any) => {
+      const job = this.workerJobMap.get(worker);
       if (job) {
         job.reject(err);
+        this.workerJobMap.delete(worker);
       }
-      // Remove errored worker and potentially replace it
       this.removeWorker(worker);
-      this.processQueue();
     });
-    
+    worker.on('exit', (code: number) => {
+      const job = this.workerJobMap.get(worker);
+      if (job) {
+        job.reject(new Error(`Worker exited with code ${code}`));
+        this.workerJobMap.delete(worker);
+      }
+      this.removeWorker(worker);
+    });
     this.workers.push(worker);
     this.idleWorkers.push(worker);
   }
@@ -87,15 +92,17 @@ export class WorkerPool<T, R> {
     if (this.workers.length <= this.minWorkers) {
       return; // Don't go below minimum
     }
-
     const worker = workerToRemove || this.idleWorkers.pop();
     if (!worker) return;
-
+    // Clean up any active job for this worker
+    const job = this.workerJobMap.get(worker);
+    if (job) {
+      job.reject(new Error('Worker terminated'));
+      this.workerJobMap.delete(worker);
+    }
     // Remove from all arrays
     this.workers = this.workers.filter(w => w !== worker);
     this.idleWorkers = this.idleWorkers.filter(w => w !== worker);
-    
-    // Terminate the worker
     worker.terminate();
   }
 
@@ -142,7 +149,22 @@ export class WorkerPool<T, R> {
 
   runTask(data: T): Promise<R> {
     return new Promise((resolve, reject) => {
-      this.queue.push({ data, resolve, reject });
+      // Add timeout to prevent hanging tasks
+      const timeoutId = setTimeout(() => {
+        reject(new Error('Task timeout: Worker took too long to respond'));
+      }, 30000); // 30 second timeout
+      
+      const wrappedResolve = (result: R) => {
+        clearTimeout(timeoutId);
+        resolve(result);
+      };
+      
+      const wrappedReject = (error: any) => {
+        clearTimeout(timeoutId);
+        reject(error);
+      };
+      
+      this.queue.push({ data, resolve: wrappedResolve, reject: wrappedReject });
       
       // Check if we need more workers for the queue
       if (this.memoryPressureLevel === 'low' && this.queue.length > this.idleWorkers.length) {
@@ -212,9 +234,9 @@ export class WorkerPool<T, R> {
 
   private processQueue() {
     if (this.queue.length === 0 || this.idleWorkers.length === 0) return;
-    
     const worker = this.idleWorkers.pop()!;
-    const job = this.queue[0];
+    const job = this.queue.shift()!;
+    this.workerJobMap.set(worker, job);
     worker.postMessage(job.data);
   }
 
@@ -244,23 +266,45 @@ export class WorkerPool<T, R> {
     this.memoryLimits = { ...this.memoryLimits, ...newLimits };
   }
 
-  destroy() {
-    // Stop memory monitoring
+  async destroy(): Promise<void> {
     if (this.memoryCheckInterval) {
       clearInterval(this.memoryCheckInterval);
       this.memoryCheckInterval = null;
     }
-
-    // Terminate all workers
-    for (const worker of this.workers) {
-      worker.terminate();
+    
+    // Reject all pending jobs first
+    for (const job of this.queue) {
+      job.reject(new Error('Worker pool destroyed'));
     }
+    this.queue = [];
+    
+    // Reject any jobs assigned to workers
+    for (const job of this.workerJobMap.values()) {
+      job.reject(new Error('Worker pool destroyed'));
+    }
+    this.workerJobMap.clear();
+    
+    // Terminate all workers with timeout
+    const terminatePromises = this.workers.map(async (worker) => {
+      try {
+        // Force terminate after 1 second if not responding
+        await Promise.race([
+          worker.terminate(),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Worker terminate timeout')), 1000)
+          )
+        ]);
+      } catch (error) {
+        // Force kill if graceful termination fails
+        try {
+          await worker.terminate();
+        } catch {}
+      }
+    });
+    
+    await Promise.allSettled(terminatePromises);
     
     this.workers = [];
     this.idleWorkers = [];
-    this.queue = [];
-    
-    // Final garbage collection attempt
-    this.forceGC();
   }
 } 

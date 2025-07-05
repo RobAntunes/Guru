@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, afterAll } from 'vitest';
 import { writeFile, unlink, mkdir } from 'fs/promises';
 import { performance } from 'perf_hooks';
 import * as fs from 'fs';
@@ -9,6 +9,14 @@ describe('Guru Stress & Edge Case Testing', () => {
   let guru: any;
 
   beforeEach(async () => {
+    // Reset database state for test isolation
+    try {
+      const { DatabaseAdapter } = await import('../src/core/database-adapter.js');
+      DatabaseAdapter.reset();
+    } catch (error) {
+      console.error('[SETUP] Database reset error:', error);
+    }
+    
     ({ Guru } = await import('../dist/index.js'));
     guru = new Guru();
   });
@@ -373,5 +381,53 @@ describe('Guru Stress & Edge Case Testing', () => {
         await unlink('project').catch(() => {});
       }
     });
+  });
+
+  afterEach(async () => {
+    if (guru) {
+      try {
+        console.log('[CLEANUP][afterEach] Calling guru.cleanup()');
+        await Promise.race([
+          guru.cleanup(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Cleanup timeout')), 5000))
+        ]);
+        console.log('[CLEANUP][afterEach] guru.cleanup() complete');
+      } catch (e) {
+        console.error('[CLEANUP][afterEach] guru.cleanup() error', e);
+      }
+    }
+  });
+  
+  afterAll(async () => {
+    if (guru) {
+      try {
+        console.log('[CLEANUP][afterAll] Calling guru.cleanup()');
+        await Promise.race([
+          guru.cleanup(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Final cleanup timeout')), 5000))
+        ]);
+        console.log('[CLEANUP][afterAll] guru.cleanup() complete');
+      } catch (e) {
+        console.error('[CLEANUP][afterAll] guru.cleanup() error', e);
+      }
+    }
+    
+    // Force close any remaining database connections and clear analyzer factory
+    try {
+      const { DatabaseAdapter } = await import('../src/core/database-adapter.js');
+      const { IncrementalAnalyzerFactory } = await import('../src/core/incremental-analyzer.js');
+      
+      await IncrementalAnalyzerFactory.clear();
+      DatabaseAdapter.reset();
+      console.log('[CLEANUP][afterAll] Database connections and analyzer factory cleared');
+    } catch (error) {
+      console.error('[CLEANUP][afterAll] Database cleanup error', error);
+    }
+    
+    // Force process exit after a short delay to ensure cleanup
+    setTimeout(() => {
+      console.log('[CLEANUP][afterAll] Forcing process exit to prevent hanging');
+      process.exit(0);
+    }, 1000);
   });
 }); 

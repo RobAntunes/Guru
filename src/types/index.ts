@@ -84,10 +84,14 @@ export interface SymbolGraph {
 }
 
 export interface SymbolEdge {
+  id: string;
   from: string;
   to: string;
   type: EdgeType;
   weight: number; // Strength of relationship
+  is_primary?: boolean;
+  confidence?: number;
+  metadata?: string;
 }
 
 export type EdgeType =

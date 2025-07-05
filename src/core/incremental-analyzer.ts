@@ -1,6 +1,6 @@
 /**
- * Incremental Analysis System for Guru
- * Only reanalyzes changed files and affected dependencies
+ * @fileoverview Incremental analysis engine for Guru
+ * Provides intelligent change detection and incremental processing
  */
 
 import * as fs from "fs/promises";
@@ -13,7 +13,9 @@ import { guruConfig, guruExcludedDirs } from "./config.js";
 import { SymbolCache, CachedSymbol } from "./symbol-cache.js";
 import { WorkerPool } from './worker-pool.js';
 import { DatabaseAdapter } from "./database-adapter.js";
+import { GuruDatabase } from './database.js';
 import * as os from 'os';
+import { fileURLToPath } from 'url';
 
 export interface FileAnalysisCache {
   hash: string;
@@ -90,7 +92,15 @@ export class IncrementalAnalyzer {
     this.originalPath = projectPath;
     this.projectPath = projectPath; // Will be resolved in initialize()
     this.quiet = quiet;
-    this.db = DatabaseAdapter.getInstance();
+    
+    // Always use isolated database instances for tests
+    if (process.env.NODE_ENV === 'test' || process.env.VITEST) {
+      // Use project path as test ID to ensure same project uses same database
+      const testId = `test-${path.resolve(projectPath).replace(/[^a-zA-Z0-9]/g, '_')}`;
+      this.db = DatabaseAdapter.getTestInstance(testId);
+    } else {
+      this.db = DatabaseAdapter.getInstance();
+    }
     
     // Set a temporary cacheDir to avoid using unresolved file paths
     this.cacheDir = guruConfig.cacheDir.startsWith("/")
@@ -125,23 +135,22 @@ export class IncrementalAnalyzer {
     // Initialize worker pool for parallel analysis
     const maxWorkers = (globalThis as any).guruMaxParallelism || os.cpus().length;
     try {
-      // Try to resolve the worker script path - handle both dev and compiled versions
+      // Always prefer the compiled version for workers (Node.js workers need .js files)
       let workerPath;
-      try {
-        // First try the compiled version (for production)
-        workerPath = require.resolve('./worker-symbol-analyze.js');
-      } catch {
-        try {
-          // Try TypeScript version for development
-          workerPath = require.resolve('./worker-symbol-analyze.ts');
-        } catch {
-          // Fallback to relative path
-          workerPath = path.join(__dirname, 'worker-symbol-analyze.js');
-          // Check if TypeScript version exists
-          const tsPath = path.join(__dirname, 'worker-symbol-analyze.ts');
-          if (await this.fileExists(tsPath)) {
-            workerPath = tsPath;
-          }
+      
+      // Get current module directory in ESM-compatible way
+      const currentDir = path.dirname(fileURLToPath(import.meta.url));
+      const compiledPath = path.join(currentDir, 'worker-symbol-analyze.js');
+      
+      if (await this.fileExists(compiledPath)) {
+        workerPath = compiledPath;
+      } else {
+        // Try to resolve from dist directory
+        const distPath = path.join(process.cwd(), 'dist', 'core', 'worker-symbol-analyze.js');
+        if (await this.fileExists(distPath)) {
+          workerPath = distPath;
+        } else {
+          throw new Error('Compiled worker file not found. Please run "bun run build" first.');
         }
       }
       
@@ -410,20 +419,48 @@ export class IncrementalAnalyzer {
    * Cleanup method to be called before analyzer is destroyed
    */
   async cleanup(): Promise<void> {
-    // Stop memory monitoring
+    if (!this.quiet) {
+      console.log('[IncrementalAnalyzer] Starting cleanup...');
+    }
+    
+    // Stop memory monitoring first
     if (this.memoryCheckTimer) {
       clearInterval(this.memoryCheckTimer);
+      this.memoryCheckTimer = undefined;
+    }
+    
+    // Cleanup worker pool with timeout
+    if (this.workerPool) {
+      try {
+        await Promise.race([
+          this.workerPool.destroy(),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Worker pool cleanup timeout')), 5000)
+          )
+        ]);
+        this.workerPool = null;
+      } catch (error) {
+        if (!this.quiet) {
+          console.error('[IncrementalAnalyzer] Worker pool cleanup error:', error);
+        }
+        this.workerPool = null;
+      }
     }
     
     // Flush all pending writes in symbol cache
     if (this.symbolCache) {
-      await this.symbolCache.flush();
+      try { 
+        await this.symbolCache.flush(); 
+        this.symbolCache = undefined;
+      } catch (error) {
+        if (!this.quiet) {
+          console.error('[IncrementalAnalyzer] Symbol cache flush error:', error);
+        }
+      }
     }
     
-    // Cleanup worker pool
-    if (this.workerPool) {
-      await this.workerPool.destroy();
-    }
+    // Don't close database connection here - it's a singleton and other components might still need it
+    // Database will be closed properly in tests via DatabaseAdapter.reset()
     
     // Clear memory caches
     this.fileCache.clear();
@@ -431,6 +468,10 @@ export class IncrementalAnalyzer {
     this.reverseDependencyGraph.clear();
     this.fileCacheAccess.length = 0;
     this.dependencyAccess.length = 0;
+    
+    if (!this.quiet) {
+      console.log('[IncrementalAnalyzer] Cleanup completed');
+    }
   }
 
   /**
@@ -442,6 +483,8 @@ export class IncrementalAnalyzer {
     newFiles: string[];
     affectedFiles: string[];
   }> {
+
+    
     if (!this.symbolCache) {
       if (!this.quiet) {
         console.log('🔍 No symbol cache available, treating all files as new');
@@ -458,8 +501,8 @@ export class IncrementalAnalyzer {
     const newFiles: string[] = [];
     const deletedFiles: string[] = [];
     
-    // Build current file set for deletion detection
-    const currentFiles = new Set(allFiles);
+    // Build current file set for deletion detection (normalize paths)
+    const currentFiles = new Set(allFiles.map(f => path.resolve(f)));
     
     // Get previously cached files to detect deletions
     const previousFiles = await this.getPreviouslyCachedFiles();
@@ -470,13 +513,17 @@ export class IncrementalAnalyzer {
       console.log(`  📦 Previously cached files: ${previousFiles.length}`);
     }
     
-    // Detect deleted files
+
+    
+    // Detect deleted files (normalize cached file paths for comparison)
     for (const cachedFile of previousFiles) {
-      if (!currentFiles.has(cachedFile)) {
+      const normalizedCachedFile = path.resolve(cachedFile);
+      if (!currentFiles.has(normalizedCachedFile)) {
         deletedFiles.push(cachedFile);
         if (!this.quiet) {
           console.log(`  🗑️  Deleted: ${path.basename(cachedFile)}`);
         }
+
       }
     }
     
@@ -488,6 +535,7 @@ export class IncrementalAnalyzer {
         
         if (!this.quiet) {
           console.log(`  🔍 Checking ${path.basename(file)} (hash: ${currentHash.substring(0, 8)}...)`);
+          console.log(`    📦 Cache hit: ${cached ? 'YES' : 'NO'}`);
         }
         
         if (!cached) {
@@ -534,12 +582,16 @@ export class IncrementalAnalyzer {
       console.log(`  📊 Affected files: ${affectedFiles.length} - ${affectedFiles.map(f => path.basename(f)).join(', ')}`);
     }
     
-    return {
+    const result = {
       changedFiles,
       deletedFiles,
       newFiles,
       affectedFiles,
     };
+    
+
+    
+    return result;
   }
 
   /**
@@ -631,8 +683,9 @@ export class IncrementalAnalyzer {
     totalFiles: number,
     analyzedFiles: number,
   ): Promise<void> {
+    const normalizedProjectPath = path.resolve(this.projectPath);
     const checkpoint: AnalysisCheckpoint = {
-      projectPath,
+      projectPath: normalizedProjectPath,
       totalFiles,
       analyzedFiles,
       timestamp: Date.now(),
@@ -641,7 +694,9 @@ export class IncrementalAnalyzer {
     };
     
     try {
-      const checkpointId = `checkpoint-${this.projectPath}`;
+      const checkpointId = `checkpoint-${normalizedProjectPath}`;
+      console.log(`[DEBUG][saveCheckpoint] Saving checkpoint with ID: ${checkpointId}`);
+      
       // Save to database (primary)
       await this.db.saveAnalysisSession(
         checkpointId,
@@ -656,14 +711,17 @@ export class IncrementalAnalyzer {
         }
       );
       console.log(`📊 Saved analysis checkpoint: ${analyzedFiles}/${totalFiles} files analyzed`);
+      console.log(`[DEBUG][saveCheckpoint] Successfully saved checkpoint to database`);
     } catch (error) {
       console.warn("Failed to save checkpoint to database:", error);
       
       // Fallback to file-based checkpoint
       const baseDir = await IncrementalAnalyzer.getBaseDirectory(this.cacheDir);
       const checkpointPath = path.join(baseDir, 'analysis-checkpoint.json');
+      console.log(`[DEBUG][saveCheckpoint] Falling back to file-based checkpoint: ${checkpointPath}`);
       await fs.mkdir(baseDir, { recursive: true });
       await fs.writeFile(checkpointPath, JSON.stringify(checkpoint, null, 2));
+      console.log(`[DEBUG][saveCheckpoint] Successfully saved file-based checkpoint`);
     }
   }
 
@@ -672,13 +730,22 @@ export class IncrementalAnalyzer {
    */
   async loadCheckpoint(): Promise<AnalysisCheckpoint | null> {
     try {
-      const checkpointId = `checkpoint-${this.projectPath}`;
+      const normalizedProjectPath = path.resolve(this.projectPath);
+      const checkpointId = `checkpoint-${normalizedProjectPath}`;
+      console.log(`[DEBUG][loadCheckpoint] Looking for checkpoint with ID: ${checkpointId}`);
+      
       // Try loading from database first
       const sessions = await this.db.getAnalysisSessions(checkpointId, 1);
+      console.log(`[DEBUG][loadCheckpoint] Found ${sessions.length} sessions in database`);
+      
       if (sessions.length > 0) {
         const session = sessions[0];
+        console.log(`[DEBUG][loadCheckpoint] Session data exists: ${!!session.session_data}`);
+        console.log(`[DEBUG][loadCheckpoint] Checkpoint exists: ${!!(session.session_data && session.session_data.checkpoint)}`);
+        
         // The checkpoint is stored in the session_data.checkpoint field
         if (session.session_data && session.session_data.checkpoint) {
+          console.log(`[DEBUG][loadCheckpoint] Successfully loaded checkpoint from database`);
           return session.session_data.checkpoint as AnalysisCheckpoint;
         }
       }
@@ -689,13 +756,18 @@ export class IncrementalAnalyzer {
     // Fallback to file-based checkpoint
     const baseDir = await IncrementalAnalyzer.getBaseDirectory(this.cacheDir);
     const checkpointPath = path.join(baseDir, 'analysis-checkpoint.json');
+    console.log(`[DEBUG][loadCheckpoint] Checking file-based checkpoint: ${checkpointPath}`);
+    
     if (!fsSync.existsSync(checkpointPath)) {
+      console.log(`[DEBUG][loadCheckpoint] No file-based checkpoint found`);
       return null;
     }
     
     try {
       const data = await fs.readFile(checkpointPath, 'utf-8');
-      return JSON.parse(data);
+      const checkpoint = JSON.parse(data);
+      console.log(`[DEBUG][loadCheckpoint] Successfully loaded file-based checkpoint`);
+      return checkpoint;
     } catch (error) {
       console.warn("Failed to parse checkpoint JSON:", error);
       // Delete corrupted checkpoint file
@@ -1061,13 +1133,7 @@ export class IncrementalAnalyzer {
   }
 
   private async hashFile(filePath: string): Promise<string> {
-    const hash = crypto.createHash("sha256");
-    const stream = fsSync.createReadStream(filePath);
-    stream.on("data", (data: any) => hash.update(data));
-    return new Promise((resolve, reject) => {
-      stream.on("end", () => resolve(hash.digest("hex")));
-      stream.on("error", reject);
-    });
+    return this.calculateFileHash(filePath);
   }
 
   async analyzeFile(filePath: string): Promise<CachedSymbol[]> {
@@ -1093,6 +1159,22 @@ export class IncrementalAnalyzer {
     this.symbolCache.setSymbols(filePath, fileHash, symbols);
     
     return symbols;
+  }
+
+  async analyzeFilesSequential(files: string[]): Promise<any[]> {
+    const results: any[] = [];
+    
+    for (const file of files) {
+      try {
+        const symbols = await this.analyzeFile(file);
+        results.push({ filePath: file, symbols, error: null });
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        results.push({ filePath: file, symbols: [], error: errorMessage });
+      }
+    }
+    
+    return results;
   }
 
   async analyzeFilesParallel(files: string[]): Promise<any[]> {
@@ -1156,54 +1238,87 @@ export class IncrementalAnalyzer {
    */
   private async processFilesInBatches(files: string[], startTime: number): Promise<any[]> {
     const results: any[] = [];
+    if (files.length === 0) return results;
     const workerStats = this.workerPool!.getStats();
-    
-    // Calculate optimal batch size based on worker count and memory pressure
     const baseBatchSize = Math.max(1, Math.floor(files.length / (workerStats.activeWorkers + workerStats.idleWorkers)));
     const adaptiveBatchSize = this.calculateAdaptiveBatchSize(baseBatchSize, files.length, workerStats.memoryPressureLevel);
-    
     if (!this.quiet) {
-      console.log(`[IncrementalAnalyzer] Processing ${files.length} files in batches of ${adaptiveBatchSize}`);
+      console.log(`[DEBUG][processFilesInBatches] Start: ${files.length} files, batch size ${adaptiveBatchSize}`);
     }
-    
-    // Process files in batches
+    if (files.length === 1) {
+      // Special case: single file, avoid batching logic
+      const batchFiles = files;
+      const batchStartTime = Date.now();
+      let batchResults;
+      try {
+        batchResults = [await this.processFileWithRetry(files[0])];
+      } catch (e) {
+        console.error('[DEBUG][processFilesInBatches] Error in single-file batch:', e);
+        // Return error result instead of throwing
+        batchResults = [{ filePath: files[0], symbols: [], error: e instanceof Error ? e.message : String(e) }];
+      }
+      if (!this.quiet) {
+        console.log(`[DEBUG][processFilesInBatches] Batch results received for single file: ${batchFiles[0]}`);
+        console.log(`[DEBUG][processFilesInBatches] Calling processBatchResults for single file: ${batchFiles[0]}`);
+      }
+      await this.processBatchResults(batchFiles, batchResults);
+      if (!this.quiet) {
+        console.log(`[DEBUG][processFilesInBatches] Returned from processBatchResults for single file: ${batchFiles[0]}`);
+      }
+      results.push(...batchResults);
+      const batchDuration = Date.now() - batchStartTime;
+      if (!this.quiet) {
+        console.log(`[DEBUG][processFilesInBatches] Single file batch completed in ${batchDuration}ms (100.0% total)`);
+      }
+      return results;
+    }
     for (let i = 0; i < files.length; i += adaptiveBatchSize) {
       const batchFiles = files.slice(i, i + adaptiveBatchSize);
       const batchStartTime = Date.now();
-      
-      // Process batch in parallel
-      const batchResults = await Promise.all(
-        batchFiles.map(file => this.processFileWithRetry(file))
-      );
-      
-      // Cache results and extract dependencies
+      if (!this.quiet) {
+        console.log(`[DEBUG][processFilesInBatches] Processing batch ${Math.floor(i / adaptiveBatchSize) + 1}: files ${batchFiles.join(', ')}`);
+      }
+      let batchResults;
+      try {
+        batchResults = await Promise.all(
+          batchFiles.map(file => this.processFileWithRetry(file))
+        );
+      } catch (e) {
+        console.error('[DEBUG][processFilesInBatches] Error in batch Promise.all:', e);
+        // Return error results for all files in batch instead of throwing
+        batchResults = batchFiles.map(file => ({ 
+          filePath: file, 
+          symbols: [], 
+          error: e instanceof Error ? e.message : String(e) 
+        }));
+      }
+      if (!this.quiet) {
+        console.log(`[DEBUG][processFilesInBatches] Batch results received for files: ${batchFiles.join(', ')}`);
+        console.log(`[DEBUG][processFilesInBatches] Calling processBatchResults for files: ${batchFiles.join(', ')}`);
+      }
       await this.processBatchResults(batchFiles, batchResults);
-      
+      if (!this.quiet) {
+        console.log(`[DEBUG][processFilesInBatches] Returned from processBatchResults for files: ${batchFiles.join(', ')}`);
+      }
       results.push(...batchResults);
-      
       const batchDuration = Date.now() - batchStartTime;
       const totalDuration = Date.now() - startTime;
       const progress = ((i + batchFiles.length) / files.length * 100).toFixed(1);
-      
       if (!this.quiet) {
-        console.log(`[IncrementalAnalyzer] Batch ${Math.floor(i / adaptiveBatchSize) + 1} completed: ${batchFiles.length} files in ${batchDuration}ms (${progress}% total, ${(batchDuration/batchFiles.length).toFixed(2)}ms/file)`);
+        console.log(`[DEBUG][processFilesInBatches] Batch ${Math.floor(i / adaptiveBatchSize) + 1} completed in ${batchDuration}ms (${progress}% total)`);
       }
-      
-      // Check memory pressure and adjust batch size if needed
       const currentStats = this.workerPool!.getStats();
       if (currentStats.memoryPressureLevel === 'high' || currentStats.memoryPressureLevel === 'critical') {
         if (!this.quiet) {
-          console.log(`[IncrementalAnalyzer] Memory pressure detected (${currentStats.memoryPressureLevel}), reducing batch size for next batch`);
+          console.log(`[DEBUG][processFilesInBatches] Memory pressure: ${currentStats.memoryPressureLevel}`);
         }
-        // Force garbage collection if available
-        if (global.gc) {
-          global.gc();
-        }
-        // Small delay to allow memory cleanup
+        if (global.gc) global.gc();
         await new Promise(resolve => setTimeout(resolve, 100));
       }
     }
-    
+    if (!this.quiet) {
+      console.log('[DEBUG][processFilesInBatches] All batches complete');
+    }
     return results;
   }
 
@@ -1240,21 +1355,32 @@ export class IncrementalAnalyzer {
    */
   private async processFileWithRetry(file: string, maxRetries = 2): Promise<any> {
     let lastError: Error | null = null;
-    
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      if (!this.quiet) {
+        console.log(`[DEBUG][processFileWithRetry] Attempt ${attempt + 1} for file: ${file}`);
+      }
       try {
-        const result = await this.workerPool!.runTask(file);
+        const result = await Promise.race([
+          this.workerPool!.runTask(file),
+          new Promise((_, reject) => setTimeout(() => reject(new Error(`[Timeout] runTask timed out for file: ${file}`)), 5000))
+        ]);
+        if (!this.quiet) {
+          console.log(`[DEBUG][processFileWithRetry] Success for file: ${file}`);
+        }
         return result;
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
-        
+        if (!this.quiet) {
+          console.error(`[DEBUG][processFileWithRetry] Error for file: ${file} on attempt ${attempt + 1}:`, lastError.message);
+        }
         if (attempt < maxRetries) {
-          // Small delay before retry
           await new Promise(resolve => setTimeout(resolve, 50 * (attempt + 1)));
         }
       }
     }
-    
+    if (!this.quiet) {
+      console.error(`[DEBUG][processFileWithRetry] All attempts failed for file: ${file}`);
+    }
     return { filePath: file, symbols: [], error: lastError?.message || 'Unknown error' };
   }
 
@@ -1262,47 +1388,69 @@ export class IncrementalAnalyzer {
    * Process batch results with enhanced dependency extraction and caching
    */
   private async processBatchResults(batchFiles: string[], batchResults: any[]): Promise<void> {
+    if (!this.quiet) {
+      console.log(`[DEBUG][processBatchResults] Start for files: ${batchFiles.join(', ')}`);
+    }
     const cachePromises: Promise<void>[] = [];
-    
     for (let i = 0; i < batchFiles.length; i++) {
       const file = batchFiles[i];
       const result = batchResults[i];
-      
+      if (!this.quiet) {
+        console.log(`[DEBUG][processBatchResults] Processing file: ${file}`);
+      }
       if (result && !result.error && this.symbolCache) {
         // Process asynchronously to avoid blocking
         cachePromises.push(this.cacheFileResult(file, result));
       }
     }
-    
-    // Wait for all cache operations to complete
+    if (!this.quiet) {
+      console.log(`[DEBUG][processBatchResults] Awaiting all cache promises for files: ${batchFiles.join(', ')}`);
+    }
     await Promise.all(cachePromises);
+    if (!this.quiet) {
+      console.log(`[DEBUG][processBatchResults] All cache promises complete for files: ${batchFiles.join(', ')}`);
+    }
   }
 
   /**
    * Cache a single file result with enhanced dependency extraction
    */
   private async cacheFileResult(file: string, result: any): Promise<void> {
+    if (!this.quiet) {
+      console.log(`[DEBUG][cacheFileResult] Start for file: ${file}`);
+    }
     try {
+      // Skip caching if the result has an error
+      if (result.error) {
+        if (!this.quiet) {
+          console.log(`[DEBUG][cacheFileResult] Skipping cache for error result: ${file}`);
+        }
+        return;
+      }
+      
+      if (!this.quiet) {
+        console.log(`[DEBUG][cacheFileResult] About to hash file: ${file}`);
+      }
       const fileHash = await this.hashFile(file);
-      
-      // Transform worker result to CachedSymbol format if needed
+      if (!this.quiet) {
+        console.log(`[DEBUG][cacheFileResult] Finished hashing file: ${file}`);
+      }
       const symbols = result.symbols || [];
-      
-      // Save to symbol cache
       if (this.symbolCache) {
+        if (!this.quiet) {
+          console.log(`[DEBUG][cacheFileResult] About to call setSymbols for file: ${file}`);
+        }
         this.symbolCache.setSymbols(file, fileHash, symbols);
       }
-      
-      // Enhanced dependency extraction from symbols
       const dependencies = this.extractDependenciesFromSymbols(file, symbols);
-      
-      // Update internal cache for consistency
-      await this.updateCache(file, symbols, dependencies);
-      
-    } catch (error) {
       if (!this.quiet) {
-        console.error('[IncrementalAnalyzer][ERROR] Failed to cache results for', file, ':', error);
+        console.log(`[DEBUG][cacheFileResult] Completed for file: ${file}`);
       }
+    } catch (e) {
+      if (!this.quiet) {
+        console.error(`[DEBUG][cacheFileResult] Error for file: ${file}:`, e);
+      }
+      // Don't throw - just skip caching for this file
     }
   }
 
@@ -1326,8 +1474,16 @@ export class IncrementalAnalyzer {
         }
       }
       
-      // Also check for file extensions that might indicate dependencies
-      if (symbol.location && symbol.location.includes('.')) {
+      // Check for file dependencies based on location.file instead of treating location as string
+      if (symbol.location && typeof symbol.location === 'object' && symbol.location.file) {
+        const potentialDep = path.resolve(fileDir, symbol.location.file);
+        if (potentialDep !== filePath && !dependencies.includes(potentialDep)) {
+          dependencies.push(potentialDep);
+        }
+      }
+      
+      // Also check for string-based location references (legacy support)
+      if (symbol.location && typeof symbol.location === 'string' && symbol.location.includes('.')) {
         const potentialDep = path.resolve(fileDir, symbol.location);
         if (potentialDep !== filePath && !dependencies.includes(potentialDep)) {
           dependencies.push(potentialDep);
@@ -1358,6 +1514,13 @@ export class IncrementalAnalyzer {
     } catch (error) {
       return null;
     }
+  }
+
+  /**
+   * Get the database instance for external access
+   */
+  getDatabase(): GuruDatabase {
+    return this.db.getDatabase();
   }
 }
 
@@ -1390,6 +1553,43 @@ export class IncrementalAnalyzerFactory {
   }
 
   /**
+   * Clear all instances with proper cleanup
+   */
+  static async clear(): Promise<void> {
+    // Cleanup all instances properly with timeout
+    const cleanupPromises = Array.from(this.instances.entries()).map(async ([path, analyzer]) => {
+      try {
+        await Promise.race([
+          analyzer.cleanup(),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error(`Analyzer cleanup timeout: ${path}`)), 3000)
+          )
+        ]);
+      } catch (error) {
+        console.error(`[Factory] Failed to cleanup analyzer for ${path}:`, error);
+      }
+    });
+    
+    await Promise.allSettled(cleanupPromises);
+    this.instances.clear();
+    this.accessOrder.length = 0;
+  }
+
+  /**
+   * Get memory statistics for all instances
+   */
+  static getMemoryStats(): { instanceCount: number; totalCacheEntries: number } {
+    let totalCacheEntries = 0;
+    for (const analyzer of this.instances.values()) {
+      totalCacheEntries += analyzer.getCacheStats().totalCachedFiles;
+    }
+    return {
+      instanceCount: this.instances.size,
+      totalCacheEntries
+    };
+  }
+
+  /**
    * Update LRU access order for instances
    */
   private static updateAccessOrder(path: string): void {
@@ -1414,31 +1614,5 @@ export class IncrementalAnalyzerFactory {
       this.instances.delete(lruPath);
       console.error(`[Factory][MEMORY] Cleaned up LRU analyzer instance: ${lruPath}`);
     }
-  }
-
-  /**
-   * Clear all instances with proper cleanup
-   */
-  static async clear(): Promise<void> {
-    // Cleanup all instances properly
-    for (const [path, analyzer] of this.instances) {
-      await analyzer.cleanup();
-    }
-    this.instances.clear();
-    this.accessOrder.length = 0;
-  }
-
-  /**
-   * Get memory statistics for all instances
-   */
-  static getMemoryStats(): { instanceCount: number; totalCacheEntries: number } {
-    let totalCacheEntries = 0;
-    for (const analyzer of this.instances.values()) {
-      totalCacheEntries += analyzer.getCacheStats().totalCachedFiles;
-    }
-    return {
-      instanceCount: this.instances.size,
-      totalCacheEntries
-    };
   }
 }

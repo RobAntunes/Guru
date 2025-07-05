@@ -16,12 +16,12 @@ export interface DatabaseConfig {
   pragmas?: Record<string, any>;
 }
 
-// Pattern Learning Data
+// DEPRECATED: Human-centric pattern learning data
 export interface PatternWeight {
   pattern: string;
   weight: number;
   updated_at: number;
-  metadata?: string; // JSON for flexible metadata
+  metadata?: string;
 }
 
 export interface PatternHistory {
@@ -31,6 +31,30 @@ export interface PatternHistory {
   timestamp: number;
   event_type: 'created' | 'updated' | 'decayed';
   source: string;
+}
+
+// AI-Native Pattern Detection
+export interface DetectedPattern {
+  id: string; // UUID
+  hash: string; // Structural hash of the pattern
+  type: 'emergent' | 'intended' | 'drifted';
+  vector_embedding: string; // JSON serialized vector
+  stability_score: number;
+  complexity_score: number;
+  frequency: number;
+  created_at: number;
+  updated_at: number;
+  metadata: string; // JSON for extended features
+}
+
+export interface PatternInstance {
+  id: string; // UUID
+  pattern_id: string;
+  symbol_id: string;
+  role_in_pattern: string; // e.g., 'entry', 'exit', 'participant'
+  confidence: number;
+  created_at: number;
+  metadata: string;
 }
 
 // Self-Reflection Data
@@ -147,6 +171,9 @@ export interface StoredSymbolEdge {
   to_symbol: string;
   edge_type: string;
   weight: number;
+  is_primary?: boolean; // For Smart Dependency Tracking
+  confidence?: number; // For AI-native confidence scoring
+  metadata?: string; // For rich context
   created_at: number;
 }
 
@@ -178,7 +205,12 @@ export class GuruDatabase {
     
     // Configure for performance
     if (config?.enableWAL !== false) {
-      this.db.pragma('journal_mode = WAL');
+      try {
+        this.db.pragma('journal_mode = WAL');
+      } catch (error) {
+        console.warn('Failed to set WAL mode, falling back to DELETE mode:', error);
+        this.db.pragma('journal_mode = DELETE');
+      }
     }
     
     if (config?.memoryOptimized !== false) {
@@ -201,7 +233,7 @@ export class GuruDatabase {
   }
 
   private initializeSchema(): void {
-    // Pattern Learning Tables
+    // DEPRECATED: Human-centric pattern learning tables
     this.db.exec(`
       CREATE TABLE IF NOT EXISTS pattern_weights (
         pattern TEXT PRIMARY KEY,
@@ -222,6 +254,38 @@ export class GuruDatabase {
 
       CREATE INDEX IF NOT EXISTS idx_pattern_history_pattern ON pattern_history(pattern);
       CREATE INDEX IF NOT EXISTS idx_pattern_history_timestamp ON pattern_history(timestamp);
+    `);
+
+    // AI-Native Pattern Detection Tables
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS detected_patterns (
+        id TEXT PRIMARY KEY,
+        hash TEXT NOT NULL UNIQUE,
+        type TEXT NOT NULL,
+        vector_embedding TEXT,
+        stability_score REAL NOT NULL DEFAULT 0,
+        complexity_score REAL NOT NULL DEFAULT 0,
+        frequency INTEGER NOT NULL DEFAULT 1,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        metadata TEXT
+      );
+
+      CREATE TABLE IF NOT EXISTS pattern_instances (
+        id TEXT PRIMARY KEY,
+        pattern_id TEXT NOT NULL,
+        symbol_id TEXT NOT NULL,
+        role_in_pattern TEXT,
+        confidence REAL NOT NULL,
+        created_at INTEGER NOT NULL,
+        metadata TEXT,
+        FOREIGN KEY (pattern_id) REFERENCES detected_patterns(id) ON DELETE CASCADE,
+        FOREIGN KEY (symbol_id) REFERENCES symbols(id) ON DELETE CASCADE
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_detected_patterns_hash ON detected_patterns(hash);
+      CREATE INDEX IF NOT EXISTS idx_pattern_instances_pattern_id ON pattern_instances(pattern_id);
+      CREATE INDEX IF NOT EXISTS idx_pattern_instances_symbol_id ON pattern_instances(symbol_id);
     `);
 
     // Self-Reflection Tables
@@ -356,9 +420,10 @@ export class GuruDatabase {
         to_symbol TEXT NOT NULL,
         edge_type TEXT NOT NULL,
         weight REAL NOT NULL DEFAULT 1.0,
-        created_at INTEGER NOT NULL,
-        FOREIGN KEY (from_symbol) REFERENCES symbols(id),
-        FOREIGN KEY (to_symbol) REFERENCES symbols(id)
+        is_primary BOOLEAN DEFAULT FALSE,
+        confidence REAL DEFAULT 1.0,
+        metadata TEXT,
+        created_at INTEGER NOT NULL
       );
 
       CREATE INDEX IF NOT EXISTS idx_symbols_file ON symbols(file_path);
@@ -437,6 +502,28 @@ export class GuruDatabase {
       SELECT * FROM pattern_history WHERE pattern = ? ORDER BY timestamp DESC LIMIT ?
     `));
 
+    // AI-Native Pattern Detection
+    this.prepared.set('upsertDetectedPattern', this.db.prepare(`
+      INSERT INTO detected_patterns (id, hash, type, vector_embedding, stability_score, complexity_score, frequency, created_at, updated_at, metadata)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(hash) DO UPDATE SET
+        frequency = frequency + 1,
+        updated_at = excluded.updated_at
+    `));
+
+    this.prepared.set('upsertPatternInstance', this.db.prepare(`
+      INSERT OR REPLACE INTO pattern_instances (id, pattern_id, symbol_id, role_in_pattern, confidence, created_at, metadata)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `));
+
+    this.prepared.set('getAllDetectedPatterns', this.db.prepare(`
+      SELECT * FROM detected_patterns
+    `));
+
+    this.prepared.set('getAllPatternInstances', this.db.prepare(`
+      SELECT * FROM pattern_instances
+    `));
+
     // File Analysis Cache
     this.prepared.set('upsertFileCache', this.db.prepare(`
       INSERT OR REPLACE INTO file_analysis_cache 
@@ -472,8 +559,8 @@ export class GuruDatabase {
     `));
 
     this.prepared.set('insertSymbolEdge', this.db.prepare(`
-      INSERT OR REPLACE INTO symbol_edges (id, from_symbol, to_symbol, edge_type, weight, created_at)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT OR REPLACE INTO symbol_edges (id, from_symbol, to_symbol, edge_type, weight, is_primary, confidence, metadata, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `));
 
     // Analysis Sessions
@@ -584,6 +671,46 @@ export class GuruDatabase {
     return stmt.all(pattern, limit) as PatternHistory[];
   }
 
+  // AI-Native Pattern Detection API
+  async upsertDetectedPattern(pattern: DetectedPattern): Promise<void> {
+    const stmt = this.prepared.get('upsertDetectedPattern')!;
+    stmt.run(
+      pattern.id,
+      pattern.hash,
+      pattern.type,
+      pattern.vector_embedding,
+      pattern.stability_score,
+      pattern.complexity_score,
+      pattern.frequency,
+      pattern.created_at,
+      pattern.updated_at,
+      pattern.metadata
+    );
+  }
+
+  async upsertPatternInstance(instance: PatternInstance): Promise<void> {
+    const stmt = this.prepared.get('upsertPatternInstance')!;
+    stmt.run(
+      instance.id,
+      instance.pattern_id,
+      instance.symbol_id,
+      instance.role_in_pattern,
+      instance.confidence,
+      instance.created_at,
+      instance.metadata
+    );
+  }
+
+  async getAllDetectedPatterns(): Promise<DetectedPattern[]> {
+    const stmt = this.prepared.get('getAllDetectedPatterns')!;
+    return stmt.all() as DetectedPattern[];
+  }
+
+  async getAllPatternInstances(): Promise<PatternInstance[]> {
+    const stmt = this.prepared.get('getAllPatternInstances')!;
+    return stmt.all() as PatternInstance[];
+  }
+
   // File Analysis Cache API
   async upsertFileAnalysis(entry: Omit<FileAnalysisEntry, 'analysis_timestamp'>): Promise<void> {
     const stmt = this.prepared.get('upsertFileCache')!;
@@ -655,11 +782,25 @@ export class GuruDatabase {
     };
   }
 
-  async storeSymbolEdge(edge: SymbolEdge): Promise<void> {
-    const stmt = this.prepared.get('insertSymbolEdge')!;
-    const edgeId = `${edge.from}-${edge.to}-${edge.type}`;
-    
-    stmt.run(edgeId, edge.from, edge.to, edge.type, edge.weight, Date.now());
+  storeSymbolEdge(edge: SymbolEdge): void {
+    // Ensure all values are SQLite-compatible
+    const safe = (v: any) => {
+      if (v === null || typeof v === 'number' || typeof v === 'string' || typeof v === 'bigint' || Buffer.isBuffer(v)) return v;
+      return JSON.stringify(v);
+    };
+    this.db.prepare(
+      `INSERT OR REPLACE INTO symbol_edges (id, from_symbol, to_symbol, edge_type, weight, is_primary, confidence, metadata, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).run(
+      safe(edge.id),
+      safe(edge.from), 
+      safe(edge.to), 
+      safe(edge.type), 
+      safe(edge.weight || 1.0),
+      safe(edge.is_primary || false),
+      safe(edge.confidence || 1.0),
+      safe(edge.metadata),
+      Date.now()
+    );
   }
 
   // Analysis Session API
@@ -833,6 +974,27 @@ export class GuruDatabase {
   // Transaction support
   transaction<T>(fn: () => T): T {
     return this.db.transaction(fn)();
+  }
+
+  // Clear all data (for testing)
+  async clearAllData(): Promise<void> {
+    const tables = [
+      'file_analysis_cache',
+      'symbols',
+      'symbol_edges',
+      'analysis_sessions',
+      'detected_patterns',
+      'pattern_instances'
+    ];
+    
+    for (const table of tables) {
+      try {
+        const stmt = this.db.prepare(`DELETE FROM ${table}`);
+        stmt.run();
+      } catch (error) {
+        // Ignore errors for non-existent tables
+      }
+    }
   }
 
   // DLGM-Ready: Future dynamic parameter support

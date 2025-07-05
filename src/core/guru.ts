@@ -8,7 +8,7 @@
 import { AnalysisResult, SymbolGraph, ExecutionTrace } from "../types/index.js";
 import { SymbolGraphBuilder } from "../parsers/symbol-graph.js";
 import { ExecutionTracer } from "../intelligence/execution-tracer.js";
-import { PatternDetector } from "../intelligence/pattern-detector.js";
+import { PatternDetector } from '../intelligence/pattern-detector.js';
 import { ChangeImpactAnalyzer } from "../intelligence/change-impact-analyzer.js";
 import { CodeClusterer } from "../intelligence/code-clusterer.js";
 import YAML from "yaml";
@@ -22,6 +22,8 @@ import {
 import { ChangeImpactAnalysis, CodeChange } from "../types/index.js";
 import fs from "fs";
 import { IncrementalAnalyzer } from "./incremental-analyzer.js";
+import { SmartDependencyTracker } from './smart-dependency-tracker.js';
+import { SymbolProfileAnalyzer } from '../intelligence/symbol-profile-analyzer.js';
 import { guruConfig } from "./config.js";
 import pathLib from "path";
 import { dirname } from "path";
@@ -58,6 +60,8 @@ interface LazyLoadedComponents {
   changeImpactAnalyzer?: ChangeImpactAnalyzer;
   codeClusterer?: CodeClusterer;
   patternDetector?: PatternDetector;
+  smartDependencyTracker?: SmartDependencyTracker;
+  symbolProfileAnalyzer?: SymbolProfileAnalyzer;
 }
 
 export class GuruCore {
@@ -145,9 +149,44 @@ export class GuruCore {
         console.error("🎯 Loading PatternDetector...");
         this.initializedComponents.add('PatternDetector');
       }
-      this.components.patternDetector = new PatternDetector();
+      if (!this.incrementalAnalyzer) {
+        throw new Error("IncrementalAnalyzer is not initialized, cannot create PatternDetector");
+      }
+      this.components.patternDetector = new PatternDetector(this.incrementalAnalyzer.getDatabase());
     }
     return this.components.patternDetector;
+  }
+
+  /**
+   * Lazy-load SmartDependencyTracker when first needed
+   */
+  private async getSmartDependencyTracker(): Promise<SmartDependencyTracker> {
+    if (!this.components.smartDependencyTracker) {
+      if (!this.quiet && !this.initializedComponents.has('SmartDependencyTracker')) {
+        console.error("🧠 Loading SmartDependencyTracker...");
+        this.initializedComponents.add('SmartDependencyTracker');
+      }
+      // This assumes you have a database instance available on the incrementalAnalyzer
+      if (!this.incrementalAnalyzer) {
+        throw new Error("IncrementalAnalyzer is not initialized, cannot create SmartDependencyTracker");
+      }
+      this.components.smartDependencyTracker = new SmartDependencyTracker(this.incrementalAnalyzer.getDatabase());
+    }
+    return this.components.smartDependencyTracker;
+  }
+
+  /**
+   * Lazy-load SymbolProfileAnalyzer when first needed
+   */
+  private async getSymbolProfileAnalyzer(): Promise<SymbolProfileAnalyzer> {
+    if (!this.components.symbolProfileAnalyzer) {
+      if (!this.quiet && !this.initializedComponents.has('SymbolProfileAnalyzer')) {
+        console.error("📊 Loading SymbolProfileAnalyzer...");
+        this.initializedComponents.add('SymbolProfileAnalyzer');
+      }
+      this.components.symbolProfileAnalyzer = new SymbolProfileAnalyzer();
+    }
+    return this.components.symbolProfileAnalyzer;
   }
 
   /**
@@ -184,12 +223,7 @@ export class GuruCore {
     path: string,
     goalSpec?: string,
     scanMode?: 'auto' | 'incremental' | 'full'
-  ): Promise<{
-    symbolGraph: any;
-    clusters: any;
-    entryPoints: any;
-    metadata: any;
-  }> {
+  ): Promise<AnalysisResult> {
     try {
       let isFile = false;
       try {
@@ -213,9 +247,14 @@ export class GuruCore {
       const freshScanMode = importedScanMode || 'auto';
       let effectiveScanMode = freshScanMode;
       
-
+      // For 'auto' mode, use incremental if we have a checkpoint
+      if (effectiveScanMode === 'auto' && checkpoint) {
+        effectiveScanMode = 'incremental';
+      }
       
       let useIncremental = effectiveScanMode === 'incremental' && checkpoint;
+      
+
 
       let filesToAnalyze: string[] = [];
       let allFilesArr: string[] = [];
@@ -244,7 +283,9 @@ export class GuruCore {
           deletedFiles = changes.deletedFiles;
           newFiles = changes.newFiles;
           affectedFiles = changes.affectedFiles;
-          filesToAnalyze = affectedFiles;
+          
+          // Filter out deleted files from analysis (they don't exist)
+          filesToAnalyze = affectedFiles.filter(file => !deletedFiles.includes(file));
           filesAnalyzedCount = filesToAnalyze.length;
         } else {
           filesToAnalyze = allFilesArr;
@@ -283,6 +324,53 @@ export class GuruCore {
       // Build clusters
       const clusters = await codeClusterer.clusterSymbols(symbolGraph);
 
+      // Smart Dependency Tracking
+      const smartTracker = await this.getSmartDependencyTracker();
+      for (const edge of symbolGraph.edges) {
+        const fromSymbol = symbolGraph.symbols.get(edge.from);
+        const toSymbol = symbolGraph.symbols.get(edge.to);
+        if (fromSymbol && toSymbol) {
+          await smartTracker.addDependency(fromSymbol, toSymbol, edge.type, {});
+        }
+      }
+
+      // Participation Profile Analysis
+      const profileAnalyzer = await this.getSymbolProfileAnalyzer();
+      const entryPointsForProfile = entryPoints.map(ep => ({
+        file: ep.name, // Use name as file for now
+        symbol: ep.id,
+        type: 'main' as const,
+        confidence: ep.confidence,
+        evidence: [],
+        indicators: [],
+        executionContext: {
+          environment: 'node' as const,
+          triggers: []
+        },
+        priority: 'primary' as const
+      }));
+      const profileMap = profileAnalyzer.analyze(symbolGraph, entryPointsForProfile);
+
+      // Pattern Detection
+      const patternDetector = await this.getPatternDetector();
+      await patternDetector.detectPatterns(symbolGraph, profileMap);
+
+      // Get detected patterns from database for test results
+      let patterns: any = { patterns: [], antiPatterns: [] };
+      try {
+        const db = this.incrementalAnalyzer?.getDatabase();
+        if (db) {
+          // Get all detected patterns
+          const detectedPatterns = await db.getAllDetectedPatterns();
+          patterns = {
+            patterns: detectedPatterns || [],
+            antiPatterns: [] // Anti-patterns would be detected separately
+          };
+        }
+      } catch (error) {
+        console.warn('[GuruCore][WARN] Could not retrieve patterns for result:', error);
+      }
+
       // Flush cache to ensure all writes are completed before returning
       if (this.incrementalAnalyzer) {
         try {
@@ -299,15 +387,26 @@ export class GuruCore {
         console.error('[GuruCore][ERROR] saveCheckpoint failed:', error);
       }
 
-      return {
+      // Calculate confidence metrics
+      const confidenceMetrics = this.calculateConfidenceMetrics(symbolGraph, []);
+
+      // Set currentAnalysis so other methods can use it
+      const analysisResult: any = {
         symbolGraph,
-        clusters,
-        entryPoints,
+        executionTraces: [], // Empty for now, will be populated by traceExecution
+        confidenceMetrics,
+        analysisMetadata: {
+          timestamp: new Date().toISOString(),
+          analysisVersion: '2.0-ai-native',
+          targetPath: path,
+          goalSpec: goalSpec || 'ai-native-analysis',
+        },
+        // Keep backward compatibility for tests
         metadata: {
           timestamp: new Date().toISOString(),
           analysisVersion: '2.0-ai-native',
           targetPath: path,
-          goalSpec: 'ai-native-analysis',
+          goalSpec: goalSpec || 'ai-native-analysis',
           incremental: useIncremental,
           filesAnalyzed: filesAnalyzedCount,
           totalFiles: allFilesArr.length,
@@ -316,7 +415,14 @@ export class GuruCore {
           newFiles,
           affectedFiles,
         },
+        clusters,
+        entryPoints,
+        patterns,
       };
+
+      this.currentAnalysis = analysisResult;
+
+      return analysisResult;
     } catch (err) {
       console.error('[GuruCore][ERROR] Analysis failed:', err);
       throw err;
@@ -655,7 +761,17 @@ export class GuruCore {
   async cleanup(): Promise<void> {
     // Cleanup incremental analyzer if it exists
     if (this.incrementalAnalyzer) {
-      await this.incrementalAnalyzer.cleanup();
+      try {
+        await Promise.race([
+          this.incrementalAnalyzer.cleanup(),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Incremental analyzer cleanup timeout')), 5000)
+          )
+        ]);
+      } catch (error) {
+        console.error('[GuruCore] Incremental analyzer cleanup error:', error);
+      }
+      this.incrementalAnalyzer = undefined;
     }
 
     // Clear component references

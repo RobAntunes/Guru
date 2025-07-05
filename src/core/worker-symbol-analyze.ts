@@ -114,13 +114,29 @@ function extractImportsAndRequires(node: any, filePath: string, dependencies: st
     }
     case "call_expression": {
       // Handle require() calls
-      if (node.text.includes('require(')) {
-        const requireMatch = node.text.match(/require\(['"]([^'"]+)['"]\)/);
-        if (requireMatch) {
-          const requirePath = requireMatch[1];
-          const resolvedPath = resolveImportPath(requirePath, path.dirname(filePath));
-          if (resolvedPath && !dependencies.includes(resolvedPath)) {
-            dependencies.push(resolvedPath);
+      // Check if the first child is identifier "require"
+      if (node.childCount > 0) {
+        const funcNode = node.child(0);
+        if (funcNode && funcNode.type === "identifier" && funcNode.text === "require") {
+          // Look for the arguments
+          for (let i = 1; i < node.childCount; i++) {
+            const argNode = node.child(i);
+            if (argNode && argNode.type === "arguments") {
+              // Find the string argument
+              for (let j = 0; j < argNode.childCount; j++) {
+                const stringNode = argNode.child(j);
+                if (stringNode && stringNode.type === "string") {
+                  // Extract the string content (remove quotes)
+                  const requirePath = stringNode.text.replace(/['"]/g, '');
+                  const resolvedPath = resolveImportPath(requirePath, path.dirname(filePath));
+                  if (resolvedPath && !dependencies.includes(resolvedPath)) {
+                    dependencies.push(resolvedPath);
+                  }
+                  break;
+                }
+              }
+              break;
+            }
           }
         }
       }
@@ -201,8 +217,9 @@ function extractJavaScriptSymbols(
       }
       break;
     }
-    case "variable_declaration": {
-      // Handle variable declarations
+    case "variable_declaration":
+    case "lexical_declaration": {
+      // Handle variable declarations (var, const, let)
       const vars = extractVariableNames(node);
       for (const varName of vars) {
         symbols.push(createSymbol(varName, 'variable', node, filePath, source, rootPath));
@@ -214,6 +231,24 @@ function extractJavaScriptSymbols(
       const name = extractName(node);
       if (name) {
         symbols.push(createSymbol(name, 'type', node, filePath, source, rootPath));
+      }
+      break;
+    }
+    case "assignment_expression": {
+      // Handle module.exports and other assignments
+      const left = node.child(0);
+      if (left && left.type === "member_expression") {
+        const memberText = left.text;
+        if (memberText === "module.exports") {
+          // This is a module.exports assignment - extract as an export symbol
+          symbols.push(createSymbol('exports', 'variable', node, filePath, source, rootPath));
+        } else {
+          // Other member assignments - extract as variables
+          const objName = extractMemberObjectName(left);
+          if (objName) {
+            symbols.push(createSymbol(objName, 'variable', node, filePath, source, rootPath));
+          }
+        }
       }
       break;
     }
@@ -290,6 +325,17 @@ function extractVariableNames(node: any): string[] {
   
   walk(node);
   return names;
+}
+
+function extractMemberObjectName(node: any): string | null {
+  // Extract the object name from member expressions like obj.prop
+  for (let i = 0; i < node.childCount; i++) {
+    const child = node.child(i);
+    if (child && child.type === 'identifier') {
+      return child.text;
+    }
+  }
+  return null;
 }
 
 function createSymbol(

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import { SymbolCache, CachedSymbol } from "../src/core/symbol-cache";
 import * as fs from "fs";
 import * as path from "path";
@@ -21,7 +21,31 @@ describe("SymbolCache", () => {
     fs.writeFileSync(testFile, "export function foo() {}\n");
   });
 
+  afterEach(async () => {
+    if (global.guru) {
+      try {
+        console.log('[CLEANUP][afterEach] Calling global.guru.cleanup()');
+        await global.guru.cleanup();
+        console.log('[CLEANUP][afterEach] global.guru.cleanup() complete');
+      } catch (e) {
+        console.error('[CLEANUP][afterEach] global.guru.cleanup() error', e);
+      }
+    }
+    // Add any temp file/dir cleanup here
+  });
+
   afterAll(async () => {
+    if (global.guru) {
+      try {
+        console.log('[CLEANUP][afterAll] Calling global.guru.cleanup()');
+        await global.guru.cleanup();
+        console.log('[CLEANUP][afterAll] global.guru.cleanup() complete');
+      } catch (e) {
+        console.error('[CLEANUP][afterAll] global.guru.cleanup() error', e);
+      }
+    }
+    // TEMP: Uncomment to force exit if hangs persist
+    // process.exit(0);
     // Clean up any pending writes
     try {
       fs.rmSync(tempDir, { recursive: true, force: true });

@@ -3,7 +3,7 @@
  * Verifies that components correctly use database storage
  */
 
-import { describe, test, expect, beforeEach, afterEach } from 'vitest';
+import { describe, test, expect, beforeEach, afterEach, afterAll } from 'vitest';
 import { PatternLearning } from '../src/intelligence/self-reflection-engine.js';
 import { getDatabase, checkDatabaseHealth } from '../src/core/database-adapter.js';
 import fs from 'fs';
@@ -22,21 +22,55 @@ describe('Database Integration Tests', () => {
   });
 
   afterEach(async () => {
-    // Cleanup
+    if (global.guru) {
+      try {
+        console.log('[CLEANUP][afterEach] Calling global.guru.cleanup()');
+        await global.guru.cleanup();
+        console.log('[CLEANUP][afterEach] global.guru.cleanup() complete');
+      } catch (e) {
+        console.error('[CLEANUP][afterEach] global.guru.cleanup() error', e);
+      }
+    }
     try {
-      const db = getDatabase();
-      db.close();
+      // Import DatabaseAdapter to reset singleton
+      const { DatabaseAdapter } = await import('../src/core/database-adapter.js');
+      DatabaseAdapter.reset();
+      console.log('[CLEANUP][afterEach] DatabaseAdapter.reset() complete');
       
       // Remove test database
       if (fs.existsSync(tempDbPath)) {
         fs.unlinkSync(tempDbPath);
+        console.log(`[CLEANUP][afterEach] Deleted temp DB: ${tempDbPath}`);
       }
       if (fs.existsSync(path.dirname(tempDbPath))) {
         fs.rmSync(path.dirname(tempDbPath), { recursive: true, force: true });
+        console.log(`[CLEANUP][afterEach] Deleted temp DB dir: ${path.dirname(tempDbPath)}`);
       }
     } catch (error) {
-      // Ignore cleanup errors
+      console.error('[CLEANUP][afterEach] DB/file cleanup error', error);
     }
+  });
+
+  afterAll(async () => {
+    if (global.guru) {
+      try {
+        console.log('[CLEANUP][afterAll] Calling global.guru.cleanup()');
+        await global.guru.cleanup();
+        console.log('[CLEANUP][afterAll] global.guru.cleanup() complete');
+      } catch (e) {
+        console.error('[CLEANUP][afterAll] global.guru.cleanup() error', e);
+      }
+    }
+    try {
+      // Final cleanup of singleton
+      const { DatabaseAdapter } = await import('../src/core/database-adapter.js');
+      DatabaseAdapter.reset();
+      console.log('[CLEANUP][afterAll] Final DatabaseAdapter.reset() complete');
+    } catch (error) {
+      console.error('[CLEANUP][afterAll] Final cleanup error', error);
+    }
+    // TEMP: Uncomment to force exit if hangs persist
+    // process.exit(0);
   });
 
   test('Database health check passes', async () => {
@@ -48,16 +82,22 @@ describe('Database Integration Tests', () => {
   test('PatternLearning saves and loads weights correctly', async () => {
     const patternLearning = new PatternLearning();
     
+    // Use unique pattern names to ensure fresh start (no existing weights)
+    const timestamp = Date.now();
+    const freshPattern1 = `fresh_pattern1_${timestamp}`;
+    const freshPattern2 = `fresh_pattern2_${timestamp}`;
+    const freshPattern3 = `fresh_pattern3_${timestamp}`;
+    
     // Update some weights
-    await patternLearning.updateWeights(['pattern1', 'pattern2'], ['pattern3']);
+    await patternLearning.updateWeights([freshPattern1, freshPattern2], [freshPattern3]);
     
     // Get weights back
     const weights = await patternLearning.getWeights();
     
     expect(weights).toBeDefined();
-    expect(weights['pattern1']).toBeGreaterThan(1.0); // Should be increased
-    expect(weights['pattern2']).toBeGreaterThan(1.0); // Should be increased  
-    expect(weights['pattern3']).toBeLessThan(1.0);    // Should be decreased
+    expect(weights[freshPattern1]).toBeGreaterThan(1.0); // Should be increased from 1.0
+    expect(weights[freshPattern2]).toBeGreaterThan(1.0); // Should be increased from 1.0
+    expect(weights[freshPattern3]).toBeLessThan(1.0);    // Should be decreased from 1.0
   });
 
   test('PatternLearning weight decay works with database', async () => {

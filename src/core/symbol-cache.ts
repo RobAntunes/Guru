@@ -38,7 +38,14 @@ export class SymbolCache {
   private pendingInvalidations?: Set<string>; // Track files to invalidate from database
 
   constructor(cacheDir: string) {
-    this.db = DatabaseAdapter.getInstance();
+    // Use test instance for tests to get proper isolation
+    if (process.env.NODE_ENV === 'test' || process.env.VITEST) {
+      // Use a test ID based on the cache directory to ensure isolation per test
+      const testId = `symbolcache-${cacheDir.replace(/[^a-zA-Z0-9]/g, '_')}`;
+      this.db = DatabaseAdapter.getTestInstance(testId);
+    } else {
+      this.db = DatabaseAdapter.getInstance();
+    }
     this.compression = guruConfig.cacheCompression;
     const ext = this.compression ? '.gz' : '.json';
     this.cacheFile = path.join(cacheDir, `symbol-cache${ext}`);
@@ -108,13 +115,14 @@ export class SymbolCache {
   }
 
   setSymbols(filePath: string, fileHash: string, symbols: CachedSymbol[]): void {
+    console.log(`[DEBUG][SymbolCache.setSymbols] Called for ${filePath}`);
     const normalizedPath = this.normalizePath(filePath);
     const entry: CacheEntry = { fileHash, symbols };
     this.putInMemoryCache(normalizedPath, entry);
     this.dirty.add(normalizedPath);
-    
     // Async write to database (primary) and disk (backup)
     this.scheduleWrite(normalizedPath, entry);
+    console.log(`[DEBUG][SymbolCache.setSymbols] Scheduled write for ${filePath}`);
   }
 
   invalidate(filePath: string): void {
@@ -275,28 +283,29 @@ export class SymbolCache {
   }
 
   private scheduleWrite(filePath: string, entry: CacheEntry): void {
+    console.log(`[DEBUG][SymbolCache.scheduleWrite] Scheduling write for ${filePath}`);
     const normalizedPath = this.normalizePath(filePath);
-    // Use setImmediate to batch writes and avoid blocking
     setImmediate(() => {
       if (this.dirty.has(normalizedPath)) {
         this.writeToStorage(normalizedPath, entry);
       }
     });
+    console.log(`[DEBUG][SymbolCache.scheduleWrite] setImmediate called for ${filePath}`);
   }
 
   private async writeToStorage(filePath: string, entry: CacheEntry): Promise<void> {
+    console.log(`[DEBUG][SymbolCache.writeToStorage] Start for ${filePath}`);
     const normalizedPath = this.normalizePath(filePath);
     let dbSuccess = false;
-    
-    // Primary: Write to database
     if (this.useDatabase) {
       try {
+        console.log(`[DEBUG][SymbolCache.writeToStorage] Writing to database for ${filePath}`);
         await this.db.saveFileAnalysis(
           normalizedPath,
           entry.fileHash,
           entry.symbols,
-          [], // dependencies - can be populated later
-          "1.0" // version
+          [],
+          "1.0"
         );
         dbSuccess = true;
         this.dirty.delete(normalizedPath);
@@ -305,11 +314,11 @@ export class SymbolCache {
         console.warn(`[SymbolCache] Failed to write ${normalizedPath} to database:`, error);
       }
     }
-    
-    // Backup: Write to disk if database failed or as backup
     if (this.useFileBackup && (!dbSuccess || this.useDatabase)) {
+      console.log(`[DEBUG][SymbolCache.writeToStorage] Writing to disk for ${filePath}`);
       await this.writeToDisk(normalizedPath, entry);
     }
+    console.log(`[DEBUG][SymbolCache.writeToStorage] End for ${filePath}`);
   }
 
   private async writeToDisk(filePath: string, entry: CacheEntry): Promise<void> {

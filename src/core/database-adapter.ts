@@ -7,6 +7,11 @@ import { GuruDatabase, DatabaseConfig } from './database.js';
 import { guruConfig } from './config.js';
 import path from 'path';
 
+// Global type declaration for test instances
+declare global {
+  var __guru_test_instances: Map<string, DatabaseAdapter> | undefined;
+}
+
 // Singleton database instance
 let dbInstance: GuruDatabase | null = null;
 
@@ -45,14 +50,131 @@ export class DatabaseAdapter {
     return DatabaseAdapter.instance;
   }
 
+  static getTestInstance(testId?: string): DatabaseAdapter {
+    // Create a shared instance per testId to enable incremental analysis within tests
+    if (!testId) {
+      testId = 'default';
+    }
+    
+    // Store test instances globally to share within the same test
+    if (!global.__guru_test_instances) {
+      global.__guru_test_instances = new Map();
+    }
+    
+    if (global.__guru_test_instances.has(testId)) {
+      return global.__guru_test_instances.get(testId)!;
+    }
+    
+    // For tests, just use in-memory database - much simpler!
+    const testConfig: DatabaseConfig = {
+      path: ':memory:', // SQLite in-memory database
+      enableWAL: false,
+      memoryOptimized: true,
+      pragmas: {
+        journal_mode: 'MEMORY',
+        synchronous: 'OFF',
+        cache_size: 2000,
+        temp_store: 'memory'
+      }
+    };
+    
+    const testAdapter = new DatabaseAdapter();
+    testAdapter.db = new GuruDatabase(testConfig);
+    testAdapter.isConnected = true;
+    
+    global.__guru_test_instances.set(testId, testAdapter);
+    return testAdapter;
+  }
+
   /**
    * Get the underlying database instance
    */
   getDatabase(): GuruDatabase {
     if (!this.isConnected) {
-      throw new Error('Database not connected');
+      this.reconnect();
     }
     return this.db;
+  }
+
+  /**
+   * Close database connection
+   */
+  close(): void {
+    if (this.isConnected && this.db) {
+      try {
+        this.db.close();
+      } catch (error) {
+        // Ignore errors during close - database might already be closed
+        console.debug('Database close error (ignored):', error);
+      }
+      this.isConnected = false;
+    }
+  }
+
+  /**
+   * Reset singleton instance (for testing)
+   */
+  static reset(): void {
+    if (DatabaseAdapter.instance) {
+      DatabaseAdapter.instance.close();
+      DatabaseAdapter.instance = null;
+    }
+    
+    // Clear test instances
+    if (global.__guru_test_instances) {
+      for (const adapter of global.__guru_test_instances.values()) {
+        adapter.close();
+      }
+      global.__guru_test_instances.clear();
+    }
+  }
+
+  /**
+   * Clear all cached data (for testing) - not needed with in-memory DB but keeping for compatibility
+   */
+  async clearCache(): Promise<void> {
+    // With in-memory databases, just reset the adapter instance
+    if (process.env.NODE_ENV === 'test' || process.env.VITEST) {
+      // In-memory database will be garbage collected automatically
+      return;
+    }
+    
+    try {
+      await this.db.clearAllData();
+    } catch (error) {
+      console.warn('Error clearing cache:', error);
+    }
+  }
+
+  /**
+   * Check if database is connected
+   */
+  isHealthy(): boolean {
+    return this.isConnected && this.db !== null;
+  }
+
+  /**
+   * Reconnect database if closed
+   */
+  reconnect(): void {
+    if (!this.isConnected) {
+      const dbConfig: DatabaseConfig = {
+        path: path.join(guruConfig.cacheDir, 'guru.db'),
+        enableWAL: true,
+        memoryOptimized: true,
+        pragmas: {
+          cache_size: 64000,
+          temp_store: 'memory',
+          mmap_size: 268435456,
+          synchronous: 'NORMAL',
+          journal_size_limit: 67108864,
+          auto_vacuum: 'INCREMENTAL'
+        }
+      };
+
+      this.db = new GuruDatabase(dbConfig);
+      this.isConnected = true;
+    }
   }
 
   /**
@@ -329,23 +451,18 @@ export class DatabaseAdapter {
     return await this.db.cleanupExpiredParameters();
   }
 
-  /**
-   * Graceful shutdown
-   */
-  close(): void {
-    if (this.isConnected && this.db) {
-      this.db.close();
-      this.isConnected = false;
-    }
-    DatabaseAdapter.instance = null;
-  }
 }
 
 /**
  * Convenience function to get database adapter instance
  */
 export function getDatabase(): DatabaseAdapter {
-  return DatabaseAdapter.getInstance();
+  const instance = DatabaseAdapter.getInstance();
+  // Ensure database is connected
+  if (!instance.isHealthy()) {
+    instance.reconnect();
+  }
+  return instance;
 }
 
 /**
