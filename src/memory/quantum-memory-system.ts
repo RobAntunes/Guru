@@ -135,14 +135,22 @@ export class QuantumProbabilityFieldMemory {
     const startTime = Date.now();
     
     // Use DPCM for deterministic retrieval
-    const basePattern = query.harmonicSignature?.category || 'general';
+    const category = query.harmonicSignature?.category;
     const dpcmOptions: DPCMQueryOptions = {
       radius: this.config.dpcm.defaultRadius,
       qualityThreshold: this.config.dpcm.qualityThreshold,
       maxResults: query.maxResults || 20
     };
     
-    const dpcmResults = this.dpcmStore.query(basePattern, operations || [], dpcmOptions);
+    // If we have a category, query by category for precision
+    // Otherwise use coordinate-based query
+    let dpcmResults: HarmonicPatternMemory[];
+    if (category && typeof category === 'string') {
+      dpcmResults = this.dpcmStore.queryByCategory(category as any, dpcmOptions);
+    } else {
+      const basePattern = category || 'general';
+      dpcmResults = this.dpcmStore.query(basePattern, operations || [], dpcmOptions);
+    }
     
     // Convert to quantum nodes
     const quantumNodes = await this.convertToQuantumNodes(dpcmResults);
@@ -413,7 +421,7 @@ export class QuantumProbabilityFieldMemory {
       },
       quantum: {
         enabled: true,
-        defaultFieldRadius: 0.5,
+        defaultFieldRadius: 1.5,
         minProbability: 0.01,
         interferenceThreshold: 0.5
       },
@@ -505,7 +513,7 @@ export class QuantumProbabilityFieldMemory {
   ): Promise<QuantumMemoryNode> {
     return {
       id: pattern.id,
-      coordinates: pattern.coordinates || pattern.dpcmCoordinates || [0.5, 0.5, 0.5],
+      coordinates: pattern.coordinates || [0.5, 0.5, 0.5],
       content: {
         title: pattern.content.title,
         description: pattern.content.description,

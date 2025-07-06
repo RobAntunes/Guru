@@ -10,6 +10,12 @@
     "start": "node dist/server.js",
     "cli": "tsx src/index.ts",
     "test": "vitest",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
+    "test:dpcm": "vitest run tests/memory/dpcm-pattern-store.test.ts",
+    "test:quantum": "vitest run tests/memory/quantum-memory-system.test.ts", 
+    "test:integration": "vitest run tests/integration/qpfm-integration.test.ts",
+    "test:memory": "vitest run tests/memory/*.test.ts tests/integration/*.test.ts",
     "test:ai-native": "vitest run tests/ai-native-suite.test.ts",
     "test:stress": "vitest run tests/stress-testing.test.ts",
     "test:validation": "vitest run tests/validation-suite.test.ts",
@@ -27,7 +33,9 @@
     "docker:logs": "docker-compose logs -f",
     "docker:build": "docker-compose build",
     "migrate": "tsx src/cli/migrate.ts",
-    "import": "tsx src/cli/import.ts"
+    "import": "tsx src/cli/import.ts",
+    "mcp:serve": "tsx src/mcp/qpfm-mcp-server.ts",
+    "mcp:build": "tsc src/mcp/qpfm-mcp-server.ts --outDir dist"
   },
   "keywords": [
     "mcp",

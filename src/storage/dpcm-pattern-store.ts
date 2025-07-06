@@ -13,7 +13,7 @@ import {
 import { EnhancedParameterHash } from '../memory/enhanced-parameter-hash.js';
 
 export class DPCMPatternStore {
-  private store: Map<string, HarmonicPatternMemory> = new Map();
+  private memoryStore: Map<string, HarmonicPatternMemory> = new Map();
   private coordinateIndex: Map<string, string[]> = new Map(); // coord key -> pattern IDs
   private categoryIndex: Map<PatternCategory, string[]> = new Map(); // category -> pattern IDs
   private strengthIndex: Map<string, string[]> = new Map(); // strength range -> pattern IDs
@@ -40,7 +40,7 @@ export class DPCMPatternStore {
     pattern.coordinates = coordinates;
 
     // Store in main memory
-    this.store.set(pattern.id, pattern);
+    this.memoryStore.set(pattern.id, pattern);
 
     // Index by coordinates for proximity search
     const coordKey = this.coordinateKey(coordinates);
@@ -75,7 +75,7 @@ export class DPCMPatternStore {
     const targetCoords = this.composeCoordinates(basePattern, operations);
 
     // Find patterns in coordinate neighborhood
-    const candidates = this.findInRadius(targetCoords, options.radius || 0.35);
+    const candidates = this.findInRadius(targetCoords, options.radius || 1.5);
 
     // Apply boolean logic filtering
     const filtered = this.applyLogicFilters(candidates, operations);
@@ -97,7 +97,7 @@ export class DPCMPatternStore {
   queryByCategory(category: PatternCategory, options: QueryOptions = {}): HarmonicPatternMemory[] {
     const patternIds = this.categoryIndex.get(category) || [];
     const patterns = patternIds
-      .map(id => this.store.get(id))
+      .map(id => this.memoryStore.get(id))
       .filter((p): p is HarmonicPatternMemory => p !== undefined);
 
     return this.applyQueryOptions(patterns, options);
@@ -116,7 +116,7 @@ export class DPCMPatternStore {
     for (const [bucket, patternIds] of this.strengthIndex) {
       if (bucket >= minBucket && bucket <= maxBucket) {
         patternIds.forEach(id => {
-          const pattern = this.store.get(id);
+          const pattern = this.memoryStore.get(id);
           if (pattern && 
               pattern.harmonicProperties.strength >= minStrength && 
               pattern.harmonicProperties.strength <= maxStrength) {
@@ -133,10 +133,10 @@ export class DPCMPatternStore {
    * Find similar patterns using coordinate proximity
    */
   findSimilar(patternId: string, options: QueryOptions = {}): HarmonicPatternMemory[] {
-    const basePattern = this.store.get(patternId);
+    const basePattern = this.memoryStore.get(patternId);
     if (!basePattern) return [];
 
-    const candidates = this.findInRadius(basePattern.coordinates, options.radius || 0.35);
+    const candidates = this.findInRadius(basePattern.coordinates, options.radius || 1.5);
     return candidates
       .filter(p => p.id !== patternId) // Exclude self
       .slice(0, options.maxResults || 10);
@@ -146,25 +146,25 @@ export class DPCMPatternStore {
    * Get all patterns (for debugging/analytics)
    */
   getAllPatterns(): HarmonicPatternMemory[] {
-    return Array.from(this.store.values());
+    return Array.from(this.memoryStore.values());
   }
 
   /**
    * Get pattern by ID
    */
   getPattern(id: string): HarmonicPatternMemory | undefined {
-    return this.store.get(id);
+    return this.memoryStore.get(id);
   }
 
   /**
    * Remove pattern from store
    */
   remove(id: string): boolean {
-    const pattern = this.store.get(id);
+    const pattern = this.memoryStore.get(id);
     if (!pattern) return false;
 
     // Remove from main store
-    this.store.delete(id);
+    this.memoryStore.delete(id);
 
     // Remove from coordinate index
     const coordKey = this.coordinateKey(pattern.coordinates);
@@ -196,7 +196,7 @@ export class DPCMPatternStore {
    * Clear all patterns
    */
   clear(): void {
-    this.store.clear();
+    this.memoryStore.clear();
     this.coordinateIndex.clear();
     this.categoryIndex.clear();
     this.strengthIndex.clear();
@@ -207,7 +207,7 @@ export class DPCMPatternStore {
    * Get pattern count
    */
   getPatternCount(): number {
-    return this.store.size;
+    return this.memoryStore.size;
   }
 
   /**
@@ -313,7 +313,7 @@ export class DPCMPatternStore {
           z >= range.minZ && z <= range.maxZ) {
         
         patternIds.forEach(id => {
-          const pattern = this.store.get(id);
+          const pattern = this.memoryStore.get(id);
           if (pattern && this.hasher.isWithinRadius(center, pattern.coordinates, radius)) {
             candidates.push(pattern);
           }
@@ -396,6 +396,57 @@ export class DPCMPatternStore {
               }
             });
           }
+          break;
+
+        case LogicGateType.XOR:
+          // Keep patterns that match EXACTLY ONE of the specified parameters
+          filtered = filtered.filter(pattern => {
+            const matches = operation.params.filter(param =>
+              pattern.harmonicProperties.category === param ||
+              pattern.content.type === param ||
+              pattern.content.tags.includes(param)
+            );
+            return matches.length === 1;
+          });
+          break;
+
+        case LogicGateType.PATTERN:
+          // Pattern-specific filtering - matches specific harmonic patterns
+          filtered = filtered.filter(pattern => {
+            // Check if pattern matches any of the specified harmonic patterns
+            return operation.params.some(param => {
+              // Match by pattern category prefix (e.g., 'fractal', 'wave', 'harmonic')
+              const categoryMatch = pattern.harmonicProperties.category.toLowerCase().includes(param.toLowerCase());
+              // Match by pattern evidence types if available
+              const evidenceMatch = pattern.evidence?.some(e => 
+                e.type.toLowerCase().includes(param.toLowerCase())
+              );
+              return categoryMatch || evidenceMatch;
+            });
+          });
+          break;
+
+        case LogicGateType.ARCHITECTURAL:
+          // Architecture-specific filtering - for code structure patterns
+          filtered = filtered.filter(pattern => {
+            return operation.params.some(param => {
+              // Check architectural patterns in locations
+              const locationMatch = pattern.locations?.some(loc => {
+                const architectural = param.toLowerCase();
+                return (architectural === 'class' && loc.className) ||
+                       (architectural === 'function' && loc.functionName) ||
+                       (architectural === 'module' && loc.file.includes('.')) ||
+                       (architectural === 'interface' && pattern.content.type === 'interface');
+              });
+              
+              // Check architectural tags
+              const tagMatch = pattern.content.tags.some(tag => 
+                tag.toLowerCase().includes(param.toLowerCase())
+              );
+              
+              return locationMatch || tagMatch;
+            });
+          });
           break;
       }
     });
