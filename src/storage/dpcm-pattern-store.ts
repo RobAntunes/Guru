@@ -85,6 +85,13 @@ export class DPCMPatternStore {
   }
 
   /**
+   * Bulk store multiple patterns
+   */
+  bulkStore(patterns: HarmonicPatternMemory[]): void {
+    patterns.forEach(pattern => this.store(pattern));
+  }
+
+  /**
    * Query patterns by category
    */
   queryByCategory(category: PatternCategory, options: QueryOptions = {}): HarmonicPatternMemory[] {
@@ -194,6 +201,13 @@ export class DPCMPatternStore {
     this.categoryIndex.clear();
     this.strengthIndex.clear();
     this.initializeIndexes();
+  }
+
+  /**
+   * Get pattern count
+   */
+  getPatternCount(): number {
+    return this.store.size;
   }
 
   /**
