@@ -228,7 +228,7 @@ export class SymbolCache {
       this.pendingInvalidations.clear();
     }
     if (this.useFileBackup) {
-      this.saveIndex();
+      this.saveIndexAsync().catch(() => this.saveIndex()); // Fallback to sync
     }
     console.log(`✅ Flushed ${writePromises.length} symbol cache entries to storage`);
   }
@@ -257,24 +257,39 @@ export class SymbolCache {
     try {
       const normalizedPath = this.normalizePath(filePath);
       const indexEntry = this.cacheIndex[normalizedPath];
-      if (!indexEntry || !fs.existsSync(this.cacheFile)) {
+      if (!indexEntry) {
+        return null;
+      }
+
+      // Check if file exists asynchronously
+      try {
+        await fs.promises.access(this.cacheFile);
+      } catch {
         return null;
       }
 
       // Read specific portion of file based on index
-      const fd = fs.openSync(this.cacheFile, 'r');
-      const buffer = Buffer.alloc(indexEntry.size);
-      fs.readSync(fd, buffer, 0, indexEntry.size, indexEntry.position);
-      fs.closeSync(fd);
+      const fileHandle = await fs.promises.open(this.cacheFile, 'r');
+      try {
+        const buffer = Buffer.alloc(indexEntry.size);
+        await fileHandle.read(buffer, 0, indexEntry.size, indexEntry.position);
 
-      let data: string;
-      if (this.compression) {
-        data = zlib.gunzipSync(buffer).toString();
-      } else {
-        data = buffer.toString();
+        let data: string;
+        if (this.compression) {
+          data = await new Promise<string>((resolve, reject) => {
+            zlib.gunzip(buffer, (err, result) => {
+              if (err) reject(err);
+              else resolve(result.toString());
+            });
+          });
+        } else {
+          data = buffer.toString();
+        }
+
+        return JSON.parse(data);
+      } finally {
+        await fileHandle.close();
       }
-
-      return JSON.parse(data);
     } catch (error) {
       console.error(`[SymbolCache] Failed to load ${filePath} from disk:`, error);
       return null;
@@ -353,6 +368,18 @@ export class SymbolCache {
     }
   }
 
+  private async loadIndexAsync(): Promise<void> {
+    try {
+      const data = await fs.promises.readFile(this.indexFile, 'utf-8');
+      this.cacheIndex = JSON.parse(data);
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        console.error('[SymbolCache] Failed to load index:', error);
+      }
+      this.cacheIndex = {};
+    }
+  }
+
   private loadIndex(): void {
     try {
       if (fs.existsSync(this.indexFile)) {
@@ -362,6 +389,15 @@ export class SymbolCache {
     } catch (error) {
       console.error('[SymbolCache] Failed to load index:', error);
       this.cacheIndex = {};
+    }
+  }
+
+  private async saveIndexAsync(): Promise<void> {
+    try {
+      const data = JSON.stringify(this.cacheIndex, null, 2);
+      await fs.promises.writeFile(this.indexFile, data);
+    } catch (error) {
+      console.error('[SymbolCache] Failed to save index:', error);
     }
   }
 

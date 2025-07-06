@@ -4,14 +4,27 @@ import * as path from 'path';
 import { SymbolNode, Parameter, SymbolType } from '../types/index.js';
 import { LanguageManager } from '../parsers/language-manager.js';
 
-// Initialize language manager for this worker
+// Initialize language manager for this worker - singleton per worker
 let languageManager: LanguageManager | null = null;
+let languageManagerPromise: Promise<LanguageManager> | null = null;
 
 async function initializeLanguageManager() {
-  if (!languageManager) {
-    languageManager = new LanguageManager();
+  if (languageManager) {
+    return languageManager;
   }
-  return languageManager;
+  
+  if (languageManagerPromise) {
+    return languageManagerPromise;
+  }
+  
+  languageManagerPromise = (async () => {
+    const manager = new LanguageManager();
+    await manager.initialize();
+    languageManager = manager;
+    return manager;
+  })();
+  
+  return languageManagerPromise;
 }
 
 // Real symbol extraction using the same logic as the main analysis

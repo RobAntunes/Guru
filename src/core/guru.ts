@@ -8,22 +8,9 @@
 import { AnalysisResult, SymbolGraph, ExecutionTrace } from "../types/index.js";
 import { SymbolGraphBuilder } from "../parsers/symbol-graph.js";
 import { ExecutionTracer } from "../intelligence/execution-tracer.js";
-import { PatternDetector } from '../intelligence/pattern-detector.js';
-import { ChangeImpactAnalyzer } from "../intelligence/change-impact-analyzer.js";
-import { CodeClusterer } from "../intelligence/code-clusterer.js";
 import YAML from "yaml";
-import { PatternMiningEngine } from "../intelligence/pattern-mining-engine.js";
-import { PerformanceAnalyzer } from "../intelligence/performance-analyzer.js";
-import { MemoryIntelligenceEngine } from "../intelligence/memory-intelligence-engine.js";
-import {
-  SelfReflectionEngine,
-  FeedbackOrchestrator,
-} from "../intelligence/self-reflection-engine.js";
-import { ChangeImpactAnalysis, CodeChange } from "../types/index.js";
 import fs from "fs";
 import { IncrementalAnalyzer } from "./incremental-analyzer.js";
-import { SmartDependencyTracker } from './smart-dependency-tracker.js';
-import { SymbolProfileAnalyzer } from '../intelligence/symbol-profile-analyzer.js';
 import { guruConfig } from "./config.js";
 import pathLib from "path";
 import { dirname } from "path";
@@ -57,11 +44,6 @@ export interface FindRelatedCodeParams {
 interface LazyLoadedComponents {
   symbolGraphBuilder?: SymbolGraphBuilder;
   executionTracer?: ExecutionTracer;
-  changeImpactAnalyzer?: ChangeImpactAnalyzer;
-  codeClusterer?: CodeClusterer;
-  patternDetector?: PatternDetector;
-  smartDependencyTracker?: SmartDependencyTracker;
-  symbolProfileAnalyzer?: SymbolProfileAnalyzer;
 }
 
 export class GuruCore {
@@ -112,87 +94,12 @@ export class GuruCore {
     return this.components.executionTracer;
   }
 
-  /**
-   * Lazy-load ChangeImpactAnalyzer when first needed
-   */
-  private async getChangeImpactAnalyzer(): Promise<ChangeImpactAnalyzer> {
-    if (!this.components.changeImpactAnalyzer) {
-      if (!this.quiet && !this.initializedComponents.has('ChangeImpactAnalyzer')) {
-        console.error("⚡ Loading ChangeImpactAnalyzer...");
-        this.initializedComponents.add('ChangeImpactAnalyzer');
-      }
-      this.components.changeImpactAnalyzer = new ChangeImpactAnalyzer();
-    }
-    return this.components.changeImpactAnalyzer;
-  }
-
-  /**
-   * Lazy-load CodeClusterer when first needed
-   */
-  private async getCodeClusterer(): Promise<CodeClusterer> {
-    if (!this.components.codeClusterer) {
-      if (!this.quiet && !this.initializedComponents.has('CodeClusterer')) {
-        console.error("🧩 Loading CodeClusterer...");
-        this.initializedComponents.add('CodeClusterer');
-      }
-      this.components.codeClusterer = new CodeClusterer(this.quiet);
-    }
-    return this.components.codeClusterer;
-  }
-
-  /**
-   * Lazy-load PatternDetector when first needed
-   */
-  private async getPatternDetector(): Promise<PatternDetector> {
-    if (!this.components.patternDetector) {
-      if (!this.quiet && !this.initializedComponents.has('PatternDetector')) {
-        console.error("🎯 Loading PatternDetector...");
-        this.initializedComponents.add('PatternDetector');
-      }
-      if (!this.incrementalAnalyzer) {
-        throw new Error("IncrementalAnalyzer is not initialized, cannot create PatternDetector");
-      }
-      this.components.patternDetector = new PatternDetector(this.incrementalAnalyzer.getDatabase());
-    }
-    return this.components.patternDetector;
-  }
-
-  /**
-   * Lazy-load SmartDependencyTracker when first needed
-   */
-  private async getSmartDependencyTracker(): Promise<SmartDependencyTracker> {
-    if (!this.components.smartDependencyTracker) {
-      if (!this.quiet && !this.initializedComponents.has('SmartDependencyTracker')) {
-        console.error("🧠 Loading SmartDependencyTracker...");
-        this.initializedComponents.add('SmartDependencyTracker');
-      }
-      // This assumes you have a database instance available on the incrementalAnalyzer
-      if (!this.incrementalAnalyzer) {
-        throw new Error("IncrementalAnalyzer is not initialized, cannot create SmartDependencyTracker");
-      }
-      this.components.smartDependencyTracker = new SmartDependencyTracker(this.incrementalAnalyzer.getDatabase());
-    }
-    return this.components.smartDependencyTracker;
-  }
-
-  /**
-   * Lazy-load SymbolProfileAnalyzer when first needed
-   */
-  private async getSymbolProfileAnalyzer(): Promise<SymbolProfileAnalyzer> {
-    if (!this.components.symbolProfileAnalyzer) {
-      if (!this.quiet && !this.initializedComponents.has('SymbolProfileAnalyzer')) {
-        console.error("📊 Loading SymbolProfileAnalyzer...");
-        this.initializedComponents.add('SymbolProfileAnalyzer');
-      }
-      this.components.symbolProfileAnalyzer = new SymbolProfileAnalyzer();
-    }
-    return this.components.symbolProfileAnalyzer;
-  }
+  // REMOVED: All interpretation components for raw harmonic analysis only
 
   /**
    * Preload commonly used components for better performance
    */
-  async preloadComponents(components: string[] = ['symbolGraphBuilder', 'codeClusterer']): Promise<void> {
+  async preloadComponents(components: string[] = ['symbolGraphBuilder']): Promise<void> {
     const preloadPromises = components.map(async (component) => {
       switch (component) {
         case 'symbolGraphBuilder':
@@ -200,15 +107,6 @@ export class GuruCore {
           break;
         case 'executionTracer':
           await this.getExecutionTracer();
-          break;
-        case 'changeImpactAnalyzer':
-          await this.getChangeImpactAnalyzer();
-          break;
-        case 'codeClusterer':
-          await this.getCodeClusterer();
-          break;
-        case 'patternDetector':
-          await this.getPatternDetector();
           break;
       }
     });
@@ -315,61 +213,8 @@ export class GuruCore {
         expandFiles: filesToAnalyze,
       });
       
-      // Find entry points
-      const entryPoints = this.findEntryPoints(symbolGraph);
-      
-      // Lazy-load clustering component
-      const codeClusterer = await this.getCodeClusterer();
-      
-      // Build clusters
-      const clusters = await codeClusterer.clusterSymbols(symbolGraph);
-
-      // Smart Dependency Tracking
-      const smartTracker = await this.getSmartDependencyTracker();
-      for (const edge of symbolGraph.edges) {
-        const fromSymbol = symbolGraph.symbols.get(edge.from);
-        const toSymbol = symbolGraph.symbols.get(edge.to);
-        if (fromSymbol && toSymbol) {
-          await smartTracker.addDependency(fromSymbol, toSymbol, edge.type, {});
-        }
-      }
-
-      // Participation Profile Analysis
-      const profileAnalyzer = await this.getSymbolProfileAnalyzer();
-      const entryPointsForProfile = entryPoints.map(ep => ({
-        file: ep.name, // Use name as file for now
-        symbol: ep.id,
-        type: 'main' as const,
-        confidence: ep.confidence,
-        evidence: [],
-        indicators: [],
-        executionContext: {
-          environment: 'node' as const,
-          triggers: []
-        },
-        priority: 'primary' as const
-      }));
-      const profileMap = profileAnalyzer.analyze(symbolGraph, entryPointsForProfile);
-
-      // Pattern Detection
-      const patternDetector = await this.getPatternDetector();
-      await patternDetector.detectPatterns(symbolGraph, profileMap);
-
-      // Get detected patterns from database for test results
-      let patterns: any = { patterns: [], antiPatterns: [] };
-      try {
-        const db = this.incrementalAnalyzer?.getDatabase();
-        if (db) {
-          // Get all detected patterns
-          const detectedPatterns = await db.getAllDetectedPatterns();
-          patterns = {
-            patterns: detectedPatterns || [],
-            antiPatterns: [] // Anti-patterns would be detected separately
-          };
-        }
-      } catch (error) {
-        console.warn('[GuruCore][WARN] Could not retrieve patterns for result:', error);
-      }
+      // SIMPLIFIED FOR RAW HARMONIC ANALYSIS - Only basic symbol graph
+      console.log('✅ Symbol graph built - ready for harmonic analysis')
 
       // Flush cache to ensure all writes are completed before returning
       if (this.incrementalAnalyzer) {
@@ -387,37 +232,17 @@ export class GuruCore {
         console.error('[GuruCore][ERROR] saveCheckpoint failed:', error);
       }
 
-      // Calculate confidence metrics
-      const confidenceMetrics = this.calculateConfidenceMetrics(symbolGraph, []);
-
-      // Set currentAnalysis so other methods can use it
+      // SIMPLIFIED RESULT FOR RAW HARMONIC ANALYSIS
       const analysisResult: any = {
         symbolGraph,
-        executionTraces: [], // Empty for now, will be populated by traceExecution
-        confidenceMetrics,
-        analysisMetadata: {
-          timestamp: new Date().toISOString(),
-          analysisVersion: '2.0-ai-native',
-          targetPath: path,
-          goalSpec: goalSpec || 'ai-native-analysis',
-        },
-        // Keep backward compatibility for tests
         metadata: {
           timestamp: new Date().toISOString(),
-          analysisVersion: '2.0-ai-native',
+          analysisVersion: '3.0-harmonic-raw',
           targetPath: path,
-          goalSpec: goalSpec || 'ai-native-analysis',
-          incremental: useIncremental,
           filesAnalyzed: filesAnalyzedCount,
           totalFiles: allFilesArr.length,
-          changedFiles,
-          deletedFiles,
-          newFiles,
-          affectedFiles,
-        },
-        clusters,
-        entryPoints,
-        patterns,
+          mode: 'raw-harmonic-only'
+        }
       };
 
       this.currentAnalysis = analysisResult;
@@ -472,30 +297,7 @@ export class GuruCore {
     }
   }
 
-  /**
-   * Analyze the impact of changing a specific symbol
-   */
-  async analyzeChangeImpact(
-    symbolId: string,
-    type: CodeChange["type"],
-  ): Promise<ChangeImpactAnalysis> {
-    if (!this.currentAnalysis) {
-      throw new Error(
-        "No analysis available. Please run analyze_codebase first.",
-      );
-    }
-
-    const changeImpactAnalyzer = await this.getChangeImpactAnalyzer();
-    return await changeImpactAnalyzer.analyzeChangeImpact(
-      this.currentAnalysis.symbolGraph,
-      {
-        type,
-        targetSymbol: symbolId,
-        description: `${type} change to ${symbolId}`,
-        rationale: `${type} change analysis`
-      }
-    );
-  }
+  // REMOVED: Change impact analysis for raw harmonic analysis only
 
   /**
    * Find code related to a natural language query

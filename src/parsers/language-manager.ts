@@ -71,6 +71,11 @@ export interface ParseResult {
   source: string;
 }
 
+// Global singleton state
+let globalParsers: Map<string, Parser> | null = null;
+let globalParserMap: Record<string, any> = {};
+let globalInitialized = false;
+
 export class LanguageManager {
   private parsers: Map<string, Parser> = new Map();
   parserMap!: Record<string, any>;
@@ -84,6 +89,18 @@ export class LanguageManager {
 
   async initialize() {
     if (this.isInitialized) return;
+    
+    // Use global singleton parsers if already initialized
+    if (globalInitialized && globalParsers) {
+      this.parsers = globalParsers;
+      this.parserMap = globalParserMap;
+      this.supportedLanguages = supportedLanguages;
+      this.isInitialized = true;
+      if (!this.quiet) {
+        console.error("[LANG][DEBUG] Reusing global parser instances");
+      }
+      return;
+    }
 
     try {
       // Load languages directly in this method for reliability
@@ -234,6 +251,31 @@ export class LanguageManager {
           `🌳 Initialized ${parsersCreated} language parsers successfully`,
         );
       }
+      
+      // Build parserMap for compatibility
+      this.parserMap = {};
+      if (localJavaScript) {
+        this.parserMap["javascript"] = localJavaScript;
+        this.parserMap["js"] = localJavaScript;
+      }
+      if (localTypeScript) {
+        this.parserMap["typescript"] = localTypeScript;
+        this.parserMap["ts"] = localTypeScript;
+      }
+      if (localTSX) {
+        this.parserMap["tsx"] = localTSX;
+      }
+      if (localPython) {
+        this.parserMap["python"] = localPython;
+        this.parserMap["py"] = localPython;
+      }
+      this.supportedLanguages = supportedLanguages;
+      
+      // Store global singleton state
+      globalParsers = this.parsers;
+      globalParserMap = this.parserMap;
+      globalInitialized = true;
+      
       this.isInitialized = true;
     } catch (error) {
       console.error(
@@ -349,6 +391,7 @@ const supportedLanguages = [
 const parserMap: Record<string, any> = {};
 
 let languageManager: LanguageManager | null = null;
+let languageManagerInitPromise: Promise<LanguageManager> | null = null;
 
 async function loadParsers() {
   try {
@@ -385,22 +428,39 @@ async function loadParsers() {
   }
 }
 
-// Export a promise that resolves to the ready languageManager
-export const languageManagerReady: Promise<LanguageManager> = (async () => {
-  console.error("[LANG][DEBUG] Starting parser loading at startup");
-  await loadParsers();
-  console.error("[LANG][DEBUG] Finished parser loading at startup");
-
-  if (!languageManager) {
-    throw new Error("LanguageManager not initialized");
+// Export a function that returns the language manager promise
+export async function getLanguageManager(): Promise<LanguageManager> {
+  if (languageManager) {
+    return languageManager;
   }
+  
+  if (languageManagerInitPromise) {
+    return languageManagerInitPromise;
+  }
+  
+  languageManagerInitPromise = (async () => {
+    console.error("[LANG][DEBUG] Starting parser loading (singleton)");
+    await loadParsers();
+    console.error("[LANG][DEBUG] Finished parser loading (singleton)");
 
-  // Initialize the parsers - we know languageManager is not null here
-  const manager = languageManager as LanguageManager;
-  await manager.initialize();
-  console.error("[LANG][DEBUG] LanguageManager initialized with parsers");
+    if (!languageManager) {
+      throw new Error("LanguageManager not initialized");
+    }
 
-  return manager;
-})();
+    // Initialize the parsers - we know languageManager is not null here
+    const manager = languageManager as LanguageManager;
+    await manager.initialize();
+    console.error("[LANG][DEBUG] LanguageManager initialized with parsers");
+
+    return manager;
+  })();
+  
+  return languageManagerInitPromise;
+}
+
+// Export a lazy function that returns the promise - avoids immediate execution
+export function languageManagerReady(): Promise<LanguageManager> {
+  return getLanguageManager();
+}
 
 export { supportedLanguages, parserMap };

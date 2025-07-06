@@ -1,0 +1,248 @@
+name: Harmonic Intelligence CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'src/harmonic-intelligence/**'
+      - 'tests/harmonic-intelligence/**'
+      - 'package.json'
+      - '.github/workflows/harmonic-intelligence-ci.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'src/harmonic-intelligence/**'
+      - 'tests/harmonic-intelligence/**'
+      - 'package.json'
+
+jobs:
+  test:
+    name: Test Harmonic Intelligence
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run linter
+      run: npm run lint -- src/harmonic-intelligence/**/*.ts
+    
+    - name: Run type checking
+      run: npm run typecheck
+    
+    - name: Run unit tests
+      run: npm test -- tests/harmonic-intelligence/unit --coverage
+      env:
+        NODE_ENV: test
+    
+    - name: Run integration tests
+      run: npm test -- tests/harmonic-intelligence/integration
+      env:
+        NODE_ENV: test
+    
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/lcov.info
+        flags: harmonic-intelligence
+        name: harmonic-intelligence-coverage
+    
+    - name: Build project
+      run: npm run build
+    
+    - name: Run performance benchmarks
+      run: npm run benchmark:harmonic
+      continue-on-error: true
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Run security audit
+      run: npm audit --production
+    
+    - name: Run OWASP dependency check
+      uses: dependency-check/Dependency-Check_Action@main
+      with:
+        project: 'guru-harmonic-intelligence'
+        path: '.'
+        format: 'HTML'
+    
+    - name: Upload OWASP results
+      uses: actions/upload-artifact@v3
+      with:
+        name: owasp-report
+        path: reports/
+
+  quality-gates:
+    name: Quality Gates
+    runs-on: ubuntu-latest
+    needs: [test, security]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Check code complexity
+      run: |
+        npx plato -r -d reports/complexity src/harmonic-intelligence
+        # Fail if average complexity > 10
+        complexity=$(cat reports/complexity/report.json | jq '.summary.average.complexity')
+        if (( $(echo "$complexity > 10" | bc -l) )); then
+          echo "Code complexity too high: $complexity"
+          exit 1
+        fi
+    
+    - name: Check test coverage
+      run: |
+        npm test -- tests/harmonic-intelligence --coverage --json --outputFile=coverage.json
+        coverage=$(cat coverage.json | jq '.coverageMap.total.lines.pct')
+        if (( $(echo "$coverage < 80" | bc -l) )); then
+          echo "Test coverage too low: $coverage%"
+          exit 1
+        fi
+    
+    - name: Run harmonic self-analysis
+      run: |
+        # Run the harmonic analyzer on its own code
+        npm run analyze:self -- src/harmonic-intelligence
+        # Check if harmonic score meets threshold
+        score=$(cat harmonic-self-analysis.json | jq '.overallScore')
+        if (( $(echo "$score < 0.7" | bc -l) )); then
+          echo "Harmonic score too low: $score"
+          exit 1
+        fi
+
+  performance:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run performance tests
+      run: |
+        npm run test:performance -- tests/harmonic-intelligence/performance
+        # Check if analysis time < 100ms for standard codebase
+        time=$(cat performance-results.json | jq '.avgAnalysisTime')
+        if (( $(echo "$time > 100" | bc -l) )); then
+          echo "Analysis too slow: ${time}ms"
+          exit 1
+        fi
+    
+    - name: Memory usage check
+      run: |
+        npm run test:memory -- tests/harmonic-intelligence/memory
+        # Check if memory usage < 50MB
+        memory=$(cat memory-results.json | jq '.peakMemoryMB')
+        if (( $(echo "$memory > 50" | bc -l) )); then
+          echo "Memory usage too high: ${memory}MB"
+          exit 1
+        fi
+
+  deploy-docs:
+    name: Deploy Documentation
+    runs-on: ubuntu-latest
+    needs: [quality-gates]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Generate API documentation
+      run: npm run docs:generate -- src/harmonic-intelligence
+    
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs/harmonic-intelligence
+
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [quality-gates, performance]
+    if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'release:')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build release
+      run: npm run build:production
+    
+    - name: Run full test suite
+      run: npm test
+    
+    - name: Generate release notes
+      run: |
+        echo "# Harmonic Intelligence Release" > RELEASE_NOTES.md
+        echo "" >> RELEASE_NOTES.md
+        echo "## Pattern Recognition Results" >> RELEASE_NOTES.md
+        npm run analyze:patterns -- --output=pattern-results.json
+        cat pattern-results.json | jq -r '.summary' >> RELEASE_NOTES.md
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        body_path: RELEASE_NOTES.md
+        files: |
+          dist/**/*
+          pattern-results.json
+        tag_name: harmonic-v${{ github.run_number }}
+        name: Harmonic Intelligence v${{ github.run_number }}

@@ -103,8 +103,8 @@ export class PatternDetector {
 
     await this.db.upsertDetectedPattern(pattern);
 
-    // Save pattern instances only if the symbols exist in the database
-    for (const interaction of interactions) {
+    // Save pattern instances only if the symbols exist in the database - use parallel operations
+    const instanceOperations = interactions.map(async (interaction) => {
       try {
         // Check if symbol exists first
         const symbol = symbolGraph.symbols.get(interaction.edge.from);
@@ -127,7 +127,9 @@ export class PatternDetector {
         console.warn(`[PatternDetector] Could not create pattern instance for ${interaction.edge.from}:`, error);
         // Continue with next instance instead of failing
       }
-    }
+    });
+    
+    await Promise.allSettled(instanceOperations);
   }
 
   private decodeProfileHash(interaction: ProfiledInteraction): string {

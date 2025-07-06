@@ -1,0 +1,48 @@
+{
+  "scanMode": "incremental",
+  "workerPoolSize": 1,
+  "chunkSize": 25,
+  "maxFileSize": 2097152,
+  "excludePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.git/**",
+    "**/.vscode/**",
+    "**/.idea/**",
+    "**/target/**",
+    "**/out/**",
+    "**/.next/**",
+    "**/*.log",
+    "**/*.tmp",
+    "**/*.temp",
+    "**/coverage/**",
+    "**/.cache/**",
+    "**/harmonic_venv/**",
+    "**/__pycache__/**",
+    "**/test-samples/**",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.test.js",
+    "**/*.spec.js"
+  ],
+  "performance": {
+    "enableStreaming": true,
+    "batchSize": 10,
+    "concurrentAnalysis": true,
+    "adaptiveWorkerScaling": false
+  },
+  "memory": {
+    "symbolCacheSize": 50,
+    "fileCacheSize": 100,
+    "dependencyGraphSize": 200,
+    "workerMemoryThreshold": 134217728,
+    "gcThreshold": 201326592
+  },
+  "database": {
+    "enabled": true,
+    "enableWAL": true,
+    "memoryOptimized": true,
+    "maxConnections": 5
+  }
+}

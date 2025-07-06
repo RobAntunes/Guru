@@ -26,6 +26,8 @@ export interface BuildParams {
   path: string;
   language?: string;
   includeTests?: boolean;
+  expandFiles?: string[];  // Additional files to analyze
+  analyzeAll?: boolean;    // Force analysis of all files (for Harmonic Intelligence)
 }
 
 export class SymbolGraphBuilder {
@@ -58,7 +60,7 @@ export class SymbolGraphBuilder {
     if (!this.quiet) {
       console.error(`🌳 Building symbol graph for ${params.path}`);
     }
-    const languageManager = await languageManagerReady;
+    const languageManager = await languageManagerReady();
 
     // 1. Recursively find all source files from the given path
     let allSourceFiles: string[] = [];
@@ -105,12 +107,17 @@ export class SymbolGraphBuilder {
       }
     }
 
-    // 3. Incremental expansion: only index files as needed
+    // 3. Determine which files to index
     let filesToIndex: string[] = [];
-    if (entryFiles.length > 0) {
+    
+    if (params.analyzeAll) {
+      // For Harmonic Intelligence: analyze ALL source files
+      filesToIndex = allSourceFiles.filter((f) => !this.indexedFiles.has(f));
+    } else if (entryFiles.length > 0) {
+      // Incremental: only index entry files
       filesToIndex = entryFiles.filter((f) => !this.indexedFiles.has(f));
     } else {
-      // If no entry points, index all discovered source files (or as many as needed for the query)
+      // Default: index all discovered source files
       filesToIndex = allSourceFiles.filter((f) => !this.indexedFiles.has(f));
     }
     if (filesToIndex.length === 0 && this.indexedFiles.size > 0) {
@@ -860,7 +867,7 @@ export class SymbolGraphBuilder {
     for (const filePath of analyzedFiles) {
       try {
         const source = await readFile(filePath, "utf-8");
-        const languageManager = await languageManagerReady;
+        const languageManager = await languageManagerReady();
         const parseResult = await languageManager.parseFile(filePath, source);
 
         if (parseResult) {

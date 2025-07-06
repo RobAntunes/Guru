@@ -1,0 +1,95 @@
+{
+  "metadata": {
+    "path": ".",
+    "filesAnalyzed": 57,
+    "symbolsAnalyzed": 4475,
+    "patternsDetected": 4965,
+    "analysisTime": 8093
+  },
+  "patterns": {
+    "_summary": {
+      "symbol": {
+        "name": "SUMMARY",
+        "type": "summary",
+        "location": {
+          "file": "multiple",
+          "line": 0
+        }
+      },
+      "detectedPatterns": [
+        {
+          "pattern": "summary_stats",
+          "category": "meta",
+          "score": 0.15821229050279328,
+          "confidence": 1,
+          "evidence": [
+            {
+              "type": "top_patterns",
+              "data": [
+                {
+                  "pattern": "symmetry_groups",
+                  "count": 503
+                },
+                {
+                  "pattern": "effective_complexity",
+                  "count": 408
+                },
+                {
+                  "pattern": "kolmogorov_complexity",
+                  "count": 402
+                },
+                {
+                  "pattern": "network_topology",
+                  "count": 395
+                },
+                {
+                  "pattern": "l_system_growth",
+                  "count": 381
+                },
+                {
+                  "pattern": "mandelbrot_complexity",
+                  "count": 371
+                },
+                {
+                  "pattern": "resonance_patterns",
+                  "count": 368
+                },
+                {
+                  "pattern": "small_world_networks",
+                  "count": 365
+                },
+                {
+                  "pattern": "hausdorff_dimension",
+                  "count": 356
+                },
+                {
+                  "pattern": "tessellation_patterns",
+                  "count": 355
+                }
+              ]
+            },
+            {
+              "type": "category_distribution",
+              "data": {
+                "geometric": 503,
+                "topological": 760,
+                "fractal": 1108,
+                "wave": 1075,
+                "classical": 354,
+                "tiling": 355,
+                "information": 810
+              }
+            },
+            {
+              "type": "coverage",
+              "data": {
+                "symbolsWithPatterns": 708,
+                "totalSymbols": 4475
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

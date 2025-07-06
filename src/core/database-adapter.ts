@@ -181,9 +181,11 @@ export class DatabaseAdapter {
    * Pattern Learning Persistence
    */
   async savePatternWeights(weights: Map<string, number>, metadata?: any): Promise<void> {
-    for (const [pattern, weight] of weights.entries()) {
-      await this.db.upsertPatternWeight(pattern, weight, metadata);
-    }
+    // Batch the operations for better performance
+    const operations = Array.from(weights.entries()).map(([pattern, weight]) => 
+      this.db.upsertPatternWeight(pattern, weight, metadata)
+    );
+    await Promise.all(operations);
   }
 
   async loadPatternWeights(): Promise<Map<string, number>> {

@@ -18,7 +18,9 @@ import {
   Tool,
 } from "@modelcontextprotocol/sdk/types.js";
 import { GuruCore } from "./core/guru.js";
+import { HarmonicCLI } from "./harmonic-intelligence/core/harmonic-cli.js";
 import { z } from "zod";
+import { HarmonicMCPTools, harmonicTools } from "./harmonic-intelligence/core/harmonic-mcp-tools.js";
 
 // Check if running as CLI vs MCP server
 const args = process.argv.slice(2);
@@ -29,14 +31,14 @@ if (isCliMode) {
   console.error("🚀 Guru CLI mode activated");
   
   async function runCli() {
-    const guru = new GuruCore();
+    const harmonicCLI = new HarmonicCLI();
     
     try {
       if (args[0] === 'analyze') {
         // Parse CLI arguments for analyze command
         let path = '';
         let debug = false;
-        let scanMode = 'auto';
+        let format = 'json';
         
         for (let i = 1; i < args.length; i++) {
           if (args[i] === '--path' && i + 1 < args.length) {
@@ -44,33 +46,60 @@ if (isCliMode) {
             i++; // skip next arg
           } else if (args[i] === '--debug') {
             debug = true;
-          } else if (args[i] === '--scan-mode' && i + 1 < args.length) {
-            scanMode = args[i + 1];
+          } else if (args[i] === '--format' && i + 1 < args.length) {
+            format = args[i + 1];
             i++; // skip next arg
+          } else if (!args[i].startsWith('--')) {
+            // Path can also be provided as positional argument
+            path = args[i];
           }
         }
         
         if (!path) {
-          console.error("❌ Error: --path argument is required");
+          console.error("❌ Error: path argument is required");
+          console.error("Usage: guru analyze <path> [--format json|summary] [--debug] [--confidence 0.7] [--max-patterns 5] [--summary-only]");
           process.exit(1);
         }
         
-        console.error(`📁 Analyzing codebase at: ${path}`);
+        console.error(`🎵 Running Raw Harmonic Analysis on: ${path}`);
         if (debug) {
           console.error("🐛 Debug mode enabled");
         }
         
-        const result = await guru.analyzeCodebase(
+        // Parse additional CLI options for filtering
+        let confidenceThreshold = 0.7;  // Default
+        let maxPatternsPerSymbol = 5;    // Default
+        let summaryOnly = false;
+        
+        for (let i = 1; i < args.length; i++) {
+          if (args[i] === '--confidence' && i + 1 < args.length) {
+            confidenceThreshold = parseFloat(args[i + 1]);
+            i++;
+          } else if (args[i] === '--max-patterns' && i + 1 < args.length) {
+            maxPatternsPerSymbol = parseInt(args[i + 1]);
+            i++;
+          } else if (args[i] === '--summary-only') {
+            summaryOnly = true;
+          }
+        }
+        
+        console.error(`🔧 Filters: confidence >= ${confidenceThreshold}, max ${maxPatternsPerSymbol} patterns/symbol${summaryOnly ? ', summary only' : ''}`);
+        
+        const result = await harmonicCLI.analyze({
           path,
-          undefined,
-          scanMode as any
-        );
+          format: format as any,
+          includeEvidence: debug,
+          maxDepth: 5,
+          confidenceThreshold,
+          maxPatternsPerSymbol,
+          summaryOnly
+        });
         
         console.log(JSON.stringify(result, null, 2));
         
       } else {
         console.error(`❌ Unknown command: ${args[0]}`);
-        console.error("Usage: guru analyze --path <path> [--debug] [--scan-mode <mode>]");
+        console.error("Usage: guru analyze <path> [--format json|summary] [--debug] [--confidence 0.7] [--max-patterns 5] [--summary-only]");
         process.exit(1);
       }
     } catch (error) {
@@ -239,6 +268,7 @@ if (isCliMode) {
   };
 
   const guru = new GuruCore();
+  const harmonicMCP = new HarmonicMCPTools();
 
   const server = new Server(
     {
@@ -278,6 +308,8 @@ if (isCliMode) {
         "Find code related to a natural language query using semantic understanding",
       inputSchema: FindRelatedCodeSchema,
     },
+    // Add Harmonic Intelligence tools
+    ...harmonicTools,
   ];
 
   // Tool handlers
@@ -344,6 +376,23 @@ if (isCliMode) {
             ],
           };
         }
+        
+        // Harmonic Intelligence tools
+        case "harmonic_analyze":
+        case "harmonic_summarize":
+        case "harmonic_find_pattern":
+        case "harmonic_symbol_context": {
+          const result = await harmonicMCP.handleToolCall(name, args);
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(result, null, 2),
+              },
+            ],
+          };
+        }
+        
         default:
           throw new Error(`Unknown tool: ${name}`);
       }
