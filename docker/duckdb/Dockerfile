@@ -3,7 +3,9 @@ FROM python:3.11-alpine
 # Install system dependencies
 RUN apk add --no-cache \
     gcc \
+    g++ \
     musl-dev \
+    make \
     curl
 
 # Install Python dependencies

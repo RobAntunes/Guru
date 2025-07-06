@@ -1,9 +1,7 @@
-version: '3.8'
-
 services:
   # Neo4j Graph Database
   neo4j:
-    image: neo4j:5.15-community
+    image: neo4j:2025.06.0
     container_name: guru-neo4j
     restart: unless-stopped
     ports:
@@ -31,11 +29,11 @@ services:
 
   # Redis Cache
   redis:
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     container_name: guru-redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "6380:6379"
     command: redis-server --appendonly yes --requirepass gurupassword
     volumes:
       - redis_data:/data
@@ -49,12 +47,12 @@ services:
   guru-app:
     build: 
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.minimal
     container_name: guru-app
     restart: unless-stopped
     ports:
-      - "3000:3000"   # API Server
-      - "3001:3001"   # WebSocket for real-time updates
+      - "3002:3000"   # API Server
+      - "3003:3001"   # WebSocket for real-time updates
     environment:
       - NODE_ENV=development
       - NEO4J_URI=bolt://neo4j:7687
@@ -99,7 +97,7 @@ services:
 
   # Monitoring Stack (Optional for production)
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.58.0
     container_name: guru-prometheus
     restart: unless-stopped
     ports:
@@ -117,7 +115,7 @@ services:
       - monitoring
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:11.4.0
     container_name: guru-grafana
     restart: unless-stopped
     ports:

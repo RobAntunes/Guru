@@ -1,11 +1,18 @@
-FROM node:18-alpine AS builder
+FROM node:22-alpine AS builder
 
-# Install build dependencies
+# Install build dependencies for tree-sitter and native modules
 RUN apk add --no-cache \
     python3 \
-    make \
+    py3-pip \
+    py3-setuptools \
+    python3-dev \
+    build-base \
+    gcc \
     g++ \
-    git
+    make \
+    git \
+    rust \
+    cargo
 
 # Set working directory
 WORKDIR /app
@@ -14,8 +21,11 @@ WORKDIR /app
 COPY package*.json ./
 COPY tsconfig.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install setuptools via pip to fix distutils issues (break system packages for Docker)
+RUN pip3 install --upgrade setuptools --break-system-packages
+
+# Install dependencies (use legacy peer deps to handle tree-sitter conflicts)
+RUN npm install --only=production --legacy-peer-deps
 
 # Copy source code
 COPY . .
@@ -24,7 +34,7 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM node:18-alpine AS production
+FROM node:22-alpine AS production
 
 # Install runtime dependencies
 RUN apk add --no-cache \
