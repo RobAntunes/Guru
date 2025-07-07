@@ -69,8 +69,8 @@ export class QuantumSuperpositionEngine {
         field
       );
       
-      // Skip negligible probabilities
-      if (probability < 0.01) {
+      // FIXED: More permissive threshold for better memory discovery
+      if (probability < 0.0001) {
         return null;
       }
 
@@ -160,7 +160,7 @@ export class QuantumSuperpositionEngine {
     superposition: QuantumSuperposition[]
   ): InterferencePattern[] {
     const patterns: InterferencePattern[] = [];
-    const phaseThreshold = Math.PI / 6; // 30 degrees
+    const phaseThreshold = Math.PI / 3; // FIXED: 60 degrees - more permissive grouping
 
     // Group memories by similar phase
     const phaseGroups = new Map<number, QuantumSuperposition[]>();
@@ -178,7 +178,7 @@ export class QuantumSuperpositionEngine {
       if (group.length > 1) {
         const totalAmplitude = group.reduce((sum, s) => sum + s.amplitude, 0);
         
-        if (totalAmplitude > 0.5) {
+        if (totalAmplitude > 0.2) { // FIXED: Lower threshold for interference detection
           patterns.push({
             type: 'constructive',
             strength: totalAmplitude,
@@ -216,12 +216,12 @@ export class QuantumSuperpositionEngine {
 
     // Find resonance patterns
     harmonicGroups.forEach((group, category) => {
-      if (group.length > 2) {
+      if (group.length >= 2) { // FIXED: Allow pairs to create patterns
         const avgStrength = group.reduce(
           (sum, s) => sum + s.memory.content.harmonicSignature.strength, 0
         ) / group.length;
 
-        if (avgStrength > 0.6) {
+        if (avgStrength > 0.3) { // FIXED: Lower threshold for harmonic interference
           patterns.push({
             type: 'constructive',
             strength: avgStrength * group.length / 10, // Scale by group size
@@ -535,5 +535,20 @@ export class QuantumSuperpositionEngine {
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash) / 2147483647; // Normalize to 0-1
+  }
+
+  /**
+   * Calculate distance between two points
+   */
+  private calculateDistance(
+    point1: [number, number, number],
+    point2: [number, number, number]
+  ): number {
+    const [dx, dy, dz] = [
+      point1[0] - point2[0],
+      point1[1] - point2[1],
+      point1[2] - point2[2]
+    ];
+    return Math.sqrt(dx * dx + dy * dy + dz * dz);
   }
 }

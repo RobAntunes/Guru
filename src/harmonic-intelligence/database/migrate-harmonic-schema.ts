@@ -3,8 +3,8 @@
  * @module harmonic-intelligence/database
  */
 
-import { DatabaseAdapter } from '../../core/database-adapter';
-import { Logger } from '../../utils/logger';
+import { DatabaseAdapter } from '../../core/database-adapter.js';
+import { Logger } from '../../utils/logger.js';
 import * as fs from 'fs';
 import * as path from 'path';
 

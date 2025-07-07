@@ -4,7 +4,7 @@
  */
 
 import { z } from 'zod';
-import { DuckDBAnalyticsStore } from '../storage/duckdb-analytics-store.js';
+import { AnalyticsStore as DuckDBAnalyticsStore } from '../storage/analytics-store.js';
 import { QuantumProbabilityFieldMemory } from '../memory/quantum-memory-system.js';
 
 // Initialize embedded DuckDB
@@ -216,4 +216,101 @@ export function registerAnalyticsTools(
       execute: (args: any) => qpfmExportTool.execute(args, analytics)
     }
   };
+}
+
+/**
+ * Create analytics tools for MCP
+ */
+export async function createAnalyticsTools() {
+  await analytics.initialize();
+  
+  const tools = [
+    {
+      name: qpfmAnalyzeTrendsTool.name,
+      description: qpfmAnalyzeTrendsTool.description,
+      inputSchema: {
+        type: 'object',
+        properties: {
+          timeRange: {
+            type: 'object',
+            properties: {
+              start: { type: 'string', format: 'date-time' },
+              end: { type: 'string', format: 'date-time' }
+            }
+          },
+          categories: {
+            type: 'array',
+            items: { type: 'string' }
+          },
+          groupBy: {
+            type: 'string',
+            enum: ['hour', 'day', 'week', 'month']
+          }
+        }
+      },
+      handler: async (args: any) => qpfmAnalyzeTrendsTool.execute(args, analytics)
+    },
+    {
+      name: qpfmCorrelationTool.name,
+      description: qpfmCorrelationTool.description,
+      inputSchema: {
+        type: 'object',
+        properties: {
+          sourceCategory: { type: 'string' },
+          minCorrelation: { type: 'number', minimum: 0, maximum: 1 }
+        },
+        required: ['sourceCategory']
+      },
+      handler: async (args: any) => qpfmCorrelationTool.execute(args, analytics)
+    },
+    {
+      name: qpfmHotspotTool.name,
+      description: qpfmHotspotTool.description,
+      inputSchema: {
+        type: 'object',
+        properties: {
+          minPatterns: { type: 'number', default: 5 },
+          categories: {
+            type: 'array',
+            items: { type: 'string' }
+          }
+        }
+      },
+      handler: async (args: any) => qpfmHotspotTool.execute(args, analytics)
+    },
+    {
+      name: qpfmExportTool.name,
+      description: qpfmExportTool.description,
+      inputSchema: {
+        type: 'object',
+        properties: {
+          format: {
+            type: 'string',
+            enum: ['parquet', 'csv', 'json']
+          },
+          filters: {
+            type: 'object',
+            properties: {
+              categories: {
+                type: 'array',
+                items: { type: 'string' }
+              },
+              minStrength: { type: 'number' },
+              dateRange: {
+                type: 'object',
+                properties: {
+                  start: { type: 'string', format: 'date-time' },
+                  end: { type: 'string', format: 'date-time' }
+                }
+              }
+            }
+          }
+        },
+        required: ['format']
+      },
+      handler: async (args: any) => qpfmExportTool.execute(args, analytics)
+    }
+  ];
+  
+  return tools;
 }

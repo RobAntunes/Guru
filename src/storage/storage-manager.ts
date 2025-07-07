@@ -30,10 +30,11 @@ export interface SymbolGraphResult {
 }
 
 export class StorageManager {
-  private neo4j: Neo4jRelationshipStore;
-  private cache: RedisCache;
-  private analytics: AnalyticsStore;
-  private dpcm: DPCMPatternStore;
+  public readonly neo4j: Neo4jRelationshipStore;
+  public readonly cache: RedisCache;
+  public readonly analytics: AnalyticsStore;
+  public readonly dpcm: DPCMPatternStore;
+  public readonly qpfm: any; // Will be set by QPFM factory
   private connected: boolean = false;
 
   constructor() {

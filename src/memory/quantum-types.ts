@@ -3,7 +3,19 @@
  * The world's first AI-native memory architecture with scientifically validated emergent intelligence
  */
 
-import { HarmonicPattern, PatternCategory } from './types.js';
+import { HarmonicPatternMemory, PatternCategory } from './types.js';
+
+// Re-export for backward compatibility
+// Harmonic signature - just the key pattern properties without the full memory
+export interface HarmonicSignature {
+  category: PatternCategory;
+  strength?: number;
+  complexity?: number;
+  confidence?: number;
+  occurrences?: number;
+}
+
+export type HarmonicPattern = HarmonicPatternMemory;
 
 // Core quantum memory node structure
 export interface QuantumMemoryNode {
@@ -16,7 +28,7 @@ export interface QuantumMemoryNode {
     title: string;
     description: string;
     type: string;
-    harmonicSignature: HarmonicPattern;     // Mathematical pattern DNA
+    harmonicSignature: HarmonicSignature;   // Mathematical pattern DNA
     tags: string[];
     data: any;
   };
@@ -92,7 +104,7 @@ export interface InterferencePattern {
 // Memory query configuration
 export interface MemoryQuery {
   type: 'precision' | 'discovery' | 'creative';
-  harmonicSignature?: HarmonicPattern;
+  harmonicSignature?: HarmonicSignature;
   confidence: number;
   exploration: number;                      // 0 = pure precision, 1 = pure exploration
   urgency?: number;                         // Time constraint influence
@@ -100,9 +112,14 @@ export interface MemoryQuery {
   contextWindow?: string[];                 // Recent context for adaptation
 }
 
+// Timestamped query for tracking
+export interface TimestampedQuery extends MemoryQuery {
+  timestamp: number;
+}
+
 // System context for adaptive behavior
 export interface SystemContext {
-  recentQueries: MemoryQuery[];
+  recentQueries: TimestampedQuery[];
   activePatterns: PatternCategory[];
   performanceMetrics: {
     avgResponseTime: number;

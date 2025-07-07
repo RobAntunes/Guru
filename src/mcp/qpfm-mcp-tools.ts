@@ -5,13 +5,26 @@
 
 import { z } from 'zod';
 import { 
-  MemoryQuery,
   LogicOperation,
   LogicGateType,
   PatternCategory,
   HarmonicPatternMemory
 } from '../memory/types.js';
+import { MemoryQuery } from '../memory/quantum-types.js';
 import { QuantumProbabilityFieldMemory } from '../memory/quantum-memory-system.js';
+
+export interface MCPTool {
+  name: string;
+  description: string;
+  inputSchema: any;
+  handler: (args: any) => Promise<MCPToolResponse>;
+}
+
+export interface MCPToolResponse {
+  success: boolean;
+  data?: any;
+  error?: string;
+}
 
 // Tool schemas for MCP
 const LogicOperationSchema = z.object({
@@ -118,7 +131,7 @@ export const qpfmStoreTool = {
   async execute(args: any, qpfm: QuantumProbabilityFieldMemory) {
     const memory: HarmonicPatternMemory = {
       id: args.id,
-      timestamp: new Date(),
+      coordinates: [0, 0, 0], // Will be overwritten by DPCM
       content: {
         title: args.title,
         description: args.description,
@@ -126,6 +139,10 @@ export const qpfmStoreTool = {
         tags: args.tags,
         data: {}
       },
+      accessCount: 0,
+      lastAccessed: Date.now(),
+      createdAt: Date.now(),
+      relevanceScore: 1.0,
       harmonicProperties: {
         category: args.category as PatternCategory,
         strength: args.strength,
@@ -133,8 +150,6 @@ export const qpfmStoreTool = {
         confidence: args.confidence,
         occurrences: args.occurrences
       },
-      coordinates: undefined as any, // Let DPCM generate
-      relevanceScore: 1.0,
       locations: [],
       evidence: [],
       relatedPatterns: [],
@@ -212,9 +227,10 @@ export const qpfmEmergentTool = {
       mode: args.mode,
       insights: insights.map(i => ({
         type: i.type,
-        content: i.content,
-        confidence: i.confidence,
-        patterns: i.sourcePatterns
+        description: i.description,
+        confidence: i.confidenceLevel,
+        noveltyScore: i.noveltyScore,
+        contributingMemories: i.contributingMemories
       })),
       totalInsights: insights.length
     };
@@ -310,4 +326,110 @@ export function registerQPFMTools(qpfm: QuantumProbabilityFieldMemory) {
       execute: (args: any) => qpfmComposeTool.execute(args, qpfm)
     }
   };
+}
+
+/**
+ * Create QPFM tools for MCP
+ */
+export async function createQPFMTools(storageManager: any) {
+  const qpfm = storageManager.qpfm || new QuantumProbabilityFieldMemory();
+  
+  const tools: MCPTool[] = [
+    {
+      name: qpfmQueryTool.name,
+      description: qpfmQueryTool.description,
+      inputSchema: {
+        type: 'object',
+        properties: {
+          query: {
+            type: 'object',
+            properties: {
+              coordinates: {
+                type: 'array',
+                items: { type: 'number' }
+              },
+              radius: { type: 'number' },
+              limit: { type: 'number' },
+              categories: {
+                type: 'array',
+                items: { type: 'string' }
+              }
+            },
+            required: ['coordinates']
+          }
+        },
+        required: ['query']
+      },
+      handler: async (args: any) => qpfmQueryTool.execute(args, qpfm)
+    },
+    {
+      name: qpfmStoreTool.name,
+      description: qpfmStoreTool.description,
+      inputSchema: {
+        type: 'object',
+        properties: {
+          pattern: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              data: { type: 'object' },
+              coordinates: {
+                type: 'array',
+                items: { type: 'number' }
+              },
+              metadata: { type: 'object' }
+            },
+            required: ['id', 'data', 'coordinates']
+          }
+        },
+        required: ['pattern']
+      },
+      handler: async (args: any) => qpfmStoreTool.execute(args, qpfm)
+    },
+    {
+      name: qpfmDistributionTool.name,
+      description: qpfmDistributionTool.description,
+      inputSchema: {
+        type: 'object',
+        properties: {
+          categories: {
+            type: 'array',
+            items: { type: 'string' }
+          }
+        }
+      },
+      handler: async (args: any) => qpfmDistributionTool.execute(args, qpfm)
+    },
+    {
+      name: qpfmEmergentTool.name,
+      description: qpfmEmergentTool.description,
+      inputSchema: {
+        type: 'object',
+        properties: {
+          categories: {
+            type: 'array',
+            items: { type: 'string' }
+          }
+        }
+      },
+      handler: async (args: any) => qpfmEmergentTool.execute(args, qpfm)
+    },
+    {
+      name: qpfmComposeTool.name,
+      description: qpfmComposeTool.description,
+      inputSchema: {
+        type: 'object',
+        properties: {
+          patterns: {
+            type: 'array',
+            items: { type: 'string' }
+          }
+        },
+        required: ['patterns']
+      },
+      handler: async (args: any) => qpfmComposeTool.execute(args, qpfm)
+    }
+  ];
+  
+  return tools;
 }

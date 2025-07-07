@@ -4,8 +4,8 @@
  * @module harmonic-intelligence/core
  */
 
-import { Logger } from '../../utils/logger';
-import { SymbolGraph, SymbolNode, SymbolEdge } from '../../types/index';
+import { Logger } from '../../utils/logger.js';
+import { SymbolGraph, SymbolNode, SymbolEdge } from '../../types/index.js';
 import { 
   SemanticData,
   PatternType, 
@@ -15,7 +15,7 @@ import {
   ArchitecturalLayers,
   HarmonicSymbol
 } from '../interfaces/harmonic-types';
-import { HarmonicAnalysisEngine } from './harmonic-analysis-engine';
+import { HarmonicAnalysisEngine } from './harmonic-analysis-engine.js';
 
 /**
  * Enriched symbol data combining original symbol information with harmonic analysis

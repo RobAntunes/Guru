@@ -3,7 +3,7 @@
  * Provides AI models with intuitive codebase understanding
  */
 
-import { HarmonicCLI } from './harmonic-cli';
+import { HarmonicCLI } from './harmonic-cli.js';
 import { z } from 'zod';
 
 // Tool schemas for MCP

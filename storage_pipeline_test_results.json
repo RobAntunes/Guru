@@ -1,0 +1,451 @@
+{
+  "timestamp": "2025-07-07T03:31:20.635Z",
+  "patternCount": 1000,
+  "performance": {
+    "storage": {
+      "duckdb": 66.15820900000006,
+      "unified": 552.6377090000001,
+      "total": 618.921958
+    },
+    "queries": {
+      "timeSeries": {
+        "time": 4.03125,
+        "results": 40
+      },
+      "aggregation": {
+        "time": 2.5865830000000187,
+        "groups": 25
+      },
+      "mcpGateway": {
+        "time": 42.61445800000001,
+        "results": 20
+      },
+      "concurrent": {
+        "time": 0.379334000000199,
+        "totalResults": 200
+      }
+    }
+  },
+  "samplePatterns": [
+    {
+      "id": "pattern_1751859079921_0",
+      "coordinates": [
+        0.5427156585600962,
+        0.2466521261368534,
+        0.4743739321069731
+      ],
+      "content": {
+        "title": "singleton Pattern 0",
+        "description": "fractal pattern implementing singleton",
+        "type": "singleton",
+        "tags": [
+          "fractal",
+          "singleton",
+          "test",
+          "benchmark"
+        ],
+        "data": {
+          "index": 0,
+          "timestamp": "2025-07-07T03:31:19.921Z",
+          "metadata": {
+            "source": "test-generator",
+            "version": "1.0.0",
+            "complexity": 6
+          }
+        }
+      },
+      "accessCount": 44,
+      "lastAccessed": 1751798016344.3347,
+      "createdAt": 1751789696129.6936,
+      "relevanceScore": 0.6127866755349596,
+      "harmonicProperties": {
+        "category": "fractal",
+        "strength": 0.5556041370087783,
+        "occurrences": 4,
+        "confidence": 0.7073821767479758,
+        "complexity": 7
+      },
+      "locations": [
+        {
+          "file": "src/fractal/file0.ts",
+          "startLine": 0,
+          "endLine": 21,
+          "startColumn": 0,
+          "endColumn": 120
+        }
+      ],
+      "evidence": [],
+      "relatedPatterns": [],
+      "causesPatterns": [],
+      "requiredBy": []
+    },
+    {
+      "id": "pattern_1751859079921_1",
+      "coordinates": [
+        0.5098586390982053,
+        0.9347374245838116,
+        0.4365379825319485
+      ],
+      "content": {
+        "title": "factory Pattern 1",
+        "description": "fractal_patterns pattern implementing factory",
+        "type": "factory",
+        "tags": [
+          "fractal_patterns",
+          "factory",
+          "test",
+          "benchmark"
+        ],
+        "data": {
+          "index": 1,
+          "timestamp": "2025-07-07T03:31:19.921Z",
+          "metadata": {
+            "source": "test-generator",
+            "version": "1.0.0",
+            "complexity": 7
+          }
+        }
+      },
+      "accessCount": 85,
+      "lastAccessed": 1751810971906.4214,
+      "createdAt": 1751724981555.3005,
+      "relevanceScore": 0.6011669857803117,
+      "harmonicProperties": {
+        "category": "fractal_patterns",
+        "strength": 0.5016014357001859,
+        "occurrences": 8,
+        "confidence": 0.6266195919601552,
+        "complexity": 7
+      },
+      "locations": [
+        {
+          "file": "src/fractal_patterns/file1.ts",
+          "startLine": 10,
+          "endLine": 37,
+          "startColumn": 0,
+          "endColumn": 120
+        }
+      ],
+      "evidence": [],
+      "relatedPatterns": [
+        "pattern_1751859079921_0"
+      ],
+      "causesPatterns": [],
+      "requiredBy": []
+    },
+    {
+      "id": "pattern_1751859079921_2",
+      "coordinates": [
+        0.9721122635463514,
+        0.17056378819294363,
+        0.1532066606807538
+      ],
+      "content": {
+        "title": "observer Pattern 2",
+        "description": "wave pattern implementing observer",
+        "type": "observer",
+        "tags": [
+          "wave",
+          "observer",
+          "test",
+          "benchmark"
+        ],
+        "data": {
+          "index": 2,
+          "timestamp": "2025-07-07T03:31:19.921Z",
+          "metadata": {
+            "source": "test-generator",
+            "version": "1.0.0",
+            "complexity": 3
+          }
+        }
+      },
+      "accessCount": 80,
+      "lastAccessed": 1751844982262.697,
+      "createdAt": 1751367845156.7737,
+      "relevanceScore": 0.35154160849492433,
+      "harmonicProperties": {
+        "category": "wave",
+        "strength": 0.5154932481221162,
+        "occurrences": 13,
+        "confidence": 0.6062208958515451,
+        "complexity": 1
+      },
+      "locations": [
+        {
+          "file": "src/wave/file2.ts",
+          "startLine": 20,
+          "endLine": 27,
+          "startColumn": 0,
+          "endColumn": 120
+        }
+      ],
+      "evidence": [],
+      "relatedPatterns": [
+        "pattern_1751859079921_1"
+      ],
+      "causesPatterns": [],
+      "requiredBy": []
+    },
+    {
+      "id": "pattern_1751859079921_3",
+      "coordinates": [
+        0.8521608661050352,
+        0.12193292521916631,
+        0.45529547833262374
+      ],
+      "content": {
+        "title": "strategy Pattern 3",
+        "description": "wave_harmonic pattern implementing strategy",
+        "type": "strategy",
+        "tags": [
+          "wave_harmonic",
+          "strategy",
+          "test",
+          "benchmark"
+        ],
+        "data": {
+          "index": 3,
+          "timestamp": "2025-07-07T03:31:19.921Z",
+          "metadata": {
+            "source": "test-generator",
+            "version": "1.0.0",
+            "complexity": 2
+          }
+        }
+      },
+      "accessCount": 77,
+      "lastAccessed": 1751799679763.0647,
+      "createdAt": 1751342626038.3022,
+      "relevanceScore": 0.09656971047334939,
+      "harmonicProperties": {
+        "category": "wave_harmonic",
+        "strength": 0.9674741135629394,
+        "occurrences": 19,
+        "confidence": 0.7367958704192281,
+        "complexity": 4
+      },
+      "locations": [
+        {
+          "file": "src/wave_harmonic/file3.ts",
+          "startLine": 30,
+          "endLine": 62,
+          "startColumn": 0,
+          "endColumn": 120
+        }
+      ],
+      "evidence": [],
+      "relatedPatterns": [
+        "pattern_1751859079921_2"
+      ],
+      "causesPatterns": [],
+      "requiredBy": []
+    },
+    {
+      "id": "pattern_1751859079921_4",
+      "coordinates": [
+        0.7599708118382773,
+        0.27572079288673607,
+        0.3272365171758543
+      ],
+      "content": {
+        "title": "composite Pattern 4",
+        "description": "information_theory pattern implementing composite",
+        "type": "composite",
+        "tags": [
+          "information_theory",
+          "composite",
+          "test",
+          "benchmark"
+        ],
+        "data": {
+          "index": 4,
+          "timestamp": "2025-07-07T03:31:19.921Z",
+          "metadata": {
+            "source": "test-generator",
+            "version": "1.0.0",
+            "complexity": 10
+          }
+        }
+      },
+      "accessCount": 90,
+      "lastAccessed": 1751822942892.6492,
+      "createdAt": 1751824577633.5513,
+      "relevanceScore": 0.3772430443696153,
+      "harmonicProperties": {
+        "category": "information_theory",
+        "strength": 0.8876044546464404,
+        "occurrences": 20,
+        "confidence": 0.8558456701628654,
+        "complexity": 2
+      },
+      "locations": [
+        {
+          "file": "src/information_theory/file4.ts",
+          "startLine": 40,
+          "endLine": 66,
+          "startColumn": 0,
+          "endColumn": 120
+        }
+      ],
+      "evidence": [],
+      "relatedPatterns": [
+        "pattern_1751859079921_3"
+      ],
+      "causesPatterns": [],
+      "requiredBy": []
+    }
+  ],
+  "aggregationResults": [
+    {
+      "category": "wave",
+      "count": "40",
+      "avg_strength": 0.7365826931190995,
+      "max_complexity": null
+    },
+    {
+      "category": "information_theory",
+      "count": "40",
+      "avg_strength": 0.7665831664398532,
+      "max_complexity": null
+    },
+    {
+      "category": "behavioral",
+      "count": "40",
+      "avg_strength": 0.7804467840064874,
+      "max_complexity": null
+    },
+    {
+      "category": "data_flow",
+      "count": "40",
+      "avg_strength": 0.7544028528984742,
+      "max_complexity": null
+    },
+    {
+      "category": "error_pattern",
+      "count": "40",
+      "avg_strength": 0.7310343377042586,
+      "max_complexity": null
+    },
+    {
+      "category": "tiling_crystallographic",
+      "count": "40",
+      "avg_strength": 0.744854639365181,
+      "max_complexity": null
+    },
+    {
+      "category": "cryptographic",
+      "count": "40",
+      "avg_strength": 0.7642114851292579,
+      "max_complexity": null
+    },
+    {
+      "category": "geometric",
+      "count": "40",
+      "avg_strength": 0.7011475023460967,
+      "max_complexity": null
+    },
+    {
+      "category": "authentication",
+      "count": "40",
+      "avg_strength": 0.750306265762498,
+      "max_complexity": null
+    },
+    {
+      "category": "classical_harmony",
+      "count": "40",
+      "avg_strength": 0.7211426459914925,
+      "max_complexity": null
+    },
+    {
+      "category": "network_topology",
+      "count": "40",
+      "avg_strength": 0.7246439449387638,
+      "max_complexity": null
+    },
+    {
+      "category": "functional",
+      "count": "40",
+      "avg_strength": 0.7613725669598589,
+      "max_complexity": null
+    },
+    {
+      "category": "harmonic",
+      "count": "40",
+      "avg_strength": 0.7232737169306678,
+      "max_complexity": null
+    },
+    {
+      "category": "fractal",
+      "count": "40",
+      "avg_strength": 0.764903129959745,
+      "max_complexity": null
+    },
+    {
+      "category": "wave_harmonic",
+      "count": "40",
+      "avg_strength": 0.7747932779894577,
+      "max_complexity": null
+    },
+    {
+      "category": "tiling",
+      "count": "40",
+      "avg_strength": 0.7739892422789906,
+      "max_complexity": null
+    },
+    {
+      "category": "recovery",
+      "count": "40",
+      "avg_strength": 0.7626372932558614,
+      "max_complexity": null
+    },
+    {
+      "category": "state_management",
+      "count": "40",
+      "avg_strength": 0.7852028282610691,
+      "max_complexity": null
+    },
+    {
+      "category": "structural",
+      "count": "40",
+      "avg_strength": 0.7941953685030944,
+      "max_complexity": null
+    },
+    {
+      "category": "geometric_harmony",
+      "count": "40",
+      "avg_strength": 0.7693663815835703,
+      "max_complexity": null
+    },
+    {
+      "category": "computational",
+      "count": "40",
+      "avg_strength": 0.7539159239925802,
+      "max_complexity": null
+    },
+    {
+      "category": "quantum",
+      "count": "40",
+      "avg_strength": 0.7284358206783778,
+      "max_complexity": null
+    },
+    {
+      "category": "fractal_patterns",
+      "count": "40",
+      "avg_strength": 0.7572112435992968,
+      "max_complexity": null
+    },
+    {
+      "category": "topological",
+      "count": "40",
+      "avg_strength": 0.7476936778893714,
+      "max_complexity": null
+    },
+    {
+      "category": "topological_patterns",
+      "count": "40",
+      "avg_strength": 0.7713742656004595,
+      "max_complexity": null
+    }
+  ]
+}

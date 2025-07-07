@@ -450,8 +450,10 @@ export class GuruCore {
         "No analysis available. Please run analyze_codebase first.",
       );
     }
-    const engine = new PatternMiningEngine(this.currentAnalysis.symbolGraph);
-    return engine.minePatterns();
+    // TODO: Implement PatternMiningEngine
+    // const engine = new PatternMiningEngine(this.currentAnalysis.symbolGraph);
+    // return engine.minePatterns();
+    return { patterns: [], miningMetadata: { totalPatternsFound: 0 } };
   }
 
   /**
@@ -461,8 +463,10 @@ export class GuruCore {
     const analysis = await this.analyzeCodebase(params.path, params.goalSpec, params.scanMode);
     let feedbackResults = null;
     try {
-      const orchestrator = new FeedbackOrchestrator();
-      feedbackResults = await orchestrator.orchestrateFeedback(analysis);
+      // TODO: Implement FeedbackOrchestrator
+      // const orchestrator = new FeedbackOrchestrator();
+      // feedbackResults = await orchestrator.orchestrateFeedback(analysis);
+      feedbackResults = { success: false, message: "FeedbackOrchestrator not implemented" };
     } catch (e) {
       console.error("Feedback orchestration failed:", e);
     }

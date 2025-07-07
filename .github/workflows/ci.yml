@@ -13,31 +13,32 @@ jobs:
     
     strategy:
       matrix:
-        bun-version: [1.2.18]
+        node-version: [20.x]
     
     steps:
     - name: 📥 Checkout code
       uses: actions/checkout@v4
       
-    - name: 🟢 Setup Bun ${{ matrix.bun-version }}
-      uses: oven-sh/setup-bun@v1
+    - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
       with:
-        bun-version: ${{ matrix.bun-version }}
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
         
     - name: 🔧 Install dependencies
-      run: bun install
+      run: npm ci
       
     - name: 🏗️ Build project
-      run: bun run build
+      run: npm run build
       
     - name: 🚀 Run AI-native suite
-      run: bun run test:ai-native
+      run: npm run test:ai-native
       
     - name: 📊 Run validation tests
-      run: bun run test:validation
+      run: npm run test:validation
       
     - name: 🔥 Run stress tests
-      run: bun run test:stress
+      run: npm run test:stress
       
   lint:
     name: 🔍 Code Quality
@@ -47,16 +48,17 @@ jobs:
     - name: 📥 Checkout code
       uses: actions/checkout@v4
       
-    - name: 🟢 Setup Bun
-      uses: oven-sh/setup-bun@v1
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        bun-version: '1.2.18'
+        node-version: '20.x'
+        cache: 'npm'
         
     - name: 🔧 Install dependencies
-      run: bun install
+      run: npm ci
       
     - name: 🏗️ Type check
-      run: bun run type-check
+      run: npm run type-check
 
   security:
     name: 🔒 Security Scan
@@ -111,19 +113,20 @@ jobs:
     - name: 📥 Checkout code
       uses: actions/checkout@v4
       
-    - name: 🟢 Setup Bun
-      uses: oven-sh/setup-bun@v1
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        bun-version: '1.2.18'
+        node-version: '20.x'
+        cache: 'npm'
         
     - name: 🔧 Install dependencies
-      run: bun install
+      run: npm ci
       
     - name: 🏗️ Build project
-      run: bun run build
+      run: npm run build
       
     - name: 🤖 Test AI-native output format
-      run: bun run test:ai-compatibility
+      run: npm run test:ai-compatibility
       
     - name: 📊 Validate AI consumption patterns
-      run: bun run validate:ai-output
+      run: npm run validate:ai-output

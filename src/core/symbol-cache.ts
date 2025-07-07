@@ -372,8 +372,8 @@ export class SymbolCache {
     try {
       const data = await fs.promises.readFile(this.indexFile, 'utf-8');
       this.cacheIndex = JSON.parse(data);
-    } catch (error) {
-      if (error.code !== 'ENOENT') {
+    } catch (error: any) {
+      if (error?.code !== 'ENOENT') {
         console.error('[SymbolCache] Failed to load index:', error);
       }
       this.cacheIndex = {};

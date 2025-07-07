@@ -9,7 +9,8 @@ import {
   SystemContext,
   FieldShapeFunction 
 } from './quantum-types.js';
-import { HarmonicPattern } from './types.js';
+import { HarmonicSignature } from './quantum-types.js';
+import { LogicOperation } from './types.js';
 import { EnhancedParameterHash } from './enhanced-parameter-hash.js';
 
 export class QuantumFieldGenerator {
@@ -56,11 +57,13 @@ export class QuantumFieldGenerator {
    */
   generateField(
     query: MemoryQuery,
-    context: SystemContext
+    context: SystemContext,
+    basePattern?: string,
+    operations?: LogicOperation[]
   ): ProbabilityField {
     
-    // Calculate field center from query harmonics
-    const center = this.calculateFieldCenter(query.harmonicSignature);
+    // Calculate field center using DPCM composition
+    const center = this.calculateFieldCenter(query.harmonicSignature, basePattern, operations);
     
     // Adapt field configuration based on query parameters
     const fieldConfig = this.adaptFieldGeometry({
@@ -75,9 +78,9 @@ export class QuantumFieldGenerator {
       center,
       radius: fieldConfig.radius,
       shape: fieldConfig.shape,
-      falloffFunction: fieldConfig.falloff,
+      falloffFunction: fieldConfig.falloffFunction,
       amplitude: fieldConfig.amplitude,
-      gradientSteepness: fieldConfig.steepness,
+      gradientSteepness: fieldConfig.gradientSteepness,
       morphingRate: this.calculateMorphingRate(query, context),
       contextSensitivity: this.calculateContextSensitivity(context),
       explorationBias: query.exploration
@@ -85,32 +88,56 @@ export class QuantumFieldGenerator {
   }
 
   /**
-   * Calculate field center from harmonic signature
+   * Calculate field center using DPCM composition
    */
   private calculateFieldCenter(
-    harmonicSignature?: HarmonicPattern
+    harmonicSignature?: HarmonicSignature,
+    basePattern?: string,
+    operations?: LogicOperation[]
   ): [number, number, number] {
-    if (!harmonicSignature) {
-      // Random exploration center
-      return [
-        Math.random(),
-        Math.random(),
-        Math.random()
-      ];
+    
+    // Determine base pattern
+    let pattern = basePattern;
+    if (!pattern && harmonicSignature) {
+      pattern = harmonicSignature.category;
+    }
+    if (!pattern) {
+      // Random exploration center for truly open queries
+      return [Math.random(), Math.random(), Math.random()];
     }
 
-    // Use enhanced parameter hash to convert harmonic signature to coordinates
-    const category = harmonicSignature.category || 'general';
-    const strength = harmonicSignature.strength || 0.5;
-    const complexity = harmonicSignature.complexity || 0.5;
-    const occurrences = harmonicSignature.occurrences || 1;
+    // SPEC LORD FIX 1: Normalize to uppercase for coordinate consistency
+    pattern = pattern.toUpperCase();
 
-    return this.hasher.generateSemanticCoordinates(
-      category,
-      strength,
-      complexity,
-      occurrences
-    );
+    // Apply DPCM logic gate composition
+    const composition = this.serializeLogicOperations(operations || []);
+    
+    // Generate composed hash using DPCM algorithm
+    const composedHash = this.hasher.hash(pattern, composition);
+    
+    // Convert to coordinates using DPCM mapping
+    return this.hasher.toCoordinates(composedHash);
+  }
+
+  /**
+   * Serialize logic operations for DPCM composition
+   */
+  private serializeLogicOperations(operations: LogicOperation[]): string {
+    // SPEC LORD FIX 2: Handle empty operations consistently for memory storage vs queries
+    if (operations.length === 0) {
+      return ''; // Empty string for no operations to match memory storage
+    }
+
+    return operations.map(op => {
+      let serialized = `${op.type}:${op.params.join(',')}`;
+      if (op.threshold !== undefined) {
+        serialized += `:threshold=${op.threshold}`;
+      }
+      if (op.weight !== undefined) {
+        serialized += `:weight=${op.weight}`;
+      }
+      return serialized;
+    }).join('|');
   }
 
   /**
@@ -125,9 +152,9 @@ export class QuantumFieldGenerator {
   }): {
     radius: number;
     shape: 'spherical' | 'elliptical' | 'adaptive' | 'fractal';
-    falloff: 'exponential' | 'polynomial' | 'gaussian' | 'sigmoid';
+    falloffFunction: 'exponential' | 'polynomial' | 'gaussian' | 'sigmoid';
     amplitude: number;
-    steepness: number;
+    gradientSteepness: number;
   } {
     const { queryType, confidenceLevel, explorationDesire, timeConstraints, context } = params;
 
@@ -135,19 +162,19 @@ export class QuantumFieldGenerator {
     let config = {
       radius: 0.35,
       shape: 'spherical' as const,
-      falloff: 'polynomial' as const,
+      falloffFunction: 'polynomial' as const,
       amplitude: 1.0,
-      steepness: 2.0
+      gradientSteepness: 2.0
     };
 
     switch (queryType) {
       case 'precision':
         config = {
-          radius: 0.1 + (1 - confidenceLevel) * 0.2, // Narrow when confident
+          radius: 0.5 + (1 - confidenceLevel) * 0.4, // FIXED: Larger radius for coordinate space coverage
           shape: 'spherical',
-          falloff: 'exponential',
+          falloffFunction: 'gaussian', // SPEC LORD FIX 4: Use Gaussian for smoother gradients
           amplitude: 1.5,
-          steepness: 4.0
+          gradientSteepness: 1.5 // FIXED: Lower steepness for broader coverage
         };
         break;
 
@@ -155,9 +182,9 @@ export class QuantumFieldGenerator {
         config = {
           radius: 0.5 + explorationDesire * 0.3, // Wide for exploration
           shape: 'elliptical',
-          falloff: 'polynomial',
+          falloffFunction: 'gaussian', // SPEC LORD FIX 4: Use Gaussian for smoother gradients
           amplitude: 1.0,
-          steepness: 1.5
+          gradientSteepness: 1.8 // Adjusted for Gaussian
         };
         break;
 
@@ -165,9 +192,9 @@ export class QuantumFieldGenerator {
         config = {
           radius: 0.6 + Math.random() * 0.2, // Variable for creativity
           shape: 'fractal',
-          falloff: 'gaussian',
+          falloffFunction: 'gaussian',
           amplitude: 0.8 + Math.random() * 0.4,
-          steepness: 1.0 + Math.random() * 2.0
+          gradientSteepness: 1.0 + Math.random() * 2.0
         };
         break;
     }
@@ -184,7 +211,7 @@ export class QuantumFieldGenerator {
     // Adjust for time constraints
     if (timeConstraints && timeConstraints < 100) {
       config.radius *= 0.8; // Smaller radius for faster search
-      config.steepness *= 1.2; // Steeper gradient
+      config.gradientSteepness *= 1.2; // Steeper gradient
     }
 
     // Adjust based on recent performance
@@ -272,19 +299,17 @@ export class QuantumFieldGenerator {
   ): number {
     const distance = this.calculateDistance(point, field.center);
     
-    // Outside field radius
-    if (distance > field.radius) {
-      return 0;
-    }
-
     // Get shape function
     const shapeFunction = this.fieldShapes.get(field.falloffFunction);
     if (!shapeFunction) {
       throw new Error(`Unknown falloff function: ${field.falloffFunction}`);
     }
 
-    // Calculate base probability
+    // Calculate base probability using the falloff function
+    // Let the falloff function handle distance vs radius logic
     let probability = shapeFunction(distance, field);
+    
+    // FIXED: Remove hard radius cutoff to allow Gaussian smooth falloff
 
     // Apply shape modifiers
     switch (field.shape) {

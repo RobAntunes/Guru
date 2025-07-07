@@ -13,18 +13,22 @@ import {
   EmergentBehaviors,
   QuantumLearningConfig,
   EmergentInsight,
-  ExecutionMetrics
+  ExecutionMetrics,
+  HarmonicSignature
 } from './quantum-types.js';
 import { 
   HarmonicPatternMemory, 
   LogicOperation,
-  QueryOptions as DPCMQueryOptions 
+  QueryOptions as DPCMQueryOptions,
+  PatternCategory 
 } from './types.js';
 import { DPCMPatternStore } from '../storage/dpcm-pattern-store.js';
+import { StorageManager } from '../storage/storage-manager.js';
 import { QuantumFieldGenerator } from './quantum-field-generator.js';
 import { QuantumSuperpositionEngine } from './quantum-superposition-engine.js';
 import { EmergentBehaviorEngine } from './emergent-behavior-engine.js';
 import { QuantumLearningSystem } from './quantum-learning-system.js';
+import { EnhancedParameterHash } from './enhanced-parameter-hash.js';
 
 export interface QPFMConfig {
   dpcm: {
@@ -50,10 +54,12 @@ export interface QPFMConfig {
 export class QuantumProbabilityFieldMemory {
   // Core engines
   private dpcmStore: DPCMPatternStore;
+  private storageManager?: StorageManager;
   private fieldGenerator: QuantumFieldGenerator;
   private superpositionEngine: QuantumSuperpositionEngine;
   private emergenceBehaviorEngine: EmergentBehaviorEngine;
   private learningSystem: QuantumLearningSystem;
+  private hasher: EnhancedParameterHash;
   
   // Memory storage
   private quantumMemories: Map<string, QuantumMemoryNode> = new Map();
@@ -62,15 +68,24 @@ export class QuantumProbabilityFieldMemory {
   // Configuration
   private config: QPFMConfig;
   
-  constructor(config?: Partial<QPFMConfig>) {
+  constructor(config?: Partial<QPFMConfig>, storageManager?: StorageManager) {
     this.config = this.mergeConfig(config);
+    this.storageManager = storageManager;
     
     // Initialize engines
-    this.dpcmStore = new DPCMPatternStore();
+    // Use StorageManager's DPCM if available, otherwise create in-memory instance
+    if (storageManager) {
+      // StorageManager already has DPCM instance we can use
+      this.dpcmStore = (storageManager as any).dpcm;
+    } else {
+      this.dpcmStore = new DPCMPatternStore();
+    }
+    
     this.fieldGenerator = new QuantumFieldGenerator();
     this.superpositionEngine = new QuantumSuperpositionEngine();
     this.emergenceBehaviorEngine = new EmergentBehaviorEngine(this.config.emergent);
     this.learningSystem = new QuantumLearningSystem(this.config.learning);
+    this.hasher = new EnhancedParameterHash();
     
     // Initialize context
     this.systemContext = {
@@ -92,9 +107,10 @@ export class QuantumProbabilityFieldMemory {
     operations?: LogicOperation[],
     context?: Partial<SystemContext>
   ): Promise<QuantumMemoryResult> {
-    const startTime = Date.now();
+    const startTime = performance.now(); // High-resolution timing
     
-    // Normalize request
+    // Normalize request and capture pattern string
+    const pattern = typeof request === 'string' ? request : undefined;
     const memoryQuery = typeof request === 'string' 
       ? this.createMemoryQuery(request, operations)
       : request;
@@ -107,20 +123,21 @@ export class QuantumProbabilityFieldMemory {
     // Determine query mode
     if (memoryQuery.type === 'precision' && memoryQuery.confidence > 0.8) {
       // High confidence precision query - use DPCM primarily
-      result = await this.precisionQuery(memoryQuery, operations);
+      result = await this.precisionQuery(memoryQuery, operations, pattern);
     } else if (memoryQuery.type === 'discovery' || memoryQuery.exploration > 0.5) {
       // Discovery mode - use full quantum approach
-      result = await this.quantumQuery(memoryQuery);
+      result = await this.quantumQuery(memoryQuery, pattern);
     } else {
       // Hybrid approach - DPCM with quantum enhancement
-      result = await this.hybridQuery(memoryQuery, operations);
+      result = await this.hybridQuery(memoryQuery, operations, pattern);
     }
     
     // Apply learning
     await this.learningSystem.processInteraction(memoryQuery, result, this.systemContext);
     
-    // Update performance metrics
-    this.updatePerformanceMetrics(result, Date.now() - startTime);
+    // Update performance metrics with high-res timing
+    const totalTime = Math.max(0.001, performance.now() - startTime); // Minimum 1μs
+    this.updatePerformanceMetrics(result, totalTime);
     
     return result;
   }
@@ -130,25 +147,41 @@ export class QuantumProbabilityFieldMemory {
    */
   private async precisionQuery(
     query: MemoryQuery,
-    operations?: LogicOperation[]
+    operations?: LogicOperation[],
+    pattern?: string
   ): Promise<QuantumMemoryResult> {
-    const startTime = Date.now();
+    const startTime = performance.now();
     
     // Use DPCM for deterministic retrieval
-    const category = query.harmonicSignature?.category;
     const dpcmOptions: DPCMQueryOptions = {
       radius: this.config.dpcm.defaultRadius,
       qualityThreshold: this.config.dpcm.qualityThreshold,
       maxResults: query.maxResults || 20
     };
     
-    // If we have a category, query by category for precision
-    // Otherwise use coordinate-based query
+    // Use pattern if provided, otherwise try to extract from query
     let dpcmResults: HarmonicPatternMemory[];
-    if (category && typeof category === 'string') {
-      dpcmResults = this.dpcmStore.queryByCategory(category as any, dpcmOptions);
+    const basePattern = pattern || 'general';
+    
+    // If we have a pattern string, try to match it to a category
+    if (pattern) {
+      // Try to match the pattern string to a category enum value
+      const categoryMatch = Object.values(PatternCategory).find(
+        cat => cat.toLowerCase() === pattern.toLowerCase()
+      );
+      if (categoryMatch) {
+        dpcmResults = this.dpcmStore.queryByCategory(categoryMatch as PatternCategory, dpcmOptions);
+      } else {
+        // Fall back to general query
+        dpcmResults = this.dpcmStore.query(basePattern, operations || [], dpcmOptions);
+      }
+    } else if (query.harmonicSignature?.category) {
+      dpcmResults = this.dpcmStore.queryByCategory(
+        query.harmonicSignature.category as any, 
+        dpcmOptions
+      );
     } else {
-      const basePattern = category || 'general';
+      // Use general query with operations
       dpcmResults = this.dpcmStore.query(basePattern, operations || [], dpcmOptions);
     }
     
@@ -156,8 +189,7 @@ export class QuantumProbabilityFieldMemory {
     const quantumNodes = await this.convertToQuantumNodes(dpcmResults);
     
     // Create minimal field for coherence calculation
-    const field = this.fieldGenerator.generateField(query, this.systemContext);
-    field.radius = 0.1; // Narrow field for precision
+    const field = this.fieldGenerator.generateField(query, this.systemContext, pattern, operations);
     
     // Quick superposition for interference detection
     const quantumState = await this.superpositionEngine.createSuperposition(
@@ -173,9 +205,9 @@ export class QuantumProbabilityFieldMemory {
       fieldConfiguration: field,
       executionMetrics: {
         superpositionTime: 0,
-        interferenceTime: Date.now() - startTime,
+        interferenceTime: Math.max(0.001, performance.now() - startTime),
         collapseTime: 0,
-        totalTime: Date.now() - startTime,
+        totalTime: Math.max(0.001, performance.now() - startTime),
         memoriesProcessed: quantumNodes.length,
         emergentPatternsFound: 0
       }
@@ -185,7 +217,7 @@ export class QuantumProbabilityFieldMemory {
   /**
    * Full quantum query with emergent discovery
    */
-  private async quantumQuery(query: MemoryQuery): Promise<QuantumMemoryResult> {
+  private async quantumQuery(query: MemoryQuery, pattern?: string): Promise<QuantumMemoryResult> {
     const metrics: ExecutionMetrics = {
       superpositionTime: 0,
       interferenceTime: 0,
@@ -195,10 +227,10 @@ export class QuantumProbabilityFieldMemory {
       emergentPatternsFound: 0
     };
     
-    const startTime = Date.now();
+    const startTime = performance.now();
     
     // Generate adaptive probability field
-    const field = this.fieldGenerator.generateField(query, this.systemContext);
+    const field = this.fieldGenerator.generateField(query, this.systemContext, pattern);
     
     // Apply field morphing for discovery
     if (query.exploration > 0.7) {
@@ -211,31 +243,31 @@ export class QuantumProbabilityFieldMemory {
     metrics.memoriesProcessed = relevantMemories.length;
     
     // Create quantum superposition
-    const superpositionStart = Date.now();
+    const superpositionStart = performance.now();
     const quantumState = await this.superpositionEngine.createSuperposition(
       field,
       relevantMemories
     );
-    metrics.superpositionTime = Date.now() - superpositionStart;
+    metrics.superpositionTime = Math.max(0.001, performance.now() - superpositionStart);
     
     // Detect emergent behaviors
-    const interferenceStart = Date.now();
+    const interferenceStart = performance.now();
     const emergentBehaviors = await this.emergenceBehaviorEngine.detect(
       quantumState,
       this.systemContext
     );
-    metrics.interferenceTime = Date.now() - interferenceStart;
+    metrics.interferenceTime = Math.max(0.001, performance.now() - interferenceStart);
     metrics.emergentPatternsFound = emergentBehaviors.insights.length;
     
     // Collapse to final memories
-    const collapseStart = Date.now();
+    const collapseStart = performance.now();
     const collapsedMemories = this.collapseQuantumState(
       quantumState,
       query.maxResults || 20
     );
-    metrics.collapseTime = Date.now() - collapseStart;
+    metrics.collapseTime = Math.max(0.001, performance.now() - collapseStart);
     
-    metrics.totalTime = Date.now() - startTime;
+    metrics.totalTime = Math.max(0.001, performance.now() - startTime);
     
     return {
       memories: collapsedMemories,
@@ -252,12 +284,13 @@ export class QuantumProbabilityFieldMemory {
    */
   private async hybridQuery(
     query: MemoryQuery,
-    operations?: LogicOperation[]
+    operations?: LogicOperation[],
+    pattern?: string
   ): Promise<QuantumMemoryResult> {
-    const startTime = Date.now();
+    const startTime = performance.now();
     
     // Start with DPCM for initial candidates
-    const basePattern = query.harmonicSignature?.category || 'general';
+    const basePattern = pattern || query.harmonicSignature?.category || 'general';
     const dpcmResults = this.dpcmStore.query(basePattern, operations || [], {
       radius: this.config.dpcm.defaultRadius * 1.5, // Wider initial search
       maxResults: 100 // Get more candidates
@@ -267,7 +300,7 @@ export class QuantumProbabilityFieldMemory {
     const quantumNodes = await this.convertToQuantumNodes(dpcmResults);
     
     // Generate balanced field
-    const field = this.fieldGenerator.generateField(query, this.systemContext);
+    const field = this.fieldGenerator.generateField(query, this.systemContext, pattern, operations);
     
     // Full quantum processing
     const quantumState = await this.superpositionEngine.createSuperposition(
@@ -298,7 +331,7 @@ export class QuantumProbabilityFieldMemory {
         superpositionTime: 0,
         interferenceTime: 0,
         collapseTime: 0,
-        totalTime: Date.now() - startTime,
+        totalTime: Math.max(0.001, performance.now() - startTime),
         memoriesProcessed: quantumNodes.length,
         emergentPatternsFound: emergentBehaviors.insights.length
       }
@@ -309,8 +342,13 @@ export class QuantumProbabilityFieldMemory {
    * Store a new memory in both DPCM and quantum systems
    */
   async store(memory: HarmonicPatternMemory): Promise<void> {
-    // Store in DPCM
-    this.dpcmStore.store(memory);
+    // If we have StorageManager, use full storage stack
+    if (this.storageManager) {
+      await this.storageManager.storePattern(memory);
+    } else {
+      // Otherwise just use in-memory DPCM
+      this.dpcmStore.store(memory);
+    }
     
     // Convert and store as quantum node
     const quantumNode = await this.createQuantumNode(memory);
@@ -324,8 +362,13 @@ export class QuantumProbabilityFieldMemory {
    * Bulk store memories
    */
   async bulkStore(memories: HarmonicPatternMemory[]): Promise<void> {
-    // Bulk store in DPCM
-    this.dpcmStore.bulkStore(memories);
+    // If we have StorageManager, use full storage stack
+    if (this.storageManager) {
+      await this.storageManager.storePatterns(memories);
+    } else {
+      // Otherwise just use in-memory DPCM
+      this.dpcmStore.bulkStore(memories);
+    }
     
     // Convert and store quantum nodes
     const quantumNodes = await Promise.all(
@@ -360,7 +403,7 @@ export class QuantumProbabilityFieldMemory {
     
     const field = this.fieldGenerator.generateField(query, this.systemContext);
     field.center = sourceMemory.coordinates;
-    field.radius = 0.3;
+    field.radius = 0.5; // Larger radius for better similarity detection
     
     // Find through quantum superposition
     const relevantMemories = Array.from(this.quantumMemories.values())
@@ -371,8 +414,8 @@ export class QuantumProbabilityFieldMemory {
       relevantMemories
     );
     
-    // Filter by similarity
-    const minSim = options?.minSimilarity || 0.7;
+    // Filter by similarity - lower threshold for better discovery
+    const minSim = options?.minSimilarity || 0.1; // FIXED: Lower threshold
     const similar = quantumState.superposition
       .filter(s => s.probability >= minSim)
       .sort((a, b) => b.probability - a.probability)
@@ -422,7 +465,7 @@ export class QuantumProbabilityFieldMemory {
       quantum: {
         enabled: true,
         defaultFieldRadius: 1.5,
-        minProbability: 0.01,
+        minProbability: 0.001,
         interferenceThreshold: 0.5
       },
       emergent: {
@@ -478,10 +521,15 @@ export class QuantumProbabilityFieldMemory {
     pattern: string,
     operations?: LogicOperation[]
   ): MemoryQuery {
-    // Infer query type from operations
-    let type: 'precision' | 'discovery' | 'creative' = 'discovery';
-    let confidence = 0.5;
-    let exploration = 0.5;
+    // Check if pattern matches a known category - if so, use precision
+    const isKnownCategory = Object.values(PatternCategory).some(
+      cat => cat.toLowerCase() === pattern.toLowerCase()
+    );
+    
+    // Infer query type from operations and pattern
+    let type: 'precision' | 'discovery' | 'creative' = isKnownCategory ? 'precision' : 'discovery';
+    let confidence = isKnownCategory ? 0.85 : 0.5;
+    let exploration = isKnownCategory ? 0.15 : 0.5;
     
     if (operations && operations.length > 0) {
       // More operations = more precision
@@ -490,15 +538,29 @@ export class QuantumProbabilityFieldMemory {
       exploration = Math.max(0.1, 0.5 - operations.length * 0.1);
     }
     
+    // Create harmonicSignature if pattern matches a category
+    let harmonicSignature: HarmonicSignature | undefined;
+    if (isKnownCategory) {
+      const matchedCategory = Object.values(PatternCategory).find(
+        cat => cat.toLowerCase() === pattern.toLowerCase()
+      );
+      if (matchedCategory) {
+        harmonicSignature = {
+          category: matchedCategory,
+          strength: 0.8,
+          complexity: 0.6,
+          confidence: 0.9,
+          occurrences: 1
+        };
+      }
+    }
+    
     return {
       type,
       confidence,
       exploration,
-      harmonicSignature: {
-        category: pattern,
-        strength: 0.5,
-        complexity: 0.5
-      }
+      harmonicSignature,
+      maxResults: 20
     };
   }
 
@@ -511,9 +573,25 @@ export class QuantumProbabilityFieldMemory {
   private async createQuantumNode(
     pattern: HarmonicPatternMemory
   ): Promise<QuantumMemoryNode> {
+    // CRITICAL FIX: Use DPCM-generated coordinates (pattern.coordinates should be updated by DPCM store)
+    // If coordinates are still [0,0,0], regenerate them using DPCM
+    let coordinates = pattern.coordinates;
+    if (coordinates[0] === 0 && coordinates[1] === 0 && coordinates[2] === 0) {
+      // Fallback: regenerate coordinates using DPCM algorithm
+      coordinates = this.hasher.generateSemanticCoordinates(
+        pattern.harmonicProperties.category,
+        pattern.harmonicProperties.strength,
+        pattern.harmonicProperties.complexity,
+        pattern.harmonicProperties.occurrences
+      );
+    }
+    
+    // Calculate harmonic score for proper correlation
+    const harmonicScore = this.calculatePatternHarmonicScore(pattern);
+    
     return {
       id: pattern.id,
-      coordinates: pattern.coordinates || [0.5, 0.5, 0.5],
+      coordinates,
       content: {
         title: pattern.content.title,
         description: pattern.content.description,
@@ -526,8 +604,8 @@ export class QuantumProbabilityFieldMemory {
       threshold: -0.55,
       currentActivation: -0.7,
       accessHistory: [],
-      confidenceScore: pattern.harmonicProperties.confidence,
-      resonanceStrength: pattern.harmonicProperties.strength,
+      confidenceScore: pattern.harmonicProperties.confidence * harmonicScore, // Correlate confidence with harmonic score
+      resonanceStrength: harmonicScore, // Use harmonic score for resonance
       lastEvolution: new Date()
     };
   }
@@ -582,8 +660,12 @@ export class QuantumProbabilityFieldMemory {
   }
 
   private updateContext(query: MemoryQuery, context?: Partial<SystemContext>): void {
-    // Add to recent queries
-    this.systemContext.recentQueries.push(query);
+    // Add to recent queries with timestamp
+    const timestampedQuery = {
+      ...query,
+      timestamp: Date.now()
+    };
+    this.systemContext.recentQueries.push(timestampedQuery);
     if (this.systemContext.recentQueries.length > 10) {
       this.systemContext.recentQueries.shift();
     }
@@ -618,6 +700,38 @@ export class QuantumProbabilityFieldMemory {
     metrics.emergenceFrequency = metrics.emergenceFrequency * 0.95 + (hasEmergence ? 1 : 0) * 0.05;
   }
 
+  /**
+   * Calculate harmonic score for a pattern to ensure correlation with quality
+   */
+  private calculatePatternHarmonicScore(pattern: HarmonicPatternMemory): number {
+    const goldenRatio = 1.618033988749895;
+    const props = pattern.harmonicProperties;
+    
+    // Base score on pattern strength (70% weight ensures correlation)
+    let harmonicScore = props.strength * 0.7;
+    
+    // 1. Fibonacci proximity bonus (gradual, up to 10%)
+    const fibSequence = [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144];
+    const nearest = fibSequence.reduce((prev, curr) => 
+      Math.abs(curr - props.occurrences) < Math.abs(prev - props.occurrences) ? curr : prev
+    );
+    const fibDistance = Math.abs(props.occurrences - nearest) / Math.max(1, nearest);
+    const fibBonus = Math.max(0, 1 - fibDistance) * 0.1;
+    
+    // 2. Harmonic complexity alignment (up to 10%)
+    const complexityFactor = 1 / (1 + Math.exp(-0.5 * (props.complexity - 5)));
+    const complexityBonus = complexityFactor * 0.1;
+    
+    // 3. Golden ratio resonance (up to 10%)
+    const goldenFactor = Math.abs(Math.cos(props.strength * Math.PI / goldenRatio));
+    const goldenBonus = goldenFactor * 0.1;
+    
+    // Apply all bonuses
+    harmonicScore += fibBonus + complexityBonus + goldenBonus;
+    
+    return Math.min(1, Math.max(0.1, harmonicScore));
+  }
+
   // Public utility methods
 
   getConfig(): QPFMConfig {
@@ -637,5 +751,50 @@ export class QuantumProbabilityFieldMemory {
     this.dpcmStore.clear();
     this.quantumMemories.clear();
     this.learningSystem.reset();
+  }
+
+  /**
+   * Initialize from storage - load existing patterns
+   */
+  async initialize(): Promise<void> {
+    if (!this.storageManager || !this.storageManager.isConnected()) {
+      console.log('⚠️  No storage manager connected - running in-memory mode');
+      return;
+    }
+
+    console.log('🔄 Loading quantum memories from storage...');
+    
+    // Query all patterns from storage
+    const patterns = await this.storageManager.queryPatterns('*', [], {
+      maxResults: this.config.performance.maxMemories
+    });
+    
+    console.log(`📥 Found ${patterns.length} patterns in storage`);
+    
+    // Convert to quantum nodes and populate quantum memory
+    for (const pattern of patterns) {
+      const quantumNode = await this.createQuantumNode(pattern);
+      this.quantumMemories.set(quantumNode.id, quantumNode);
+    }
+    
+    console.log(`✅ Initialized ${this.quantumMemories.size} quantum memories`);
+  }
+
+  /**
+   * Persist quantum learning state
+   */
+  async persistLearningState(): Promise<void> {
+    if (!this.storageManager) return;
+    
+    // TODO: Store learning state in Neo4j or dedicated storage
+    const learningState = this.learningSystem.getStats();
+    console.log('💾 Persisting quantum learning state...', learningState);
+  }
+
+  /**
+   * Check if connected to persistent storage
+   */
+  isConnected(): boolean {
+    return this.storageManager?.isConnected() || false;
   }
 }

@@ -9,9 +9,9 @@ import {
   PatternScore,
   PatternCategory,
   PatternEvidence
-} from '../interfaces/harmonic-types';
-import { BasePatternAnalyzer } from './base-pattern-analyzer';
-import { Logger } from '../../utils/logger';
+} from '../interfaces/harmonic-types.js';
+import { BasePatternAnalyzer } from './base-pattern-analyzer.js';
+import { Logger } from '../../utils/logger.js';
 export class ClassicalHarmonyAnalyzer extends BasePatternAnalyzer {
   protected readonly logger = new Logger('ClassicalHarmonyAnalyzer');
   protected readonly category = PatternCategory.CLASSICAL_HARMONY;

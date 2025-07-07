@@ -32,20 +32,28 @@ export interface PatternConnection {
 }
 
 export class Neo4jRelationshipStore {
-  private driver: Driver;
+  private _driver: Driver;
   private connected: boolean = false;
 
-  constructor() {
-    const uri = process.env.NEO4J_URI || 'bolt://localhost:7687';
-    const username = process.env.NEO4J_USERNAME || 'neo4j';
-    const password = process.env.NEO4J_PASSWORD || 'password';
+  constructor(
+    uri?: string,
+    username?: string,
+    password?: string
+  ) {
+    const neo4jUri = uri || process.env.NEO4J_URI || 'bolt://localhost:7687';
+    const neo4jUsername = username || process.env.NEO4J_USERNAME || 'neo4j';
+    const neo4jPassword = password || process.env.NEO4J_PASSWORD || 'password';
 
-    this.driver = neo4j.driver(uri, neo4j.auth.basic(username, password));
+    this._driver = neo4j.driver(neo4jUri, neo4j.auth.basic(neo4jUsername, neo4jPassword));
+  }
+
+  get driver(): Driver {
+    return this._driver;
   }
 
   async connect(): Promise<void> {
     try {
-      await this.driver.verifyConnectivity();
+      await this._driver.verifyConnectivity();
       await this.initializeSchema();
       this.connected = true;
       console.log('✅ Neo4j connected and schema initialized');
@@ -56,14 +64,18 @@ export class Neo4jRelationshipStore {
   }
 
   async disconnect(): Promise<void> {
-    if (this.driver) {
-      await this.driver.close();
+    if (this._driver) {
+      await this._driver.close();
       this.connected = false;
     }
   }
 
+  async close(): Promise<void> {
+    await this.disconnect();
+  }
+
   private async initializeSchema(): Promise<void> {
-    const session = this.driver.session();
+    const session = this._driver.session();
     try {
       // Create constraints and indexes for symbols
       await session.run(`
@@ -105,8 +117,20 @@ export class Neo4jRelationshipStore {
 
   // Symbol operations
   async createSymbol(symbol: SymbolNode): Promise<void> {
-    const session = this.driver.session();
+    const session = this._driver.session();
     try {
+      // Flatten the properties for Neo4j storage
+      const params = {
+        id: symbol.id,
+        name: symbol.name,
+        type: symbol.type,
+        file: symbol.file,
+        startLine: symbol.startLine,
+        endLine: symbol.endLine,
+        complexity: symbol.complexity,
+        propertiesJson: JSON.stringify(symbol.properties)
+      };
+      
       await session.run(`
         MERGE (s:Symbol {id: $id})
         SET s.name = $name,
@@ -115,16 +139,16 @@ export class Neo4jRelationshipStore {
             s.startLine = $startLine,
             s.endLine = $endLine,
             s.complexity = $complexity,
-            s.properties = $properties,
+            s.properties = $propertiesJson,
             s.updatedAt = datetime()
-      `, symbol);
+      `, params);
     } finally {
       await session.close();
     }
   }
 
   async createSymbolRelationship(relationship: SymbolRelationship): Promise<void> {
-    const session = this.driver.session();
+    const session = this._driver.session();
     try {
       await session.run(`
         MATCH (from:Symbol {id: $from})
@@ -145,7 +169,7 @@ export class Neo4jRelationshipStore {
   }
 
   async getSymbolsByFile(file: string): Promise<SymbolNode[]> {
-    const session = this.driver.session();
+    const session = this._driver.session();
     try {
       const result = await session.run(`
         MATCH (s:Symbol {file: $file})
@@ -172,7 +196,7 @@ export class Neo4jRelationshipStore {
   }
 
   async getSymbolCallGraph(symbolId: string, depth: number = 2): Promise<any> {
-    const session = this.driver.session();
+    const session = this._driver.session();
     try {
       const result = await session.run(`
         MATCH path = (start:Symbol {id: $symbolId})-[:CALLS*1..${depth}]->(target:Symbol)
@@ -188,7 +212,7 @@ export class Neo4jRelationshipStore {
 
   // Pattern operations
   async createPattern(pattern: HarmonicPatternMemory): Promise<void> {
-    const session = this.driver.session();
+    const session = this._driver.session();
     try {
       // Create pattern node
       await session.run(`
@@ -203,17 +227,21 @@ export class Neo4jRelationshipStore {
             p.updatedAt = datetime()
       `, {
         id: pattern.id,
-        category: pattern.harmonicProperties.category,
+        category: pattern.harmonicProperties.category || 'GENERAL',
         strength: pattern.harmonicProperties.strength,
         occurrences: pattern.harmonicProperties.occurrences,
         confidence: pattern.harmonicProperties.confidence,
         complexity: pattern.harmonicProperties.complexity,
-        coordinates: pattern.dpcmCoordinates,
+        coordinates: pattern.coordinates,
         evidence: JSON.stringify(pattern.evidence)
       });
 
       // Connect pattern to symbols
       for (const location of pattern.locations) {
+        // Handle both formats: { line: number } and { startLine, endLine }
+        const startLine = (location as any).line || location.startLine || 0;
+        const endLine = (location as any).line || location.endLine || startLine;
+        
         await session.run(`
           MATCH (p:Pattern {id: $patternId})
           MATCH (s:Symbol {file: $file})
@@ -222,8 +250,8 @@ export class Neo4jRelationshipStore {
         `, {
           patternId: pattern.id,
           file: location.file,
-          startLine: location.startLine,
-          endLine: location.endLine
+          startLine,
+          endLine
         });
       }
     } finally {
@@ -232,7 +260,7 @@ export class Neo4jRelationshipStore {
   }
 
   async createPatternSimilarity(connection: PatternConnection): Promise<void> {
-    const session = this.driver.session();
+    const session = this._driver.session();
     try {
       await session.run(`
         MATCH (p1:Pattern {id: $pattern1})
@@ -249,7 +277,7 @@ export class Neo4jRelationshipStore {
   }
 
   async findSimilarPatterns(patternId: string, minSimilarity: number = 0.7): Promise<any[]> {
-    const session = this.driver.session();
+    const session = this._driver.session();
     try {
       const result = await session.run(`
         MATCH (p1:Pattern {id: $patternId})-[r:SIMILAR_TO]-(p2:Pattern)
@@ -269,7 +297,7 @@ export class Neo4jRelationshipStore {
   }
 
   async getPatternsByCategory(category: PatternCategory): Promise<any[]> {
-    const session = this.driver.session();
+    const session = this._driver.session();
     try {
       const result = await session.run(`
         MATCH (p:Pattern {category: $category})
@@ -285,7 +313,7 @@ export class Neo4jRelationshipStore {
   }
 
   async getSymbolPatternAnalysis(symbolId: string): Promise<any> {
-    const session = this.driver.session();
+    const session = this._driver.session();
     try {
       const result = await session.run(`
         MATCH (s:Symbol {id: $symbolId})<-[:FOUND_IN]-(p:Pattern)
@@ -305,7 +333,7 @@ export class Neo4jRelationshipStore {
 
   // Utility methods for symbol graph analysis
   async getComplexityHotspots(limit: number = 10): Promise<SymbolNode[]> {
-    const session = this.driver.session();
+    const session = this._driver.session();
     try {
       const result = await session.run(`
         MATCH (s:Symbol)
@@ -334,7 +362,7 @@ export class Neo4jRelationshipStore {
   }
 
   async getCentralSymbols(limit: number = 10): Promise<any[]> {
-    const session = this.driver.session();
+    const session = this._driver.session();
     try {
       const result = await session.run(`
         MATCH (s:Symbol)
@@ -356,7 +384,7 @@ export class Neo4jRelationshipStore {
   }
 
   async getFileModularityScore(file: string): Promise<number> {
-    const session = this.driver.session();
+    const session = this._driver.session();
     try {
       const result = await session.run(`
         MATCH (internal:Symbol {file: $file})-[r]->(external:Symbol)
@@ -376,9 +404,63 @@ export class Neo4jRelationshipStore {
     }
   }
 
+  // Check if a pattern exists for a symbol
+  async patternExists(symbolId: string, patternType: string): Promise<boolean> {
+    const session = this._driver.session();
+    try {
+      const result = await session.run(`
+        MATCH (s:Symbol {id: $symbolId})-[:EXHIBITS]->(p:Pattern {type: $patternType})
+        RETURN count(p) > 0 as exists
+      `, { symbolId, patternType });
+      
+      return result.records[0]?.get('exists') || false;
+    } finally {
+      await session.close();
+    }
+  }
+
+  // Link patterns to symbols
+  async linkPatternToSymbol(symbolId: string, patterns: any[]): Promise<void> {
+    const session = this._driver.session();
+    try {
+      await session.run('BEGIN');
+      
+      for (const pattern of patterns) {
+        await session.run(`
+          MERGE (p:Pattern {
+            id: $patternId,
+            type: $patternType,
+            category: $category
+          })
+          SET p.strength = $score,
+              p.confidence = $confidence,
+              p.location = $location
+          WITH p
+          MATCH (s:Symbol {id: $symbolId})
+          MERGE (s)-[:EXHIBITS]->(p)
+        `, {
+          patternId: `${symbolId}_${pattern.pattern}`,
+          patternType: pattern.pattern,
+          category: pattern.category,
+          score: pattern.score,
+          confidence: pattern.confidence,
+          location: JSON.stringify(pattern.location),
+          symbolId
+        });
+      }
+      
+      await session.run('COMMIT');
+    } catch (error) {
+      await session.run('ROLLBACK');
+      throw error;
+    } finally {
+      await session.close();
+    }
+  }
+
   // Health check
   async healthCheck(): Promise<{ status: string; nodeCount: number; relationshipCount: number }> {
-    const session = this.driver.session();
+    const session = this._driver.session();
     try {
       const nodeResult = await session.run('MATCH (n) RETURN count(n) as nodeCount');
       const relResult = await session.run('MATCH ()-[r]->() RETURN count(r) as relCount');

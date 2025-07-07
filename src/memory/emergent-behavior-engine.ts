@@ -60,7 +60,7 @@ export class EmergentBehaviorEngine {
 
     // Check for creative synthesis
     if (this.config.creativeSynthesis.enabled) {
-      const synthesisInsights = this.detectCreativeSynthesis(
+      const synthesisInsights = await this.detectCreativeSynthesis(
         quantumState,
         options?.threshold || this.config.creativeSynthesis.noveltyThreshold
       );
@@ -97,7 +97,7 @@ export class EmergentBehaviorEngine {
       case 'dejavu':
         return this.forceDejaVuExploration(quantumState, context);
       case 'synthesis':
-        return this.forceCreativeSynthesis(quantumState);
+        return await this.forceCreativeSynthesis(quantumState);
       default:
         return [];
     }
@@ -237,7 +237,7 @@ export class EmergentBehaviorEngine {
   /**
    * Creative synthesis - interference-driven insight generation
    */
-  private detectCreativeSynthesis(
+  private async detectCreativeSynthesis(
     quantumState: QuantumMemoryState,
     noveltyThreshold: number
   ): Promise<EmergentInsight[]> {
@@ -582,7 +582,7 @@ export class EmergentBehaviorEngine {
     return this.detectDejaVuPatterns(quantumState, context);
   }
 
-  private forceCreativeSynthesis(quantumState: QuantumMemoryState): EmergentInsight[] {
+  private async forceCreativeSynthesis(quantumState: QuantumMemoryState): Promise<EmergentInsight[]> {
     // Generate synthetic interference patterns
     const patterns: InterferencePattern[] = [];
     
@@ -604,7 +604,7 @@ export class EmergentBehaviorEngine {
     }
 
     quantumState.interferencePatterns = patterns;
-    return this.detectCreativeSynthesis(quantumState, 0.5);
+    return await this.detectCreativeSynthesis(quantumState, 0.5);
   }
 
   getStats(): any {

@@ -44,8 +44,12 @@ export class AnalyticsStore {
   private patterns: Map<string, HarmonicPatternMemory> = new Map();
   private metrics: Map<string, FileMetrics> = new Map();
 
-  constructor() {
+  constructor(private dbPath: string = ':memory:') {
     console.log('📊 Analytics store initialized (in-memory mode)');
+  }
+
+  async initialize(): Promise<void> {
+    // Initialization logic if needed
   }
 
   async connect(): Promise<void> {
@@ -55,7 +59,7 @@ export class AnalyticsStore {
 
   async disconnect(): Promise<void> {
     // Placeholder for DuckDB disconnection
-    console.log('📊 Analytics store disconnected');
+    console.log('📴 Analytics store disconnected');
   }
 
   // Pattern analytics
@@ -259,5 +263,67 @@ export class AnalyticsStore {
       patternCount: this.patterns.size,
       fileCount: this.metrics.size
     };
+  }
+
+  // Missing methods for MCP tools compatibility
+  async query(sql: string, params: any[] = []): Promise<any[]> {
+    // Simple in-memory implementation
+    // In production, this would use DuckDB
+    console.log('Query:', sql, 'Params:', params);
+    
+    // Return mock data for now
+    return [];
+  }
+
+  async getPatternHotspots(options: {
+    minPatterns?: number;
+    categories?: string[];
+  }): Promise<any[]> {
+    const filePatterns = new Map<string, Set<string>>();
+    const fileStats = new Map<string, { 
+      pattern_count: number;
+      avg_strength: number;
+      categories: Set<string>;
+    }>();
+
+    // Group patterns by file
+    for (const [id, pattern] of this.patterns.entries()) {
+      const file = pattern.location.file;
+      if (!filePatterns.has(file)) {
+        filePatterns.set(file, new Set());
+        fileStats.set(file, {
+          pattern_count: 0,
+          avg_strength: 0,
+          categories: new Set()
+        });
+      }
+      
+      filePatterns.get(file)!.add(id);
+      const stats = fileStats.get(file)!;
+      stats.pattern_count++;
+      stats.avg_strength = (stats.avg_strength * (stats.pattern_count - 1) + pattern.harmonicProperties.strength) / stats.pattern_count;
+      stats.categories.add(pattern.harmonicProperties.category);
+    }
+
+    // Filter and format results
+    const results = [];
+    for (const [file, stats] of fileStats.entries()) {
+      if (stats.pattern_count >= (options.minPatterns || 1)) {
+        if (options.categories && options.categories.length > 0) {
+          const hasCategory = options.categories.some(cat => stats.categories.has(cat));
+          if (!hasCategory) continue;
+        }
+        
+        results.push({
+          file_path: file,
+          pattern_count: stats.pattern_count,
+          avg_strength: stats.avg_strength,
+          category_diversity: stats.categories.size,
+          categories: Array.from(stats.categories).join(', ')
+        });
+      }
+    }
+
+    return results.sort((a, b) => b.pattern_count - a.pattern_count);
   }
 }

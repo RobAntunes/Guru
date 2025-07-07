@@ -3,8 +3,8 @@
  * Provides targeted pattern analysis for AI models
  */
 
-import { SymbolGraphBuilder } from '../../parsers/symbol-graph';
-import { HarmonicEnricher } from './harmonic-enricher';
+import { SymbolGraphBuilder } from '../../parsers/symbol-graph.js';
+import { HarmonicEnricher } from './harmonic-enricher.js';
 import { PatternType } from '../interfaces/harmonic-types';
 
 export interface HarmonicAnalysisOptions {

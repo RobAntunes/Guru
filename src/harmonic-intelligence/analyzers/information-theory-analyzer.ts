@@ -3,7 +3,7 @@
  * Detects Shannon entropy, Kolmogorov complexity, and effective complexity in code structure
  * @module harmonic-intelligence/analyzers
  */
-import { BasePatternAnalyzer } from './base-pattern-analyzer';
+import { BasePatternAnalyzer } from './base-pattern-analyzer.js';
 import {
   PatternType,
   PatternScore,
@@ -12,7 +12,7 @@ import {
   PatternEvidence,
   HarmonicSymbol
 } from '../interfaces/harmonic-types';
-import { Logger } from '../../utils/logger';
+import { Logger } from '../../utils/logger.js';
 interface InformationMetrics {
   shannonEntropy: EntropyMetrics;
   kolmogorovComplexity: ComplexityMetrics;

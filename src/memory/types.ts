@@ -293,3 +293,6 @@ export interface HarmonicSignatureQuery {
   minPatterns: number;
   limit?: number;
 }
+
+// Re-export MemoryQuery for compatibility  
+// export { MemoryQuery } from './quantum-types.js'; // TODO: Fix circular dependency

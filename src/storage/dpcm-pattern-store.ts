@@ -70,6 +70,11 @@ export class DPCMPatternStore {
     operations: LogicOperation[],
     options: QueryOptions = {}
   ): HarmonicPatternMemory[] {
+    // Special case: '*' means get all patterns
+    if (basePattern === '*' && operations.length === 0) {
+      const allPatterns = Array.from(this.memoryStore.values());
+      return this.applyQueryOptions(allPatterns, options);
+    }
     
     // Generate target coordinates using DPCM composition
     const targetCoords = this.composeCoordinates(basePattern, operations);
@@ -156,6 +161,7 @@ export class DPCMPatternStore {
     return this.memoryStore.get(id);
   }
 
+
   /**
    * Remove pattern from store
    */
@@ -218,6 +224,9 @@ export class DPCMPatternStore {
     categoryCounts: Record<string, number>;
     averageStrength: number;
     coordinateSpread: { min: [number, number, number]; max: [number, number, number] };
+    totalEntries?: number;
+    uniquePatterns?: number;
+    totalOperations?: number;
   } {
     const patterns = this.getAllPatterns();
     const categoryCounts: Record<string, number> = {};
@@ -247,7 +256,10 @@ export class DPCMPatternStore {
       totalPatterns: patterns.length,
       categoryCounts,
       averageStrength: patterns.length > 0 ? totalStrength / patterns.length : 0,
-      coordinateSpread: { min: minCoords, max: maxCoords }
+      coordinateSpread: { min: minCoords, max: maxCoords },
+      totalEntries: this.memoryStore.size,
+      uniquePatterns: this.memoryStore.size,
+      totalOperations: 0 // Not currently tracked
     };
   }
 
@@ -257,8 +269,12 @@ export class DPCMPatternStore {
    * Generate coordinates from pattern properties
    */
   private generatePatternCoordinates(pattern: HarmonicPatternMemory): [number, number, number] {
+    // SPEC LORD FIX 1: Normalize category to uppercase for coordinate consistency
+    const category = pattern.harmonicProperties.category || 'GENERAL';
+    const normalizedCategory = category.toUpperCase();
+    
     return this.hasher.generateSemanticCoordinates(
-      pattern.harmonicProperties.category,
+      normalizedCategory,
       pattern.harmonicProperties.strength,
       pattern.harmonicProperties.complexity,
       pattern.harmonicProperties.occurrences
@@ -288,9 +304,18 @@ export class DPCMPatternStore {
    * Compose target coordinates from base pattern and operations
    */
   private composeCoordinates(basePattern: string, operations: LogicOperation[]): [number, number, number] {
+    // SPEC LORD FIX 1: Normalize to uppercase for coordinate consistency
+    const normalizedPattern = basePattern.toUpperCase();
+    
+    // SPEC LORD FIX 2: Handle empty operations consistently
+    let operationsPart = '';
+    if (operations.length > 0) {
+      operationsPart = `_${operations.map(op => `${op.type}_${op.params.join(',')}`).join('_')}`;
+    }
+    
     // For now, use simple hash-based composition
     // This can be enhanced with more sophisticated DPCM logic
-    const compositionString = `${basePattern}_${operations.map(op => `${op.type}_${op.params.join(',')}`).join('_')}`;
+    const compositionString = `${normalizedPattern}${operationsPart}`;
     const hash = this.hasher.hash('composed', compositionString);
     return this.hasher.toCoordinates(hash);
   }
