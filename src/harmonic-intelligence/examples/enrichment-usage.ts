@@ -4,9 +4,9 @@
  * @module harmonic-intelligence/examples
  */
 
-import { HarmonicEnricher, EnrichedSymbolGraph } from '../core/harmonic-enricher';
-import { SymbolGraph } from '../../types/index';
-import { PatternType, PatternCategory } from '../interfaces/harmonic-types';
+import { HarmonicEnricher, EnrichedSymbolGraph } from '../core/harmonic-enricher.js';
+import { SymbolGraph } from '../../types/index.js';
+import { PatternType, PatternCategory } from '../interfaces/harmonic-types.js';
 
 /**
  * Example: Basic enrichment of a symbol graph

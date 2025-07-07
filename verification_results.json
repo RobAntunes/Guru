@@ -1,0 +1,55 @@
+{
+  "harmonicCorrelation": {
+    "correlation": 0.9463611275642615,
+    "sampleSize": 100,
+    "significanceLevel": 1.2204641726062606e-161,
+    "patternTypes": [
+      "state_management",
+      "topological",
+      "fractal_patterns",
+      "tiling",
+      "data_flow",
+      "topological_patterns",
+      "quantum",
+      "structural",
+      "wave",
+      "classical_harmony",
+      "cryptographic",
+      "error_pattern",
+      "geometric",
+      "authentication",
+      "fractal",
+      "geometric_harmony",
+      "information_theory",
+      "behavioral",
+      "recovery",
+      "tiling_crystallographic",
+      "network_topology",
+      "functional",
+      "wave_harmonic",
+      "harmonic",
+      "computational"
+    ]
+  },
+  "interferencePatterns": {
+    "totalDetected": 7,
+    "constructiveCount": 7,
+    "averageStrength": 0.5632691010342706,
+    "mechanismTypes": [
+      "phase_coherence",
+      "harmonic_resonance"
+    ]
+  },
+  "emergentBehaviors": {
+    "dreamStateActivations": 2,
+    "flashbackCascades": 0,
+    "synthesisEvents": 0,
+    "noveltyScores": []
+  },
+  "performanceMetrics": {
+    "averageQueryTime": 0.34911259999996674,
+    "memoryCount": 100,
+    "compressionRatio": 42.666666666666664,
+    "relevanceAccuracy": 0
+  }
+}

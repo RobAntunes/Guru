@@ -20,13 +20,34 @@ export interface ContentMemory {
 }
 
 export enum PatternCategory {
+  // Original harmonic categories
   FRACTAL = 'fractal',
-  WAVE = 'wave', 
+  FRACTAL_PATTERNS = 'fractal_patterns',
+  WAVE = 'wave',
+  WAVE_HARMONIC = 'wave_harmonic',
   INFORMATION_THEORY = 'information_theory',
   TOPOLOGICAL = 'topological',
+  TOPOLOGICAL_PATTERNS = 'topological_patterns',
   GEOMETRIC = 'geometric',
+  GEOMETRIC_HARMONY = 'geometric_harmony',
   TILING = 'tiling',
-  CLASSICAL_HARMONY = 'classical_harmony'
+  TILING_CRYSTALLOGRAPHIC = 'tiling_crystallographic',
+  CLASSICAL_HARMONY = 'classical_harmony',
+  NETWORK_TOPOLOGY = 'network_topology',
+  
+  // QPFM system categories
+  AUTHENTICATION = 'authentication',
+  BEHAVIORAL = 'behavioral',
+  COMPUTATIONAL = 'computational',
+  CRYPTOGRAPHIC = 'cryptographic',
+  DATA_FLOW = 'data_flow',
+  ERROR_PATTERN = 'error_pattern',
+  FUNCTIONAL = 'functional',
+  HARMONIC = 'harmonic',
+  QUANTUM = 'quantum',
+  RECOVERY = 'recovery',
+  STATE_MANAGEMENT = 'state_management',
+  STRUCTURAL = 'structural'
 }
 
 export enum EvidenceType {
@@ -272,3 +293,6 @@ export interface HarmonicSignatureQuery {
   minPatterns: number;
   limit?: number;
 }
+
+// Re-export MemoryQuery for compatibility  
+// export { MemoryQuery } from './quantum-types.js'; // TODO: Fix circular dependency

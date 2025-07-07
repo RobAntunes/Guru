@@ -9,16 +9,16 @@ import {
   PatternScore,
   PatternCategory
 } from '../interfaces/harmonic-types';
-import { Logger } from '../../utils/logger';
+import { Logger } from '../../utils/logger.js';
 
 // Pattern Analyzers
-import { ClassicalHarmonyAnalyzer } from '../analyzers/classical-harmony-analyzer';
-import { GeometricHarmonyAnalyzer } from '../analyzers/geometric-harmony-analyzer';
-import { FractalPatternAnalyzer } from '../analyzers/fractal-pattern-analyzer';
-import { TilingCrystallographicAnalyzer } from '../analyzers/tiling-crystallographic-analyzer';
-import { TopologicalPatternAnalyzer } from '../analyzers/topological-pattern-analyzer';
-import { WaveHarmonicAnalyzer } from '../analyzers/wave-harmonic-analyzer';
-import { InformationTheoryAnalyzer } from '../analyzers/information-theory-analyzer';
+import { ClassicalHarmonyAnalyzer } from '../analyzers/classical-harmony-analyzer.js';
+import { GeometricHarmonyAnalyzer } from '../analyzers/geometric-harmony-analyzer.js';
+import { FractalPatternAnalyzer } from '../analyzers/fractal-pattern-analyzer.js';
+import { TilingCrystallographicAnalyzer } from '../analyzers/tiling-crystallographic-analyzer.js';
+import { TopologicalPatternAnalyzer } from '../analyzers/topological-pattern-analyzer.js';
+import { WaveHarmonicAnalyzer } from '../analyzers/wave-harmonic-analyzer.js';
+import { InformationTheoryAnalyzer } from '../analyzers/information-theory-analyzer.js';
 
 /**
  * Options for harmonic analysis

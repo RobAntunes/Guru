@@ -7,8 +7,8 @@ import {
   PatternType,
   PatternScore,
   PatternCategory
-} from '../interfaces/harmonic-types';
-import { Logger } from '../../utils/logger';
+} from '../interfaces/harmonic-types.js';
+import { Logger } from '../../utils/logger.js';
 export abstract class BasePatternAnalyzer {
   protected abstract readonly logger: Logger;
   protected abstract readonly category: PatternCategory;

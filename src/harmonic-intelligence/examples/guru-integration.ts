@@ -3,10 +3,10 @@
  * @module harmonic-intelligence/examples
  */
 
-import { SymbolGraph } from '../../types/index';
-import { HarmonicEnricher } from '../core/harmonic-enricher';
-import { PatternType, PatternCategory } from '../interfaces/harmonic-types';
-import { Logger } from '../../utils/logger';
+import { SymbolGraph } from '../../types/index.js';
+import { HarmonicEnricher } from '../core/harmonic-enricher.js';
+import { PatternType, PatternCategory } from '../interfaces/harmonic-types.js';
+import { Logger } from '../../utils/logger.js';
 
 const logger = new Logger('GuruHarmonicIntegration');
 

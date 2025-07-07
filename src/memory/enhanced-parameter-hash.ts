@@ -3,7 +3,7 @@
  * Generates deterministic 3D coordinates from pattern properties
  */
 
-import { createHash } from 'crypto';
+import { blake3 } from '@noble/hashes/blake3';
 import { DPCMHash } from './types.js';
 
 export class EnhancedParameterHash implements DPCMHash {
@@ -12,12 +12,19 @@ export class EnhancedParameterHash implements DPCMHash {
    * Generate deterministic hash from category and composition string
    */
   hash(category: string, composition: string): string {
-    const combined = `${category}:${composition}`;
-    return createHash('sha256').update(combined).digest('hex');
+    // SPEC LORD FIX 1: Normalize category to uppercase for coordinate consistency
+    const normalizedCategory = category.toUpperCase();
+    const combined = `${normalizedCategory}:${composition}`;
+    const encoder = new TextEncoder();
+    const data = encoder.encode(combined);
+    const hashArray = blake3(data);
+    return Array.from(hashArray)
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
   }
 
   /**
-   * Convert hash to deterministic 3D coordinates in range [-1, 1]
+   * Convert hash to deterministic 3D coordinates in range [0, 1]
    */
   toCoordinates(hash: string): [number, number, number] {
     // Take first 24 characters (8 chars per coordinate)
@@ -30,11 +37,11 @@ export class EnhancedParameterHash implements DPCMHash {
     const yInt = parseInt(yHex, 16);
     const zInt = parseInt(zHex, 16);
 
-    // Normalize to [-1, 1] range
+    // Normalize to [0, 1] range
     const maxInt = 0xFFFFFFFF; // 2^32 - 1
-    const x = (xInt / maxInt) * 2 - 1;
-    const y = (yInt / maxInt) * 2 - 1;
-    const z = (zInt / maxInt) * 2 - 1;
+    const x = xInt / maxInt;
+    const y = yInt / maxInt;
+    const z = zInt / maxInt;
 
     return [x, y, z];
   }
@@ -64,11 +71,11 @@ export class EnhancedParameterHash implements DPCMHash {
     const [x, y, z] = center;
     
     return {
-      minX: Math.max(-1, x - radius),
+      minX: Math.max(0, x - radius),
       maxX: Math.min(1, x + radius),
-      minY: Math.max(-1, y - radius),
+      minY: Math.max(0, y - radius),
       maxY: Math.min(1, y + radius),
-      minZ: Math.max(-1, z - radius),
+      minZ: Math.max(0, z - radius),
       maxZ: Math.min(1, z + radius)
     };
   }
@@ -148,15 +155,18 @@ export class EnhancedParameterHash implements DPCMHash {
     complexity: number,
     occurrences: number
   ): [number, number, number] {
+    // SPEC LORD FIX 1: Normalize category to uppercase for coordinate consistency
+    const normalizedCategory = category.toUpperCase();
+    
     // Create semantic composition that captures pattern essence
     const semanticComposition = [
       `strength:${strength.toFixed(3)}`,
       `complexity:${complexity.toFixed(3)}`,
       `occurrences:${Math.min(occurrences, 1000)}`, // Cap to prevent coordinate drift
-      `category:${category}`
+      `category:${normalizedCategory}`
     ].join('|');
     
-    const hash = this.hash(category, semanticComposition);
+    const hash = this.hash(normalizedCategory, semanticComposition);
     return this.toCoordinates(hash);
   }
 }
