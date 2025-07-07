@@ -2,6 +2,10 @@ import { Neo4jRelationshipStore, SymbolNode, SymbolRelationship } from './neo4j-
 import { RedisCache } from './redis-cache.js';
 import { AnalyticsStore } from './analytics-store.js';
 import { DPCMPatternStore } from './dpcm-pattern-store.js';
+import { PatternQualityManager } from './pattern-quality-manager.js';
+import { AdaptiveCacheWarmer } from '../optimization/adaptive-cache-warmer.js';
+import { StorageTierMigrator } from '../optimization/storage-tier-migrator.js';
+import { QueryResultMaterializer } from '../optimization/query-result-materializer.js';
 import { HarmonicPatternMemory, PatternCategory, LogicOperation } from '../memory/types.js';
 
 export interface StorageHealth {
@@ -35,6 +39,10 @@ export class StorageManager {
   public readonly analytics: AnalyticsStore;
   public readonly dpcm: DPCMPatternStore;
   public readonly qpfm: any; // Will be set by QPFM factory
+  private qualityManager: PatternQualityManager;
+  private cacheWarmer: AdaptiveCacheWarmer;
+  private tierMigrator: StorageTierMigrator;
+  private queryMaterializer: QueryResultMaterializer;
   private connected: boolean = false;
 
   constructor() {
@@ -42,6 +50,10 @@ export class StorageManager {
     this.cache = new RedisCache();
     this.analytics = new AnalyticsStore();
     this.dpcm = new DPCMPatternStore();
+    this.qualityManager = new PatternQualityManager(this);
+    this.cacheWarmer = new AdaptiveCacheWarmer(this, this.cache);
+    this.tierMigrator = new StorageTierMigrator(this);
+    this.queryMaterializer = new QueryResultMaterializer(this, this.cache);
   }
 
   async connect(): Promise<void> {
@@ -58,6 +70,18 @@ export class StorageManager {
 
       this.connected = true;
       console.log('✅ All storage layers connected successfully');
+      
+      // Start adaptive cache warming
+      this.cacheWarmer.start();
+      console.log('🔥 Adaptive cache warming started');
+      
+      // Start storage tier migration
+      this.tierMigrator.start();
+      console.log('📦 Storage tier migration started');
+      
+      // Start query result materialization
+      await this.queryMaterializer.start();
+      console.log('📊 Query result materialization started');
     } catch (error) {
       console.error('❌ Storage connection failed:', error);
       throw error;
@@ -66,6 +90,11 @@ export class StorageManager {
 
   async disconnect(): Promise<void> {
     if (this.connected) {
+      // Stop optimizations
+      this.cacheWarmer.stop();
+      this.tierMigrator.stop();
+      this.queryMaterializer.stop();
+      
       await Promise.all([
         this.neo4j.disconnect(),
         this.cache.disconnect(),
@@ -115,8 +144,21 @@ export class StorageManager {
     return graph;
   }
 
-  // Pattern operations with multi-layer storage
+  // Pattern operations with quality-based routing
   async storePattern(pattern: HarmonicPatternMemory): Promise<void> {
+    // Use quality manager to route to appropriate storage
+    await this.qualityManager.routePattern(pattern);
+  }
+
+  async storePatterns(patterns: HarmonicPatternMemory[]): Promise<void> {
+    // Use quality manager for bulk routing
+    await this.qualityManager.bulkRoutePatterns(patterns);
+  }
+  
+  /**
+   * Store pattern in all layers (legacy method for compatibility)
+   */
+  async storePatternEverywhere(pattern: HarmonicPatternMemory): Promise<void> {
     // Store in all layers
     await Promise.all([
       this.dpcm.store(pattern),           // DPCM coordinates
@@ -126,40 +168,45 @@ export class StorageManager {
     ]);
   }
 
-  async storePatterns(patterns: HarmonicPatternMemory[]): Promise<void> {
-    // Bulk operations for better performance
-    await Promise.all([
-      this.dpcm.bulkStore(patterns),
-      this.analytics.storePatterns(patterns),
-      this.cache.cacheMultiplePatterns(patterns)
-    ]);
-
-    // Store patterns in Neo4j individually (no bulk API yet)
-    for (const pattern of patterns) {
-      await this.neo4j.createPattern(pattern);
-    }
-  }
-
   async queryPatterns(
     basePattern: string,
     operations: LogicOperation[],
     options: any = {}
   ): Promise<HarmonicPatternMemory[]> {
+    const startTime = Date.now();
+    
     // Use DPCM for coordinate-based search
-    return this.dpcm.query(basePattern, operations, options);
+    const results = await this.dpcm.query(basePattern, operations, options);
+    
+    // Record access patterns for cache warming
+    const latency = Date.now() - startTime;
+    results.forEach(pattern => {
+      this.cacheWarmer.recordAccess(pattern.id, latency);
+    });
+    
+    return results;
   }
 
   async findSimilarPatterns(patternId: string, minSimilarity: number = 0.7): Promise<any[]> {
+    const startTime = Date.now();
+    
     // Try cache first
     const cacheKey = `similar:${patternId}:${minSimilarity}`;
     const cached = await this.cache.getDPCMQuery(cacheKey);
     if (cached) {
+      // Record cache hit with low latency
+      this.cacheWarmer.recordAccess(patternId, Date.now() - startTime);
       return cached;
     }
 
     // Query Neo4j for graph-based similarity
     const similar = await this.neo4j.findSimilarPatterns(patternId, minSimilarity);
     await this.cache.cacheDPCMQuery(cacheKey, similar, 3600); // 1 hour TTL
+    
+    // Record access pattern
+    const latency = Date.now() - startTime;
+    this.cacheWarmer.recordAccess(patternId, latency);
+    
     return similar;
   }
 
@@ -230,17 +277,65 @@ export class StorageManager {
     return score;
   }
 
-  // Analytics aggregations
+  // Analytics aggregations with materialization
   async getPatternTrends(days: number = 30): Promise<any[]> {
-    return this.analytics.getPatternTrends(days);
+    const startTime = Date.now();
+    
+    // Check for materialized result
+    const query = `pattern_evolution_${days}d`;
+    const materialized = await this.queryMaterializer.getMaterializedResult(query, { days });
+    if (materialized) {
+      return materialized.result;
+    }
+    
+    // Execute query normally
+    const result = await this.analytics.getPatternTrends(days);
+    
+    // Record execution for potential materialization
+    const executionTime = Date.now() - startTime;
+    this.queryMaterializer.recordQueryExecution(query, { days }, executionTime);
+    
+    return result;
   }
 
   async getPatternDistribution(): Promise<Record<PatternCategory, number>> {
-    return this.analytics.getPatternDistribution();
+    const startTime = Date.now();
+    
+    // Check for materialized result
+    const query = 'pattern_distribution';
+    const materialized = await this.queryMaterializer.getMaterializedResult(query, {});
+    if (materialized) {
+      return materialized.result;
+    }
+    
+    // Execute query normally
+    const result = await this.analytics.getPatternDistribution();
+    
+    // Record execution
+    const executionTime = Date.now() - startTime;
+    this.queryMaterializer.recordQueryExecution(query, {}, executionTime);
+    
+    return result;
   }
 
   async getTopPatternsByStrength(limit: number = 10): Promise<HarmonicPatternMemory[]> {
-    return this.analytics.getTopPatternsByStrength(limit);
+    const startTime = Date.now();
+    
+    // Check for materialized result
+    const query = 'top_patterns_by_strength';
+    const materialized = await this.queryMaterializer.getMaterializedResult(query, { limit });
+    if (materialized) {
+      return materialized.result;
+    }
+    
+    // Execute query normally
+    const result = await this.analytics.getTopPatternsByStrength(limit);
+    
+    // Record execution
+    const executionTime = Date.now() - startTime;
+    this.queryMaterializer.recordQueryExecution(query, { limit }, executionTime);
+    
+    return result;
   }
 
   // Cache management
@@ -297,6 +392,75 @@ export class StorageManager {
   // Utility methods
   isConnected(): boolean {
     return this.connected;
+  }
+
+  /**
+   * Get quality manager for external access
+   */
+  getQualityManager(): PatternQualityManager {
+    return this.qualityManager;
+  }
+
+  /**
+   * Get cache warmer for external access
+   */
+  getCacheWarmer(): AdaptiveCacheWarmer {
+    return this.cacheWarmer;
+  }
+
+  /**
+   * Get tier migrator for external access
+   */
+  getTierMigrator(): StorageTierMigrator {
+    return this.tierMigrator;
+  }
+
+  /**
+   * Get query materializer for external access
+   */
+  getQueryMaterializer(): QueryResultMaterializer {
+    return this.queryMaterializer;
+  }
+
+  /**
+   * Get storage optimization recommendations based on quality distribution
+   */
+  async getStorageOptimizationRecommendations(): Promise<{
+    recommendations: string[];
+    qualityDistribution: {
+      premium: number;
+      standard: number; 
+      archive: number;
+    };
+    storageEfficiency: number;
+  }> {
+    const recommendations = await this.qualityManager.getStorageRecommendations();
+    
+    // Get current pattern distribution
+    const [dpcmCount, analyticsCount] = await Promise.all([
+      Promise.resolve(this.dpcm.getPatternCount()),
+      this.analytics.getStats().then(s => s.patternCount)
+    ]);
+    
+    const totalPatterns = dpcmCount + analyticsCount;
+    
+    // Estimate quality distribution (would be more accurate with actual metrics)
+    const qualityDistribution = {
+      premium: Math.round(totalPatterns * 0.15), // Top 15%
+      standard: Math.round(totalPatterns * 0.35), // Middle 35%
+      archive: Math.round(totalPatterns * 0.50)   // Bottom 50%
+    };
+    
+    // Calculate storage efficiency (0-1, higher is better)
+    const storageEfficiency = totalPatterns > 0 
+      ? Math.min(1, 1 - (dpcmCount / totalPatterns) * 0.3) // Penalize if too many in DPCM
+      : 0;
+    
+    return {
+      recommendations,
+      qualityDistribution,
+      storageEfficiency
+    };
   }
 
   async getStorageStats(): Promise<any> {

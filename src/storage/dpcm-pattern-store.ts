@@ -11,6 +11,8 @@ import {
   PatternCategory 
 } from '../memory/types.js';
 import { EnhancedParameterHash } from '../memory/enhanced-parameter-hash.js';
+import { SemanticCoordinateMapper } from '../optimization/semantic-coordinate-mapper.js';
+import { CoordinateSpaceIndex } from '../optimization/coordinate-space-index.js';
 
 export class DPCMPatternStore {
   private memoryStore: Map<string, HarmonicPatternMemory> = new Map();
@@ -18,9 +20,15 @@ export class DPCMPatternStore {
   private categoryIndex: Map<PatternCategory, string[]> = new Map(); // category -> pattern IDs
   private strengthIndex: Map<string, string[]> = new Map(); // strength range -> pattern IDs
   private hasher: EnhancedParameterHash;
+  private coordinateMapper: SemanticCoordinateMapper;
+  private spatialIndex: CoordinateSpaceIndex;
+  private useSemanticMapping: boolean = true; // Flag to enable/disable semantic mapping
+  private useSpatialIndex: boolean = true; // Flag to enable/disable R-tree index
 
   constructor() {
     this.hasher = new EnhancedParameterHash();
+    this.coordinateMapper = new SemanticCoordinateMapper();
+    this.spatialIndex = new CoordinateSpaceIndex();
     this.initializeIndexes();
   }
 
@@ -42,7 +50,12 @@ export class DPCMPatternStore {
     // Store in main memory
     this.memoryStore.set(pattern.id, pattern);
 
-    // Index by coordinates for proximity search
+    // Add to spatial index for O(log n) proximity search
+    if (this.useSpatialIndex) {
+      this.spatialIndex.insert(pattern);
+    }
+
+    // Index by coordinates for proximity search (fallback)
     const coordKey = this.coordinateKey(coordinates);
     if (!this.coordinateIndex.has(coordKey)) {
       this.coordinateIndex.set(coordKey, []);
@@ -93,7 +106,47 @@ export class DPCMPatternStore {
    * Bulk store multiple patterns
    */
   bulkStore(patterns: HarmonicPatternMemory[]): void {
-    patterns.forEach(pattern => this.store(pattern));
+    // Generate coordinates for all patterns first
+    const patternsWithCoords = patterns.map(pattern => {
+      const coordinates = this.generatePatternCoordinates(pattern);
+      pattern.coordinates = coordinates;
+      return pattern;
+    });
+    
+    // Bulk insert into spatial index for better performance
+    if (this.useSpatialIndex && patternsWithCoords.length > 10) {
+      this.spatialIndex.bulkInsert(patternsWithCoords);
+    }
+    
+    // Store patterns individually for other indexes
+    patternsWithCoords.forEach(pattern => {
+      // Store in main memory
+      this.memoryStore.set(pattern.id, pattern);
+      
+      // Skip spatial index (already bulk inserted)
+      if (!this.useSpatialIndex || patternsWithCoords.length <= 10) {
+        this.spatialIndex.insert(pattern);
+      }
+      
+      // Index by coordinates for proximity search (fallback)
+      const coordKey = this.coordinateKey(pattern.coordinates);
+      if (!this.coordinateIndex.has(coordKey)) {
+        this.coordinateIndex.set(coordKey, []);
+      }
+      this.coordinateIndex.get(coordKey)!.push(pattern.id);
+      
+      // Index by category
+      const categoryPatterns = this.categoryIndex.get(pattern.harmonicProperties.category) || [];
+      categoryPatterns.push(pattern.id);
+      this.categoryIndex.set(pattern.harmonicProperties.category, categoryPatterns);
+      
+      // Index by strength range
+      const strengthBucket = this.getStrengthBucket(pattern.harmonicProperties.strength);
+      if (!this.strengthIndex.has(strengthBucket)) {
+        this.strengthIndex.set(strengthBucket, []);
+      }
+      this.strengthIndex.get(strengthBucket)!.push(pattern.id);
+    });
   }
 
   /**
@@ -206,6 +259,7 @@ export class DPCMPatternStore {
     this.coordinateIndex.clear();
     this.categoryIndex.clear();
     this.strengthIndex.clear();
+    this.spatialIndex.clear();
     this.initializeIndexes();
   }
 
@@ -214,6 +268,81 @@ export class DPCMPatternStore {
    */
   getPatternCount(): number {
     return this.memoryStore.size;
+  }
+
+  /**
+   * Get a specific pattern by ID
+   */
+  getPattern(patternId: string): HarmonicPatternMemory | undefined {
+    return this.memoryStore.get(patternId);
+  }
+
+  /**
+   * Analyze coordinate space usage and get optimization recommendations
+   */
+  analyzeCoordinateSpace(): {
+    density: Map<PatternCategory, number>;
+    clusters: Array<{ center: [number, number, number]; count: number }>;
+    recommendations: string[];
+  } {
+    const patterns = this.getAllPatterns();
+    return this.coordinateMapper.analyzeSpaceUsage(patterns);
+  }
+
+  /**
+   * Enable/disable semantic coordinate mapping
+   */
+  setSemanticMapping(enabled: boolean): void {
+    this.useSemanticMapping = enabled;
+  }
+
+  /**
+   * Enable/disable spatial indexing
+   */
+  setSpatialIndexing(enabled: boolean): void {
+    this.useSpatialIndex = enabled;
+    
+    if (enabled && this.memoryStore.size > 0) {
+      // Rebuild index with existing patterns
+      console.log('Rebuilding spatial index...');
+      this.spatialIndex.clear();
+      const patterns = Array.from(this.memoryStore.values());
+      this.spatialIndex.bulkInsert(patterns);
+    }
+  }
+
+  /**
+   * Get spatial index statistics
+   */
+  getSpatialIndexStats() {
+    return this.spatialIndex.getStats();
+  }
+
+  /**
+   * Find k nearest neighbors using R-tree
+   */
+  findNearestNeighbors(patternId: string, k: number): Array<{pattern: HarmonicPatternMemory; distance: number}> {
+    const pattern = this.memoryStore.get(patternId);
+    if (!pattern || !this.useSpatialIndex) {
+      return [];
+    }
+    
+    const results = this.spatialIndex.searchKNN(pattern.coordinates, k + 1); // +1 to exclude self
+    return results.filter(r => r.pattern.id !== patternId).slice(0, k);
+  }
+
+  /**
+   * Get semantic distance between two patterns
+   */
+  getSemanticDistance(patternId1: string, patternId2: string): number | null {
+    const pattern1 = this.memoryStore.get(patternId1);
+    const pattern2 = this.memoryStore.get(patternId2);
+    
+    if (!pattern1 || !pattern2) {
+      return null;
+    }
+    
+    return this.coordinateMapper.getSemanticDistance(pattern1, pattern2);
   }
 
   /**
@@ -269,16 +398,21 @@ export class DPCMPatternStore {
    * Generate coordinates from pattern properties
    */
   private generatePatternCoordinates(pattern: HarmonicPatternMemory): [number, number, number] {
-    // SPEC LORD FIX 1: Normalize category to uppercase for coordinate consistency
-    const category = pattern.harmonicProperties.category || 'GENERAL';
-    const normalizedCategory = category.toUpperCase();
-    
-    return this.hasher.generateSemanticCoordinates(
-      normalizedCategory,
-      pattern.harmonicProperties.strength,
-      pattern.harmonicProperties.complexity,
-      pattern.harmonicProperties.occurrences
-    );
+    if (this.useSemanticMapping) {
+      // Use optimized semantic coordinate mapping
+      return this.coordinateMapper.mapToCoordinates(pattern);
+    } else {
+      // Fallback to original hash-based mapping
+      const category = pattern.harmonicProperties.category || 'GENERAL';
+      const normalizedCategory = category.toUpperCase();
+      
+      return this.hasher.generateSemanticCoordinates(
+        normalizedCategory,
+        pattern.harmonicProperties.strength,
+        pattern.harmonicProperties.complexity,
+        pattern.harmonicProperties.occurrences
+      );
+    }
   }
 
   /**
@@ -324,6 +458,13 @@ export class DPCMPatternStore {
    * Find patterns within radius of coordinates
    */
   private findInRadius(center: [number, number, number], radius: number): HarmonicPatternMemory[] {
+    // Use R-tree index for O(log n) search if enabled
+    if (this.useSpatialIndex) {
+      const results = this.spatialIndex.searchRadius(center, radius);
+      return results.map(r => r.pattern);
+    }
+    
+    // Fallback to original implementation
     const candidates: HarmonicPatternMemory[] = [];
     
     // Get coordinate range for efficient searching

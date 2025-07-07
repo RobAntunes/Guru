@@ -312,6 +312,50 @@ export class Neo4jRelationshipStore {
     }
   }
 
+  /**
+   * Get a specific pattern by ID
+   */
+  async getPattern(patternId: string): Promise<HarmonicPatternMemory | null> {
+    const session = this._driver.session();
+    try {
+      const result = await session.run(`
+        MATCH (p:Pattern {id: $patternId})
+        RETURN p
+      `, { patternId });
+
+      if (result.records.length === 0) {
+        return null;
+      }
+
+      const props = result.records[0].get('p').properties;
+      
+      // Reconstruct HarmonicPatternMemory object
+      return {
+        id: props.id,
+        content: JSON.parse(props.evidence || '{}'), // Stored as JSON
+        harmonicProperties: {
+          category: props.category as PatternCategory,
+          strength: props.strength,
+          confidence: props.confidence,
+          complexity: props.complexity,
+          occurrences: props.occurrences
+        },
+        coordinates: props.dpcmCoordinates || [0, 0, 0],
+        createdAt: props.createdAt?.toNumber() || Date.now(),
+        lastAccessed: props.updatedAt?.toNumber() || Date.now(),
+        accessCount: props.accessCount || 0,
+        relevanceScore: props.strength,
+        locations: [],
+        evidence: JSON.parse(props.evidence || '[]'),
+        relatedPatterns: [],
+        causesPatterns: [],
+        requiredBy: []
+      };
+    } finally {
+      await session.close();
+    }
+  }
+
   async getSymbolPatternAnalysis(symbolId: string): Promise<any> {
     const session = this._driver.session();
     try {

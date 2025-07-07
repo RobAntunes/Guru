@@ -227,6 +227,14 @@ export class AnalyticsStore {
     return csv;
   }
 
+  /**
+   * Get pattern by ID
+   */
+  async getPatternById(patternId: string): Promise<HarmonicPatternMemory[]> {
+    const pattern = this.patterns.get(patternId);
+    return pattern ? [pattern] : [];
+  }
+
   // Health check and statistics
   async getStats(): Promise<any> {
     const patternCount = this.patterns.size;

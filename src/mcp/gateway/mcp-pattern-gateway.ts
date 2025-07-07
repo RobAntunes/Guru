@@ -9,6 +9,7 @@ import { Neo4jRelationshipStore } from '../../storage/neo4j-relationship-store.j
 import { QuantumProbabilityFieldMemory } from '../../memory/quantum-memory-system.js';
 import { UnifiedPatternQuery } from '../../integration/unified-pattern-query.js';
 import { StorageManager } from '../../storage/storage-manager.js';
+import { IntelligentQueryRouter } from './intelligent-query-router.js';
 import { Logger } from '../../logging/logger.js';
 import { EventEmitter } from 'events';
 import { LRUCache } from 'lru-cache';
@@ -69,6 +70,7 @@ export class MCPPatternGateway extends EventEmitter {
   private duckLake: DuckDBDataLake;
   private neo4j: Neo4jRelationshipStore;
   private qpfm: QuantumProbabilityFieldMemory;
+  private queryRouter: IntelligentQueryRouter;
 
   constructor(storageManagerOrDuckLake: StorageManager | DuckDBDataLake, ...args: any[]) {
     super();
@@ -112,6 +114,7 @@ export class MCPPatternGateway extends EventEmitter {
     });
 
     this.unifiedQuery = new UnifiedPatternQuery(this.duckLake, this.neo4j, this.qpfm);
+    this.queryRouter = new IntelligentQueryRouter();
     
     this.logger.info('🌟 MCP Pattern Gateway initialized');
   }
@@ -121,7 +124,10 @@ export class MCPPatternGateway extends EventEmitter {
    */
   async handleMCPRequest(query: MCPQuery): Promise<MCPResponse> {
     const startTime = Date.now();
-    const cacheKey = this.generateCacheKey(query);
+    
+    // Use intelligent routing
+    const route = this.queryRouter.analyze(query);
+    const cacheKey = route.cacheKey || this.generateCacheKey(query);
     
     // Check cache first
     const cached = this.cache.get(cacheKey);
@@ -136,27 +142,58 @@ export class MCPPatternGateway extends EventEmitter {
       };
     }
 
-    this.logger.debug(`Processing MCP query: ${query.type} for ${query.target}`);
+    this.logger.debug(`Processing MCP query: ${query.type} with route: ${route.storage}`);
     
     try {
-      // Route to optimal storage system
-      const response = await this.routeQuery(query);
+      let response: MCPResponse;
+      
+      // Fast path optimization
+      if (route.fastPath && route.storage === 'duckdb') {
+        // Direct DuckDB query for time-series (4ms path)
+        const results = await this.duckLake.queryTimeRange({
+          startTime: query.parameters?.timeRange?.start || new Date(Date.now() - 3600000),
+          endTime: query.parameters?.timeRange?.end || new Date(),
+          categories: query.parameters?.categories
+        });
+        
+        response = {
+          success: true,
+          data: results,
+          metadata: {
+            queryType: query.type,
+            executionTime: Date.now() - startTime,
+            sourceSystems: ['duckdb'],
+            cacheHit: false
+          },
+          memories: results
+        } as MCPResponse;
+      } else if (route.strategy === 'batch' && query.limit && query.limit > 10) {
+        // Batch processing for concurrent queries
+        response = await this.handleBatchQuery(query, route);
+      } else {
+        // Standard routing
+        response = await this.routeQuery(query);
+      }
       
       // Add execution metadata
       response.metadata = {
         queryType: query.type,
         executionTime: Date.now() - startTime,
-        sourceSystems: this.determineSourceSystems(query.type),
+        sourceSystems: route.storage === 'unified' 
+          ? ['duckdb', 'neo4j', 'qpfm'] 
+          : [route.storage],
         cacheHit: false
       };
 
-      // Cache successful responses
-      if (response.success) {
+      // Cache successful responses (only if query takes > 10ms)
+      if (response.success && route.expectedTime > 10) {
         this.cache.set(cacheKey, response);
       }
 
-      // Update metrics
-      this.updateQueryMetrics(query.type, response.metadata.executionTime);
+      // Update metrics and router profile
+      const actualTime = response.metadata.executionTime;
+      this.updateQueryMetrics(query.type, actualTime);
+      this.queryRouter.updateProfile(query.type, actualTime, response.success);
       
       // Emit for streaming subscribers
       if (this.config.enableStreaming) {
@@ -708,6 +745,44 @@ export class MCPPatternGateway extends EventEmitter {
     }
     
     return recommendations;
+  }
+
+  /**
+   * Handle batch queries for optimal performance
+   */
+  private async handleBatchQuery(query: MCPQuery, route: any): Promise<MCPResponse> {
+    const batchSize = this.queryRouter.getOptimalBatchSize(query);
+    const batches: any[] = [];
+    
+    // Split into optimal batches
+    const totalItems = query.limit || 100;
+    for (let i = 0; i < totalItems; i += batchSize) {
+      batches.push({
+        ...query,
+        offset: i,
+        limit: Math.min(batchSize, totalItems - i)
+      });
+    }
+    
+    // Execute batches in parallel
+    const batchResults = await Promise.all(
+      batches.map(batch => this.routeQuery(batch))
+    );
+    
+    // Combine results
+    const allMemories = batchResults.flatMap(r => r.memories || []);
+    
+    return {
+      success: true,
+      data: allMemories,
+      metadata: {
+        queryType: query.type,
+        executionTime: 0, // Will be set by caller
+        sourceSystems: ['batch_processor'],
+        cacheHit: false
+      },
+      memories: allMemories
+    } as MCPResponse;
   }
 
   /**

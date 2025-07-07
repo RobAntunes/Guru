@@ -13,7 +13,7 @@ export interface CacheStats {
 }
 
 export class RedisCache {
-  private client: RedisClientType;
+  public client: RedisClientType; // Made public for direct access
   private connected: boolean = false;
   private stats = { hits: 0, misses: 0 };
 
@@ -242,6 +242,54 @@ export class RedisCache {
     } catch (error) {
       console.error('Bulk cache write error:', error);
     }
+  }
+
+  /**
+   * Set key with expiration (convenience method)
+   */
+  async setex(key: string, ttl: number, value: string): Promise<void> {
+    if (!this.connected) return;
+    
+    try {
+      await this.client.setEx(key, ttl, value);
+    } catch (error) {
+      console.error('Cache setex error:', error);
+    }
+  }
+
+  /**
+   * Get value by key (convenience method)
+   */
+  async get(key: string): Promise<string | null> {
+    if (!this.connected) return null;
+    
+    try {
+      return await this.client.get(key);
+    } catch (error) {
+      console.error('Cache get error:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get all keys matching pattern
+   */
+  async keys(pattern: string): Promise<string[]> {
+    if (!this.connected) return [];
+    
+    try {
+      return await this.client.keys(pattern);
+    } catch (error) {
+      console.error('Cache keys error:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Create pipeline for batch operations
+   */
+  pipeline() {
+    return this.client.multi();
   }
 
   async invalidatePatternCache(patternId?: string): Promise<void> {
