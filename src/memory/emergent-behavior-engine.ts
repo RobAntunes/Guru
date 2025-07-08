@@ -11,6 +11,7 @@ import {
   InterferencePattern,
   SystemContext
 } from './quantum-types.js';
+import { calculateAdaptiveThreshold } from './quantum-threshold-manager.js';
 
 export interface EmergentDetectionResult {
   insights: EmergentInsight[];
@@ -122,10 +123,18 @@ export class EmergentBehaviorEngine {
     for (let i = 0; i < walkLength && currentState; i++) {
       visitedMemories.add(currentState.memory.id);
 
-      // Find next random connection
+      // Find next random connection using dynamic threshold
+      const similarities = quantumState.superposition
+        .filter(s => !visitedMemories.has(s.memory.id))
+        .map(s => this.calculateMemorySimilarity(currentState.memory, s.memory));
+      
+      const similarityThreshold = similarities.length > 0 
+        ? calculateAdaptiveThreshold(similarities, 'permissive')
+        : 0.3; // Fallback only if no data
+      
       const connections = quantumState.superposition.filter(
         s => !visitedMemories.has(s.memory.id) &&
-        this.calculateMemorySimilarity(currentState.memory, s.memory) > 0.3
+        this.calculateMemorySimilarity(currentState.memory, s.memory) > similarityThreshold
       );
 
       if (connections.length > 0) {
@@ -144,12 +153,17 @@ export class EmergentBehaviorEngine {
         ).filter((m): m is QuantumMemoryNode => m !== undefined)
       );
 
+      // Calculate dynamic novelty and confidence based on walk properties
+      const walkComplexity = visitedMemories.size / walkLength;
+      const baseNovelty = 0.5 + walkComplexity * 0.3;
+      const baseConfidence = 0.3 + walkComplexity * 0.4;
+      
       insights.push({
         type: 'novel_connection',
         description: `Dream walk discovered: ${description}`,
         contributingMemories: memoryArray,
-        noveltyScore: 0.6 + Math.random() * 0.3,
-        confidenceLevel: 0.4 + Math.random() * 0.2,
+        noveltyScore: Math.min(0.9, baseNovelty + Math.random() * 0.2),
+        confidenceLevel: Math.min(0.6, baseConfidence + Math.random() * 0.1),
         suggestedAction: 'Explore connection between distant concepts'
       });
     }
@@ -204,10 +218,14 @@ export class EmergentBehaviorEngine {
     const insights: EmergentInsight[] = [];
     const uncertaintyThreshold = this.config.dejaVuExploration.uncertaintyThreshold;
 
-    // Find partial matches with high uncertainty
+    // Find partial matches with high uncertainty using dynamic thresholds
+    const probabilities = quantumState.superposition.map(s => s.probability);
+    const lowerBound = calculateAdaptiveThreshold(probabilities, 'permissive');
+    const upperBound = calculateAdaptiveThreshold(probabilities, 'strict');
+    
     const uncertainMatches = quantumState.superposition.filter(
-      s => s.probability > 0.2 && 
-           s.probability < 0.6 &&
+      s => s.probability > lowerBound && 
+           s.probability < upperBound &&
            s.memory.confidenceScore < uncertaintyThreshold
     );
 
@@ -219,12 +237,16 @@ export class EmergentBehaviorEngine {
         if (group.length >= 2) {
           const commonPatterns = this.findCommonPatterns(group);
           
+          // Dynamic scoring based on group properties
+          const groupComplexity = commonPatterns.length / group.length;
+          const avgProbability = group.reduce((sum, s) => sum + s.probability, 0) / group.length;
+          
           insights.push({
             type: 'unexpected_relevance',
             description: `Déjà vu pattern: ${commonPatterns.join(', ')} across uncertain memories`,
             contributingMemories: group.map(s => s.memory.id),
-            noveltyScore: 0.65,
-            confidenceLevel: 0.3, // Low confidence triggers exploration
+            noveltyScore: Math.min(0.85, 0.5 + groupComplexity * 0.3),
+            confidenceLevel: Math.max(0.2, avgProbability * 0.5),
             suggestedAction: 'Expand search to clarify uncertain connections'
           });
         }
@@ -243,9 +265,14 @@ export class EmergentBehaviorEngine {
   ): Promise<EmergentInsight[]> {
     const insights: EmergentInsight[] = [];
 
-    // Analyze interference patterns
+    // Analyze interference patterns using dynamic thresholds
+    const patternStrengths = quantumState.interferencePatterns.map(p => p.strength);
+    const strengthThreshold = patternStrengths.length > 0
+      ? calculateAdaptiveThreshold(patternStrengths, 'balanced')
+      : 0.5;
+    
     const significantPatterns = quantumState.interferencePatterns.filter(
-      pattern => pattern.strength > 0.5 && pattern.noveltyScore > noveltyThreshold
+      pattern => pattern.strength > strengthThreshold && pattern.noveltyScore > noveltyThreshold
     );
 
     significantPatterns.forEach(pattern => {

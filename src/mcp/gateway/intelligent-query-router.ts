@@ -78,6 +78,20 @@ export class IntelligentQueryRouter {
   analyze(query: MCPQuery): RouteStrategy {
     const profile = this.performanceProfiles.get(query.type);
     
+    // Check explicit type first before pattern matching
+    
+    // QPFM for similarity searches - check FIRST to avoid time-series false positives
+    if (query.type === 'similarity' || query.type === 'realtime_similarity') {
+      return {
+        storage: 'qpfm',
+        handler: 'handleSimilarityQuery',
+        expectedTime: 15.0,
+        strategy: 'cache_first',
+        fallback: 'quantum_search',
+        cacheKey: this.generateCacheKey(query, 'sim')
+      };
+    }
+    
     // Fast path for time-series queries (our 4ms benchmark)
     if (query.type === 'time_series' || this.isTimeSeriesQuery(query)) {
       return {
@@ -101,8 +115,8 @@ export class IntelligentQueryRouter {
       };
     }
 
-    // QPFM for similarity searches
-    if (query.type === 'similarity' || this.isSimilarityQuery(query)) {
+    // Secondary check for similarity patterns (if not explicitly typed)
+    if (this.isSimilarityQuery(query)) {
       return {
         storage: 'qpfm',
         handler: 'handleSimilarityQuery',

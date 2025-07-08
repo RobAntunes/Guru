@@ -4,7 +4,7 @@
  */
 
 import { DuckDBDataLake } from '../datalake/duckdb-data-lake.js';
-import { Neo4jRelationshipStore } from '../storage/neo4j-relationship-store.js';
+import { UnifiedStorageManager } from '../storage/unified-storage-manager.js';
 import { QuantumProbabilityFieldMemory } from '../memory/quantum-memory-system.js';
 import { Logger } from '../logging/logger.js';
 
@@ -16,7 +16,7 @@ export interface UnifiedQueryResult {
     statistics: any;
   };
   
-  // From Neo4j - Relationships
+  // From Storage - Relationships
   graph?: {
     symbol: any;
     patterns: any[];
@@ -45,7 +45,7 @@ export class UnifiedPatternQuery {
   
   constructor(
     private duckLake: DuckDBDataLake,
-    private neo4j: Neo4jRelationshipStore,
+    private storage: UnifiedStorageManager,
     private qpfm: QuantumProbabilityFieldMemory
   ) {}
 
@@ -83,7 +83,7 @@ export class UnifiedPatternQuery {
       );
     }
 
-    // 2. Graph from Neo4j
+    // 2. Graph from Storage
     if (options.includeGraph !== false) {
       promises.push(
         this.getGraph(target, options.depth || 2)
@@ -145,55 +145,50 @@ export class UnifiedPatternQuery {
   }
 
   /**
-   * Get relationship graph from Neo4j
+   * Get relationship graph from Storage
    */
   private async getGraph(target: string, depth: number): Promise<any> {
-    console.log('   🕸️  Querying Neo4j for relationships...');
+    console.log('   🕸️  Querying storage for relationships...');
     
-    const session = this.neo4j.driver.session();
+    const db = this.storage.getDatabase();
     
     try {
-      // Get symbol and its patterns
-      const symbolResult = await session.run(`
-        MATCH (s:Symbol)
-        WHERE s.name = $target OR s.file = $target OR s.id = $target
-        OPTIONAL MATCH (s)-[:EXHIBITS]->(p:Pattern)
-        RETURN s, collect(p) as patterns
+      // Get symbol and its patterns using SurrealDB
+      const symbolResult = await db.query(`
+        SELECT *, 
+               (SELECT * FROM pattern WHERE symbol = $parent.id) as patterns
+        FROM symbol 
+        WHERE name = $target OR file = $target OR id = $target
         LIMIT 1
       `, { target });
 
-      if (symbolResult.records.length === 0) {
+      if (!symbolResult[0]?.result?.[0]) {
         return null;
       }
 
-      const record = symbolResult.records[0];
-      const symbol = record.get('s').properties;
-      const patterns = record.get('patterns').map((p: any) => p.properties);
+      const symbol = symbolResult[0].result[0];
+      const patterns = symbol.patterns || [];
 
       // Get related symbols through shared patterns
-      const relatedResult = await session.run(`
-        MATCH (s1:Symbol)-[:EXHIBITS]->(p:Pattern)<-[:EXHIBITS]-(s2:Symbol)
-        WHERE s1.id = $symbolId AND s1 <> s2
-        WITH s2, count(DISTINCT p) as sharedPatterns
+      const relatedResult = await db.query(`
+        SELECT s2.*, count() as sharedPatterns
+        FROM symbol:⟨$symbolId⟩->exhibits->pattern<-exhibits<-symbol as s2
+        WHERE s2.id != $symbolId
+        GROUP BY s2
         ORDER BY sharedPatterns DESC
         LIMIT 10
-        RETURN s2, sharedPatterns
       `, { symbolId: symbol.id });
 
-      const relatedSymbols = relatedResult.records.map(r => ({
-        symbol: r.get('s2').properties,
-        sharedPatterns: r.get('sharedPatterns').toNumber()
-      }));
+      const relatedSymbols = relatedResult[0]?.result || [];
 
       // Get call chains
-      const callChainResult = await session.run(`
-        MATCH path = (s1:Symbol)-[:CALLS*1..${depth}]->(s2:Symbol)
-        WHERE s1.id = $symbolId
-        RETURN [n in nodes(path) | n.name] as chain
+      const callChainResult = await db.query(`
+        SELECT ->calls(?..$depth)->symbol.name as chain
+        FROM symbol:⟨$symbolId⟩
         LIMIT 20
-      `, { symbolId: symbol.id });
+      `, { symbolId: symbol.id, depth });
 
-      const callChains = callChainResult.records.map(r => r.get('chain'));
+      const callChains = callChainResult[0]?.result?.map((r: any) => r.chain) || [];
 
       return {
         symbol,
@@ -201,8 +196,9 @@ export class UnifiedPatternQuery {
         relatedSymbols,
         callChains
       };
-    } finally {
-      await session.close();
+    } catch (error) {
+      this.logger.error('Graph query failed:', error);
+      throw error;
     }
   }
 
@@ -402,26 +398,27 @@ export class UnifiedPatternQuery {
       .filter(g => g.file_count >= (options.minFiles || 3))
       .sort((a, b) => b.file_count - a.file_count || b.avg_score - a.avg_score);
 
-    // Calculate impact using Neo4j
+    // Calculate impact using storage
     const impact = new Map<string, number>();
+    const db = this.storage.getDatabase();
     
     for (const pattern of patterns) {
-      const session = this.neo4j.driver.session();
       try {
-        const result = await session.run(`
-          MATCH (s:Symbol)-[:EXHIBITS]->(p:Pattern {type: $patternType})
-          MATCH (s)-[:CALLS*0..2]->(downstream:Symbol)
-          RETURN COUNT(DISTINCT downstream) as impactedSymbols
+        const result = await db.query(`
+          SELECT count() as impactedSymbols
+          FROM symbol->exhibits->pattern
+          WHERE pattern.type = $patternType
+          FETCH symbol->calls(..2)->symbol as downstream
         `, { patternType: pattern.pattern_type });
 
-        if (result.records.length > 0) {
+        if (result[0]?.result?.[0]) {
           impact.set(
             pattern.pattern_type,
-            result.records[0].get('impactedSymbols').toNumber()
+            result[0].result[0].impactedSymbols
           );
         }
-      } finally {
-        await session.close();
+      } catch (error) {
+        this.logger.error(`Failed to calculate impact for ${pattern.pattern_type}:`, error);
       }
     }
 
@@ -525,19 +522,15 @@ async function demoUnifiedQueries() {
   console.log('============================');
 
   // Initialize stores (in production, these would be injected)
-  const duckLake = new HarmonicDuckLake();
+  const duckLake = new DuckDBDataLake();
   await duckLake.initialize();
   
-  const neo4j = new Neo4jRelationshipStore(
-    process.env.NEO4J_URI || 'bolt://localhost:7687',
-    process.env.NEO4J_USERNAME || 'neo4j',
-    process.env.NEO4J_PASSWORD || 'password'
-  );
-  await neo4j.connect();
+  const storage = new UnifiedStorageManager();
+  await storage.initialize();
 
   const qpfm = new QuantumProbabilityFieldMemory();
 
-  const unifiedQuery = new UnifiedPatternQuery(duckLake, neo4j, qpfm);
+  const unifiedQuery = new UnifiedPatternQuery(duckLake, storage, qpfm);
 
   // 1. Comprehensive analysis
   console.log('\n1️⃣ Comprehensive Analysis of src/core/guru.ts:');
@@ -572,7 +565,7 @@ async function demoUnifiedQueries() {
   console.log(`   Improvements needed: ${recommendations.improvements.length}`);
   console.log(`   Similar high-quality code: ${recommendations.similar.length} examples`);
 
-  await neo4j.close();
+  await storage.close();
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

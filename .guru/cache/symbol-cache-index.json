@@ -1,37 +1,47 @@
 {
-  "/Users/boss/Documents/projects/guru/test-flow-type/flow-test.ts": {
-    "fileHash": "7ebd8f47351108432a48f38ca39281e99bbdf7a88665ba9e4afeadab7c6d6ad6",
-    "position": 1122855,
-    "size": 308
+  "/Users/boss/Documents/projects/guru/stress-memory-test.ts": {
+    "fileHash": "9f6878ee2ab5ade16851c301f2ecd25260aacf58f8ad2c1c2ad00a9b9a8cb9b0",
+    "position": 3130663,
+    "size": 105
   },
-  "/Users/boss/Documents/projects/guru/test-flow-type/type-test.ts": {
-    "fileHash": "9b732fbd8d4073c2f27cc5c194563cea437334746aaf3dbd3a35dc55bb1e4e67",
-    "position": 1122180,
-    "size": 367
+  "/Users/boss/Documents/projects/guru/stress-concurrent-0.ts": {
+    "fileHash": "6e746fe3547ab73f457f6d130ea4350d17ad8ca9d4cd464603a9a989bead85ad",
+    "position": 3130768,
+    "size": 154
   },
-  "/Users/boss/Documents/projects/guru/test-flow-type-debug/complex-flow.ts": {
-    "fileHash": "0a0b02aea153ac82a4724316d68b98dd5d336f1f038eec36723f4be64cff0bb3",
-    "position": 1123163,
-    "size": 425
+  "/Users/boss/Documents/projects/guru/stress-concurrent-1.ts": {
+    "fileHash": "4fa823450ecfa0bcbbfcd386ec1fbedaa4d463595979739342bc9dd2dc17257c",
+    "position": 3130922,
+    "size": 154
   },
-  "/Users/boss/Documents/projects/guru/test-samples/cli-tool/cli.js": {
-    "fileHash": "f23507d61cef47f645663f61c9cf202873e020f56c7d601c4b24c332a7601f21",
-    "position": 1123588,
-    "size": 103
+  "/Users/boss/Documents/projects/guru/stress-concurrent-2.ts": {
+    "fileHash": "b1b1f087858dac9b5077116d50c77f4d685d5a1f9a2b845d804f843e9ef106c5",
+    "position": 3131076,
+    "size": 251
   },
-  "/Users/boss/Documents/projects/guru/test-samples/hello-world/index.js": {
-    "fileHash": "d0a8adf734e6b4325e1b83906c78e4d7981c3d803fe513a9034a0688e52b6190",
-    "position": 1123691,
-    "size": 104
+  "/Users/boss/Documents/projects/guru/stress-concurrent-4.ts": {
+    "fileHash": "6508c7b171db5650564ed23782fc21d137eb15b62543235e4d463ef408df739b",
+    "position": 3131327,
+    "size": 252
   },
-  "/Users/boss/Documents/projects/guru/test-samples/simple.ts": {
-    "fileHash": "045d274b0eec1c090609ee2e11d2c532cadc26c7d2d4b2a7cb70a9f85e9f4b65",
-    "position": 1123795,
-    "size": 316
+  "/Users/boss/Documents/projects/guru/stress-concurrent-3.ts": {
+    "fileHash": "afad39aa63667e0b1d1afb80449ec6f1c87d093ba876aaa9d531377805c93316",
+    "position": 3131579,
+    "size": 249
   },
-  "/Users/boss/Documents/projects/guru/test-samples/web-server/server.js": {
-    "fileHash": "43c2026694e4be83dbf65e6c6d8ee7ea6d1ee61bdf8b828ede2f0cbcf36a89a2",
-    "position": 1124111,
-    "size": 286
+  "/Users/boss/Documents/projects/guru/project/src/main.js": {
+    "fileHash": "bfcf237d7af6d494b59a60cd68526b5a92234f3dee9cb015e3edb86f5f9b9849",
+    "position": 3131828,
+    "size": 354
+  },
+  "/Users/boss/Documents/projects/guru/project/src/utils.ts": {
+    "fileHash": "4c3566c35e2a58d57e04f9342c9fc0facc46997dc45d5538b2d2de3da87b32bf",
+    "position": 3132182,
+    "size": 259
+  },
+  "/Users/boss/Documents/projects/guru/project/scripts/process.py": {
+    "fileHash": "1ef2e08425750083bdc32a57f10b886c92efeec07191ccd7ef1d1c0e66ad09fa",
+    "position": 3132441,
+    "size": 314
   }
 }

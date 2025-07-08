@@ -465,20 +465,36 @@ export class Neo4jRelationshipStore {
 
   // Link patterns to symbols
   async linkPatternToSymbol(symbolId: string, patterns: any[]): Promise<void> {
+    // Check if driver is connected
+    if (!this._driver || !this.connected) {
+      console.warn('Neo4j not connected, skipping pattern linking');
+      return;
+    }
+    
     const session = this._driver.session();
+    const tx = session.beginTransaction();
+    
     try {
-      await session.run('BEGIN');
+      // First ensure the Symbol exists
+      await tx.run(`
+        MERGE (s:Symbol {id: $symbolId})
+        ON CREATE SET s.name = $symbolId,
+                      s.type = 'unknown',
+                      s.file = 'unknown',
+                      s.startLine = 0,
+                      s.endLine = 0,
+                      s.createdAt = datetime()
+      `, { symbolId });
       
       for (const pattern of patterns) {
-        await session.run(`
-          MERGE (p:Pattern {
-            id: $patternId,
-            type: $patternType,
-            category: $category
-          })
-          SET p.strength = $score,
+        await tx.run(`
+          MERGE (p:Pattern {id: $patternId})
+          SET p.type = $patternType,
+              p.category = $category,
+              p.strength = $score,
               p.confidence = $confidence,
-              p.location = $location
+              p.location = $location,
+              p.updatedAt = datetime()
           WITH p
           MATCH (s:Symbol {id: $symbolId})
           MERGE (s)-[:EXHIBITS]->(p)
@@ -493,9 +509,13 @@ export class Neo4jRelationshipStore {
         });
       }
       
-      await session.run('COMMIT');
+      await tx.commit();
     } catch (error) {
-      await session.run('ROLLBACK');
+      try {
+        await tx.rollback();
+      } catch (rollbackError) {
+        // Ignore rollback errors
+      }
       throw error;
     } finally {
       await session.close();

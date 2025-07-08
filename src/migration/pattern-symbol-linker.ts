@@ -3,7 +3,7 @@
  * Creates relationships between harmonic patterns and the symbols they're found in
  */
 
-import { Neo4jRelationshipStore } from '../storage/neo4j-relationship-store.js';
+import { UnifiedStorageManager } from '../storage/unified-storage-manager.js';
 import { StorageManager } from '../storage/storage-manager.js';
 import { HarmonicPatternMemory, CodeLocation } from '../memory/types.js';
 
@@ -20,22 +20,22 @@ interface PatternSymbolLink {
 }
 
 export class PatternSymbolLinker {
-  private neo4j: Neo4jRelationshipStore;
+  private storage: UnifiedStorageManager;
   private storageManager: StorageManager;
 
   constructor() {
-    this.neo4j = new Neo4jRelationshipStore();
+    this.storage = new UnifiedStorageManager();
     this.storageManager = new StorageManager();
   }
 
   async connect(): Promise<void> {
-    await this.neo4j.connect();
+    await this.storage.initialize();
     await this.storageManager.connect();
     console.log('✅ Connected for pattern-symbol linking');
   }
 
   async disconnect(): Promise<void> {
-    await this.neo4j.disconnect();
+    await this.storage.close();
     await this.storageManager.disconnect();
     console.log('📴 Disconnected from databases');
   }
@@ -117,7 +117,11 @@ export class PatternSymbolLinker {
 
     for (const location of pattern.locations) {
       // Query symbols in the same file that overlap with pattern location
-      const overlappingSymbols = await this.neo4j.getSymbolsByFile(location.file);
+      const result = await this.storage.getDatabase().query(`
+        SELECT * FROM symbol WHERE file = $file
+      `, { file: location.file });
+      
+      const overlappingSymbols = result[0]?.result || [];
       
       for (const symbol of overlappingSymbols) {
         const overlap = this.calculateOverlap(
@@ -170,31 +174,30 @@ export class PatternSymbolLinker {
    * Create EXHIBITS relationship between symbol and pattern
    */
   private async createPatternSymbolLink(link: PatternSymbolLink): Promise<void> {
-    const session = this.neo4j['driver'].session();
+    const db = this.storage.getDatabase();
     
-    try {
-      await session.run(`
-        MATCH (s:Symbol {id: $symbolId})
-        MATCH (p:Pattern {id: $patternId})
-        MERGE (s)-[r:EXHIBITS]->(p)
-        SET r.strength = $strength,
-            r.confidence = $confidence,
-            r.evidence = $evidence,
-            r.overlapPercentage = $overlapPercentage,
-            r.overlapLines = $overlapLines,
-            r.createdAt = datetime()
-      `, {
-        symbolId: link.symbolId,
-        patternId: link.patternId,
-        strength: link.strength,
-        confidence: link.confidence,
-        evidence: JSON.stringify(link.evidence),
-        overlapPercentage: link.overlap.percentage,
-        overlapLines: link.overlap.lines
-      });
-    } finally {
-      await session.close();
-    }
+    await db.query(`
+      LET $pattern = SELECT * FROM pattern WHERE id = $patternId;
+      IF !$pattern THEN
+        CREATE pattern SET id = $patternId;
+      END;
+      
+      RELATE symbol:⟨$symbolId⟩->exhibits->pattern:⟨$patternId⟩ SET
+        strength = $strength,
+        confidence = $confidence,
+        evidence = $evidence,
+        overlapPercentage = $overlapPercentage,
+        overlapLines = $overlapLines,
+        createdAt = time::now()
+    `, {
+      symbolId: link.symbolId,
+      patternId: link.patternId,
+      strength: link.strength,
+      confidence: link.confidence,
+      evidence: JSON.stringify(link.evidence),
+      overlapPercentage: link.overlap.percentage,
+      overlapLines: link.overlap.lines
+    });
   }
 
   /**
@@ -210,7 +213,13 @@ export class PatternSymbolLinker {
         const similarity = this.calculatePatternSimilarity(patterns[i], patterns[j]);
         
         if (similarity > 0.7) { // 70% similarity threshold
-          await this.storageManager['neo4j'].createPatternSimilarity({
+          // Create similarity relationship in storage
+          await this.storage.getDatabase().query(`
+            RELATE pattern:⟨$pattern1⟩->similar_to->pattern:⟨$pattern2⟩ SET
+              similarity = $similarity,
+              sharedFeatures = $sharedFeatures,
+              distance = $distance
+          `, {
             pattern1: patterns[i].id,
             pattern2: patterns[j].id,
             similarity,
@@ -288,27 +297,24 @@ export class PatternSymbolLinker {
    * Calculate how patterns propagate through code
    */
   private async calculatePatternPropagation(): Promise<void> {
-    const session = this.neo4j['driver'].session();
+    const db = this.storage.getDatabase();
     
-    try {
-      // Find pattern propagation through function calls
-      const result = await session.run(`
-        MATCH (s1:Symbol)-[:CALLS]->(s2:Symbol)
-        MATCH (s1)-[:EXHIBITS]->(p1:Pattern)
-        MATCH (s2)-[:EXHIBITS]->(p2:Pattern)
-        WHERE p1.category = p2.category
-        WITH p1.category as category, count(*) as propagationCount
-        RETURN category, propagationCount
-        ORDER BY propagationCount DESC
-      `);
+    // Find pattern propagation through function calls
+    const result = await db.query(`
+      SELECT p1.category as category, count() as propagationCount
+      FROM symbol as s1
+      WHERE s1->calls->symbol as s2
+        AND s1->exhibits->pattern as p1
+        AND s2->exhibits->pattern as p2
+        AND p1.category = p2.category
+      GROUP BY category
+      ORDER BY propagationCount DESC
+    `);
 
-      console.log('   Pattern propagation analysis:');
-      result.records.forEach(record => {
-        console.log(`     ${record.get('category')}: ${record.get('propagationCount')} propagations`);
-      });
-    } finally {
-      await session.close();
-    }
+    console.log('   Pattern propagation analysis:');
+    result[0]?.result?.forEach((record: any) => {
+      console.log(`     ${record.category}: ${record.propagationCount} propagations`);
+    });
   }
 
   /**
@@ -321,48 +327,47 @@ export class PatternSymbolLinker {
     avgPatternsPerSymbol: number;
     avgSymbolsPerPattern: number;
   }> {
-    const session = this.neo4j['driver'].session();
+    const db = this.storage.getDatabase();
     
-    try {
-      const stats = await session.run(`
-        MATCH (p:Pattern)
-        WITH count(p) as patternCount
-        MATCH (s:Symbol)
-        WITH patternCount, count(s) as symbolCount
-        MATCH (:Symbol)-[e:EXHIBITS]->(:Pattern)
-        WITH patternCount, symbolCount, count(e) as linkCount
-        MATCH (s:Symbol)-[:EXHIBITS]->(p:Pattern)
-        WITH patternCount, symbolCount, linkCount, 
-             count(DISTINCT s) as linkedSymbols,
-             count(DISTINCT p) as linkedPatterns
-        RETURN patternCount, symbolCount, linkCount, linkedSymbols, linkedPatterns
-      `);
-
-      if (stats.records.length === 0) {
-        return {
-          totalPatterns: 0,
-          totalSymbols: 0,
-          totalLinks: 0,
-          avgPatternsPerSymbol: 0,
-          avgSymbolsPerPattern: 0
-        };
-      }
+    const stats = await db.query(`
+      LET $patternCount = (SELECT count() FROM pattern);
+      LET $symbolCount = (SELECT count() FROM symbol);
+      LET $exhibits = (SELECT * FROM exhibits);
+      LET $linkCount = count($exhibits);
+      LET $linkedSymbols = (SELECT count(DISTINCT in) FROM exhibits);
+      LET $linkedPatterns = (SELECT count(DISTINCT out) FROM exhibits);
       
-      const record = stats.records[0];
-      const linkCount = record.get('linkCount').toNumber();
-      const linkedSymbols = record.get('linkedSymbols').toNumber();
-      const linkedPatterns = record.get('linkedPatterns').toNumber();
-
-      return {
-        totalPatterns: record.get('patternCount').toNumber(),
-        totalSymbols: record.get('symbolCount').toNumber(),
-        totalLinks: linkCount,
-        avgPatternsPerSymbol: linkedSymbols > 0 ? linkCount / linkedSymbols : 0,
-        avgSymbolsPerPattern: linkedPatterns > 0 ? linkCount / linkedPatterns : 0
+      RETURN {
+        patternCount: $patternCount,
+        symbolCount: $symbolCount,
+        linkCount: $linkCount,
+        linkedSymbols: $linkedSymbols,
+        linkedPatterns: $linkedPatterns
       };
-    } finally {
-      await session.close();
+    `);
+
+    const result = stats[0]?.result?.[0];
+    if (!result) {
+      return {
+        totalPatterns: 0,
+        totalSymbols: 0,
+        totalLinks: 0,
+        avgPatternsPerSymbol: 0,
+        avgSymbolsPerPattern: 0
+      };
     }
+    
+    const linkCount = result.linkCount || 0;
+    const linkedSymbols = result.linkedSymbols || 0;
+    const linkedPatterns = result.linkedPatterns || 0;
+
+    return {
+      totalPatterns: result.patternCount || 0,
+      totalSymbols: result.symbolCount || 0,
+      totalLinks: linkCount,
+      avgPatternsPerSymbol: linkedSymbols > 0 ? linkCount / linkedSymbols : 0,
+      avgSymbolsPerPattern: linkedPatterns > 0 ? linkCount / linkedPatterns : 0
+    };
   }
 }
 

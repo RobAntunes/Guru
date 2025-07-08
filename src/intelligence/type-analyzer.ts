@@ -98,6 +98,7 @@ export class TypeAnalyzer {
   private harmonicEnricher?: HarmonicEnricher;
   private types: Map<string, TypeInfo> = new Map();
   private flows: TypeFlowEdge[] = [];
+  private issues: TypeIssue[] = [];
   private typeIdCounter = 0;
   
   constructor(symbolGraph: SymbolGraph, harmonicEnricher?: HarmonicEnricher) {
@@ -114,6 +115,7 @@ export class TypeAnalyzer {
     this.checker = program.getTypeChecker();
     this.types.clear();
     this.flows = [];
+    this.issues = [];
     this.typeIdCounter = 0;
     
     const issues: TypeIssue[] = [];
@@ -127,7 +129,8 @@ export class TypeAnalyzer {
     }
     
     // Detect type issues
-    issues.push(...this.detectTypeIssues());
+    this.issues.push(...this.detectTypeIssues());
+    issues.push(...this.issues);
     
     // Calculate metrics
     const metrics = this.calculateTypeMetrics();
@@ -255,23 +258,39 @@ export class TypeAnalyzer {
     const graphSymbol = this.symbolGraph.symbols.get(functionName);
     if (graphSymbol) {
       this.enhanceTypeWithSymbolContext(typeInfo, graphSymbol);
-      
-      // Track parameter and return type flows
-      if (node.parameters) {
-        for (const param of node.parameters) {
-          const paramSymbol = this.checker.getSymbolAtLocation(param.name);
-          if (paramSymbol) {
-            const paramType = this.checker.getTypeOfSymbolAtLocation(paramSymbol, param);
-            const paramTypeInfo = await this.extractTypeInfo(paramType, param);
-            
-            this.flows.push({
-              from: functionName,
-              to: paramSymbol.getName(),
-              type: paramTypeInfo,
-              operation: 'parameter',
-              confidence: 1.0
+    }
+    
+    // Track parameter and return type flows - check all functions, not just those in symbol graph
+    if (node.parameters) {
+      for (const param of node.parameters) {
+        const paramSymbol = this.checker.getSymbolAtLocation(param.name);
+        if (paramSymbol) {
+          const paramType = this.checker.getTypeOfSymbolAtLocation(paramSymbol, param);
+          const paramTypeInfo = await this.extractTypeInfo(paramType, param);
+          
+          // Check for implicit any in parameters
+          if (!param.type && (paramType.flags & ts.TypeFlags.Any)) {
+            this.issues.push({
+              type: 'implicit_any',
+              severity: 'warning',
+              location: {
+                file: sourceFile.fileName,
+                line: sourceFile.getLineAndCharacterOfPosition(param.getStart()).line + 1,
+                column: sourceFile.getLineAndCharacterOfPosition(param.getStart()).character + 1
+              },
+              message: `Parameter '${paramSymbol.getName()}' has implicit any type in function '${functionName}'`,
+              actualType: paramTypeInfo,
+              suggestion: `Add type annotation to parameter '${paramSymbol.getName()}'`
             });
           }
+          
+          this.flows.push({
+            from: functionName,
+            to: paramSymbol.getName(),
+            type: paramTypeInfo,
+            operation: 'parameter',
+            confidence: 1.0
+          });
         }
       }
     }
@@ -683,15 +702,18 @@ export class TypeAnalyzer {
       complexityScore += this.calculateTypeComplexity(type);
     }
     
-    // Inferred types are those in flows without explicit declaration
-    const declaredTypes = new Set(this.types.keys());
-    for (const flow of this.flows) {
-      if (!declaredTypes.has(flow.to)) {
+    // Count explicit vs inferred types
+    // Explicit types are those with actual type annotations
+    // Inferred types are those without explicit annotations (TypeScript inferred them)
+    for (const [name, type] of this.types) {
+      // Check if this type was explicitly annotated
+      // For simplicity, if it's not 'any' and has a specific name, consider it explicit
+      if (!(type.flags & ts.TypeFlags.Any) && type.name !== 'any') {
+        explicitTypes++;
+      } else {
         inferredTypes++;
       }
     }
-    
-    explicitTypes = this.types.size - inferredTypes;
     
     return {
       totalTypes: this.types.size,

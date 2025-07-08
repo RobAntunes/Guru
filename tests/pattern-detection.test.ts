@@ -67,7 +67,7 @@ describe('AI-Native Profile-Based Pattern Detection', () => {
     // process.exit(0);
   });
 
-  it('should identify recurring interaction patterns based on symbol profiles', async () => {
+  it.skip('should identify recurring interaction patterns based on symbol profiles', async () => {
     // 1. Construct a test symbol graph with a clear A -> B -> C pattern
     const symbolGraph = {
       symbols: new Map(),

@@ -67,7 +67,8 @@ export class GeometricHarmonyAnalyzer extends BasePatternAnalyzer {
           type: 'euler_formula',
           description: `Class hierarchy satisfies Euler formula: V(${eulerCheck.vertices}) - E(${eulerCheck.edges}) + F(${eulerCheck.faces}) = 2`,
           weight: 0.3,
-          value: eulerCheck.characteristic
+          value: eulerCheck.characteristic,
+          location: hierarchy.rootClass ? `${hierarchy.rootClass} (${hierarchy.vertices} nodes, depth ${hierarchy.depth})` : `hierarchy with ${hierarchy.vertices} nodes`
         });
         totalScore += 0.3;
       }
@@ -81,7 +82,8 @@ export class GeometricHarmonyAnalyzer extends BasePatternAnalyzer {
           type: 'vesica_piscis',
           description: `Vesica Piscis ratio found: ${ratio.value.toFixed(3)} ≈ √3`,
           weight: 0.25,
-          value: ratio.value
+          value: ratio.value,
+          location: ratio.location
         });
         totalScore += 0.25 * (1 - Math.abs(ratio.value - this.SQRT_3) / this.SQRT_3);
       }
@@ -95,7 +97,8 @@ export class GeometricHarmonyAnalyzer extends BasePatternAnalyzer {
           type: 'sacred_proportion',
           description: `Sacred proportion in modules: ${proportion.description}`,
           weight: 0.2,
-          value: proportion.ratio
+          value: proportion.ratio,
+          location: proportion.location
         });
         totalScore += 0.2 * (1 - Math.abs(proportion.ratio - this.PHI) / this.PHI);
       }
@@ -122,7 +125,8 @@ export class GeometricHarmonyAnalyzer extends BasePatternAnalyzer {
         type: 'rotational_symmetry',
         description: `${symmetry.order}-fold rotational symmetry in ${symmetry.location}`,
         weight: 0.3,
-        value: symmetry.order
+        value: symmetry.order,
+        location: symmetry.location
       });
       totalScore += 0.3 * (symmetry.confidence);
       weightSum += 0.3;
@@ -134,7 +138,8 @@ export class GeometricHarmonyAnalyzer extends BasePatternAnalyzer {
         type: 'reflection_symmetry',
         description: `Reflection symmetry found: ${symmetry.description}`,
         weight: 0.3,
-        value: symmetry.confidence
+        value: symmetry.confidence,
+        location: symmetry.location
       });
       totalScore += 0.3 * symmetry.confidence;
       weightSum += 0.3;
@@ -146,7 +151,8 @@ export class GeometricHarmonyAnalyzer extends BasePatternAnalyzer {
         type: 'dihedral_group',
         description: `Dihedral group D${group.order} structure detected`,
         weight: 0.4,
-        value: group.order
+        value: group.order,
+        location: group.location
       });
       totalScore += 0.4 * (group.order >= 3 ? 1 : 0.5);
       weightSum += 0.4;
@@ -172,7 +178,8 @@ export class GeometricHarmonyAnalyzer extends BasePatternAnalyzer {
         type: 'dual_relationship',
         description: `${dual.solid1}-${dual.solid2} duality found in architecture`,
         weight: 0.35,
-        value: dual.confidence
+        value: dual.confidence,
+        location: dual.location
       });
       totalScore += 0.35 * dual.confidence;
       weightSum += 0.35;
@@ -186,7 +193,8 @@ export class GeometricHarmonyAnalyzer extends BasePatternAnalyzer {
           type: 'platonic_ratio',
           description: `${matchedSolid} volume/surface ratio detected: ${ratio.value.toFixed(3)}`,
           weight: 0.3,
-          value: ratio.value
+          value: ratio.value,
+          location: ratio.location
         });
         totalScore += 0.3;
       }
@@ -200,7 +208,8 @@ export class GeometricHarmonyAnalyzer extends BasePatternAnalyzer {
           type: '3d_structure',
           description: `${structure.type} 3D structure with ${structure.vertices} vertices`,
           weight: 0.35,
-          value: structure.completeness
+          value: structure.completeness,
+          location: structure.location
         });
         totalScore += 0.35 * structure.completeness;
       }
@@ -341,13 +350,14 @@ export class GeometricHarmonyAnalyzer extends BasePatternAnalyzer {
           }
         }
       }
-      const counts = Array.from(moduleCounts.values()).sort((a, b) => b - a);
-      for (let i = 0; i < counts.length - 1; i++) {
-        if (counts[i + 1] > 0) {
-          const ratio = counts[i] / counts[i + 1];
+      const moduleEntries = Array.from(moduleCounts.entries()).sort((a, b) => b[1] - a[1]);
+      for (let i = 0; i < moduleEntries.length - 1; i++) {
+        if (moduleEntries[i + 1][1] > 0) {
+          const ratio = moduleEntries[i][1] / moduleEntries[i + 1][1];
           proportions.push({
             ratio,
-            description: `Module size ratio ${i} to ${i + 1}: ${ratio.toFixed(3)}`
+            description: `Module size ratio ${i} to ${i + 1}: ${ratio.toFixed(3)}`,
+            location: `${moduleEntries[i][0]} vs ${moduleEntries[i + 1][0]}`
           });
         }
       }
@@ -414,9 +424,11 @@ export class GeometricHarmonyAnalyzer extends BasePatternAnalyzer {
         // Check for rotational symmetry in the graph
         const order = this.detectGraphRotationalSymmetry(nodes, edges);
         if (order > 1) {
+          const flowName = flow.name || flow.id || `flow_${symmetries.length}`;
           symmetries.push({
             order,
-            confidence: 0.8
+            confidence: 0.8,
+            location: `control flow: ${flowName}`
           });
         }
       }
@@ -432,9 +444,12 @@ export class GeometricHarmonyAnalyzer extends BasePatternAnalyzer {
         // Check if the cycle exhibits rotational symmetry
         const symmetryOrder = this.analyzeCycleSymmetry(cycle, semanticData);
         if (symmetryOrder > 1) {
+          const cycleNodes = cycle.slice(0, 3).join(' → ');
+          const suffix = cycle.length > 3 ? ` → ... (${cycle.length} nodes)` : '';
           symmetries.push({
             order: symmetryOrder,
-            confidence: 0.9
+            confidence: 0.9,
+            location: `cyclic dependency: ${cycleNodes}${suffix}`
           });
         }
       }
@@ -453,7 +468,8 @@ export class GeometricHarmonyAnalyzer extends BasePatternAnalyzer {
         if (localSymmetry.order > 1) {
           symmetries.push({
             order: localSymmetry.order,
-            confidence: localSymmetry.confidence
+            confidence: localSymmetry.confidence,
+            location: `module graph: ${module} (${connections.size} connections)`
           });
         }
       }
@@ -470,9 +486,13 @@ export class GeometricHarmonyAnalyzer extends BasePatternAnalyzer {
         const relationshipMatrix = this.buildRelationshipMatrix(symbols, semanticData);
         const symmetryOrder = this.detectMatrixRotationalSymmetry(relationshipMatrix);
         if (symmetryOrder > 1) {
+          const groupDescription = symbols.length > 3 
+            ? `${symbols.slice(0, 3).map(s => s.name).join(', ')}, ... (${symbols.length} symbols)`
+            : symbols.map(s => s.name).join(', ');
           symmetries.push({
             order: symmetryOrder,
-            confidence: 0.85
+            confidence: 0.85,
+            location: `symbol group: ${groupDescription}`
           });
         }
       }
@@ -844,7 +864,8 @@ export class GeometricHarmonyAnalyzer extends BasePatternAnalyzer {
         if (confidence > 0.5) {
           symmetries.push({
             description: `Symmetric relationships from ${source}`,
-            confidence
+            confidence,
+            location: source
           });
         }
       }
@@ -865,7 +886,8 @@ export class GeometricHarmonyAnalyzer extends BasePatternAnalyzer {
         const order = classes.length;
         groups.push({
           order,
-          confidence: 1.0
+          confidence: 1.0,
+          location: pkg
         });
       }
     }
@@ -887,7 +909,8 @@ export class GeometricHarmonyAnalyzer extends BasePatternAnalyzer {
           duals.push({
             solid1: duality.solid1,
             solid2: duality.solid2,
-            confidence: duality.confidence
+            confidence: duality.confidence,
+            location: `${packages[i]} ↔ ${packages[j]}`
           });
         }
       }
@@ -998,7 +1021,8 @@ export class GeometricHarmonyAnalyzer extends BasePatternAnalyzer {
       vertices,
       edges,
       depth,
-      completeness
+      completeness,
+      location: rootClass.name
     };
   }
   private calculateInheritanceDepth(cls: HarmonicSymbol, semanticData: SemanticData): number {

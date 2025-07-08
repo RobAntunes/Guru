@@ -210,8 +210,16 @@ describe('QuantumProbabilityFieldMemory', () => {
     });
 
     it('should perform precision queries with high confidence', async () => {
+      // Debug: Check that authentication memory was stored
+      const stats = qpfm.getStats();
+      console.log('Total memories stored:', stats.totalMemories);
+      console.log('DPCM stats:', stats.dpcmStats);
+      
       // Query for authentication patterns directly
       const result = await qpfm.query('authentication');
+      
+      console.log('Query result memories:', result.memories.length);
+      console.log('Field config:', result.fieldConfiguration);
 
       expect(result.memories.length).toBeGreaterThan(0);
       expect(result.memories[0].content.harmonicSignature.category).toBe(PatternCategory.AUTHENTICATION);
@@ -279,7 +287,6 @@ describe('QuantumProbabilityFieldMemory', () => {
       const interferingMemories: HarmonicPatternMemory[] = [
         {
           id: 'interfere-1',
-          timestamp: new Date(),
           content: {
             title: 'Pattern A',
             description: 'First interfering pattern',
@@ -295,11 +302,18 @@ describe('QuantumProbabilityFieldMemory', () => {
             occurrences: 10
           },
           coordinates: [0, 0, 0], // Will be overwritten by DPCM during storage
-          relevanceScore: 1.0
+          relevanceScore: 1.0,
+          accessCount: 0,
+          lastAccessed: Date.now(),
+          createdAt: Date.now(),
+          locations: [],
+          evidence: [],
+          relatedPatterns: [],
+          causesPatterns: [],
+          requiredBy: []
         },
         {
           id: 'interfere-2',
-          timestamp: new Date(),
           content: {
             title: 'Pattern B',
             description: 'Second interfering pattern',
@@ -315,11 +329,25 @@ describe('QuantumProbabilityFieldMemory', () => {
             occurrences: 12
           },
           coordinates: [0, 0, 0], // Will be overwritten by DPCM during storage
-          relevanceScore: 0.95
+          relevanceScore: 0.95,
+          accessCount: 0,
+          lastAccessed: Date.now(),
+          createdAt: Date.now(),
+          locations: [],
+          evidence: [],
+          relatedPatterns: [],
+          causesPatterns: [],
+          requiredBy: []
         }
       ];
 
       await qpfm.bulkStore(interferingMemories);
+      
+      // Debug: Check where harmonic memories are stored
+      const stats = qpfm.getStats();
+      console.log('Harmonic memories stored:', stats.totalMemories);
+      console.log('Category counts:', stats.dpcmStats.categoryCounts);
+      console.log('Coordinate spread:', stats.dpcmStats.coordinateSpread);
 
       const query: MemoryQuery = {
         type: 'discovery',
@@ -333,6 +361,12 @@ describe('QuantumProbabilityFieldMemory', () => {
       };
 
       const result = await qpfm.query(query);
+      
+      console.log('Query field center:', result.fieldConfiguration?.center);
+      console.log('Query field radius:', result.fieldConfiguration?.radius);
+      console.log('Interference test - memories found:', result.memories.length);
+      console.log('Interference test - superposition size:', result.executionMetrics?.memoriesProcessed);
+      console.log('Interference test - patterns:', result.interferencePatterns);
 
       expect(result.interferencePatterns.length).toBeGreaterThan(0);
       const constructivePattern = result.interferencePatterns.find(p => p.type === 'constructive');
@@ -372,7 +406,6 @@ describe('QuantumProbabilityFieldMemory', () => {
       // Add high-resonance memories
       const resonantMemories: HarmonicPatternMemory[] = Array.from({ length: 5 }, (_, i) => ({
         id: `resonant-${i}`,
-        timestamp: new Date(),
         content: {
           title: `Resonant Pattern ${i}`,
           description: 'High resonance pattern',
@@ -388,7 +421,15 @@ describe('QuantumProbabilityFieldMemory', () => {
           occurrences: 50
         },
         coordinates: [0.5 + i * 0.02, 0.5, 0.5],
-        relevanceScore: 0.95
+        relevanceScore: 0.95,
+        accessCount: 0,
+        lastAccessed: Date.now(),
+        createdAt: Date.now(),
+        locations: [],
+        evidence: [],
+        relatedPatterns: [],
+        causesPatterns: [],
+        requiredBy: []
       }));
 
       await qpfm.bulkStore(resonantMemories);
@@ -412,7 +453,6 @@ describe('QuantumProbabilityFieldMemory', () => {
     it('should find similar memories using quantum interference', async () => {
       const baseMemory: HarmonicPatternMemory = {
         id: 'base-quantum',
-        timestamp: new Date(),
         content: {
           title: 'Base Quantum Pattern',
           description: 'Pattern to find similar',
@@ -428,7 +468,15 @@ describe('QuantumProbabilityFieldMemory', () => {
           occurrences: 20
         },
         coordinates: [0, 0, 0], // Will be overwritten by DPCM during storage
-        relevanceScore: 1.0
+        relevanceScore: 1.0,
+        accessCount: 0,
+        lastAccessed: Date.now(),
+        createdAt: Date.now(),
+        locations: [],
+        evidence: [],
+        relatedPatterns: [],
+        causesPatterns: [],
+        requiredBy: []
       };
 
       await qpfm.store(baseMemory);
@@ -533,7 +581,6 @@ describe('QuantumProbabilityFieldMemory', () => {
       
       const memory: HarmonicPatternMemory = {
         id: 'no-quantum-test',
-        timestamp: new Date(),
         content: {
           title: 'No Quantum Test',
           description: 'Testing without quantum features',
@@ -549,7 +596,15 @@ describe('QuantumProbabilityFieldMemory', () => {
           occurrences: 1
         },
         coordinates: [0.5, 0.5, 0.5],
-        relevanceScore: 1.0
+        relevanceScore: 1.0,
+        accessCount: 0,
+        lastAccessed: Date.now(),
+        createdAt: Date.now(),
+        locations: [],
+        evidence: [],
+        relatedPatterns: [],
+        causesPatterns: [],
+        requiredBy: []
       };
 
       await noQuantumQPFM.store(memory);
@@ -564,7 +619,6 @@ describe('QuantumProbabilityFieldMemory', () => {
       // Add some memories
       const memories = Array.from({ length: 10 }, (_, i) => ({
         id: `clear-test-${i}`,
-        timestamp: new Date(),
         content: {
           title: `Clear Test ${i}`,
           description: 'To be cleared',
@@ -580,7 +634,15 @@ describe('QuantumProbabilityFieldMemory', () => {
           occurrences: 1
         },
         coordinates: [Math.random(), Math.random(), Math.random()],
-        relevanceScore: 0.5
+        relevanceScore: 0.5,
+        accessCount: 0,
+        lastAccessed: Date.now(),
+        createdAt: Date.now(),
+        locations: [],
+        evidence: [],
+        relatedPatterns: [],
+        causesPatterns: [],
+        requiredBy: []
       }));
 
       await qpfm.bulkStore(memories);

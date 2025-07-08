@@ -4,7 +4,7 @@
  */
 
 import { DuckDBDataLake } from '../datalake/duckdb-data-lake.js';
-import { Neo4jRelationshipStore } from '../storage/neo4j-relationship-store.js';
+import { UnifiedStorageManager } from '../storage/unified-storage-manager.js';
 import { QuantumProbabilityFieldMemory } from '../memory/quantum-memory-system.js';
 import { StorageManager } from '../storage/storage-manager.js';
 import { Logger } from '../logging/logger.js';
@@ -20,7 +20,7 @@ export interface ReconciliationConfig {
 export interface ReconciliationStats {
   totalPatterns: number;
   duckLakeStored: number;
-  neo4jRelationships: number;
+  storageRelationships: number;
   qpfmPatterns: number;
   errors: number;
   duration: number;
@@ -32,7 +32,7 @@ export class PatternStoreReconciler extends EventEmitter {
   
   constructor(
     private duckLake: DuckDBDataLake,
-    private neo4j: Neo4jRelationshipStore,
+    private storage: UnifiedStorageManager,
     private qpfm: QuantumProbabilityFieldMemory,
     config?: Partial<ReconciliationConfig>
   ) {
@@ -60,7 +60,7 @@ export class PatternStoreReconciler extends EventEmitter {
     const stats: ReconciliationStats = {
       totalPatterns: 0,
       duckLakeStored: 0,
-      neo4jRelationships: 0,
+      storageRelationships: 0,
       qpfmPatterns: 0,
       errors: 0,
       duration: 0
@@ -69,7 +69,7 @@ export class PatternStoreReconciler extends EventEmitter {
     const startTime = Date.now();
     const batches = {
       duckLake: [] as any[],
-      neo4j: [] as any[],
+      storage: [] as any[],
       qpfm: [] as any[]
     };
 
@@ -82,7 +82,7 @@ export class PatternStoreReconciler extends EventEmitter {
 
         // Add to appropriate batches
         batches.duckLake.push(pattern);
-        batches.neo4j.push(pattern);
+        batches.storage.push(pattern);
         
         if (pattern.score >= this.config.qpfmScoreThreshold) {
           batches.qpfm.push(pattern);
@@ -119,7 +119,7 @@ export class PatternStoreReconciler extends EventEmitter {
       console.log('\n✅ Reconciliation complete:');
       console.log(`   Total patterns: ${stats.totalPatterns.toLocaleString()}`);
       console.log(`   DuckLake: ${stats.duckLakeStored.toLocaleString()}`);
-      console.log(`   Neo4j relationships: ${stats.neo4jRelationships.toLocaleString()}`);
+      console.log(`   Storage relationships: ${stats.storageRelationships.toLocaleString()}`);
       console.log(`   QPFM patterns: ${stats.qpfmPatterns.toLocaleString()}`);
       console.log(`   Errors: ${stats.errors}`);
       console.log(`   Duration: ${(stats.duration / 1000).toFixed(2)}s`);
@@ -141,7 +141,7 @@ export class PatternStoreReconciler extends EventEmitter {
   private async processBatches(
     batches: {
       duckLake: any[];
-      neo4j: any[];
+      storage: any[];
       qpfm: any[];
     },
     metadata: any,
@@ -160,13 +160,13 @@ export class PatternStoreReconciler extends EventEmitter {
       );
     }
 
-    // Create Neo4j relationships
-    if (batches.neo4j.length > 0) {
+    // Create storage relationships
+    if (batches.storage.length > 0) {
       promises.push(
-        this.storeToNeo4j(batches.neo4j, stats)
+        this.storeToStorage(batches.storage, stats)
           .catch(err => {
-            this.logger.error('Neo4j storage error:', err);
-            stats.errors += batches.neo4j.length;
+            this.logger.error('Storage error:', err);
+            stats.errors += batches.storage.length;
           })
       );
     }
@@ -186,7 +186,7 @@ export class PatternStoreReconciler extends EventEmitter {
 
     // Clear batches
     batches.duckLake.length = 0;
-    batches.neo4j.length = 0;
+    batches.storage.length = 0;
     batches.qpfm.length = 0;
   }
 
@@ -203,9 +203,9 @@ export class PatternStoreReconciler extends EventEmitter {
   }
 
   /**
-   * Create pattern-symbol relationships in Neo4j
+   * Create pattern-symbol relationships in storage
    */
-  private async storeToNeo4j(
+  private async storeToStorage(
     patterns: any[],
     stats: ReconciliationStats
   ): Promise<void> {
@@ -221,9 +221,31 @@ export class PatternStoreReconciler extends EventEmitter {
     }
 
     // Create relationships in batches
+    const db = this.storage.getDatabase();
     for (const [symbolId, symbolPatterns] of patternsBySymbol) {
-      await this.neo4j.linkPatternToSymbol(symbolId, symbolPatterns);
-      stats.neo4jRelationships += symbolPatterns.length;
+      try {
+        // Create pattern nodes and relationships
+        for (const pattern of symbolPatterns) {
+          await db.query(`
+            LET $pattern = CREATE pattern SET 
+              id = $patternId,
+              type = $patternType,
+              category = $category,
+              score = $score;
+            RELATE symbol:⟨$symbolId⟩->exhibits->$pattern;
+          `, {
+            symbolId,
+            patternId: `${symbolId}_${pattern.pattern}`,
+            patternType: pattern.pattern,
+            category: pattern.category,
+            score: pattern.score
+          });
+          stats.storageRelationships++;
+        }
+      } catch (error) {
+        // Continue processing even if storage fails
+        this.logger.warn(`Failed to link patterns to ${symbolId} in storage:`, error);
+      }
     }
   }
 
@@ -235,19 +257,42 @@ export class PatternStoreReconciler extends EventEmitter {
     stats: ReconciliationStats
   ): Promise<void> {
     for (const pattern of patterns) {
-      // Convert pattern to QPFM format
-      const qpfmPattern = {
+      // Convert pattern to HarmonicPatternMemory format expected by QPFM
+      const harmonicPattern = {
         id: `${pattern.symbol}_${pattern.pattern}`,
-        data: pattern,
         coordinates: this.patternToCoordinates(pattern),
-        metadata: {
+        content: {
+          title: `${pattern.pattern} in ${pattern.symbol}`,
+          description: `Pattern ${pattern.pattern} detected in ${pattern.symbol}`,
+          type: pattern.pattern,
+          tags: [pattern.category, pattern.pattern],
+          data: pattern
+        },
+        accessCount: 0,
+        lastAccessed: Date.now(),
+        createdAt: Date.now(),
+        relevanceScore: pattern.score,
+        harmonicProperties: {
           category: pattern.category,
-          score: pattern.score,
-          confidence: pattern.confidence
-        }
+          strength: pattern.score,
+          occurrences: 1,
+          confidence: pattern.confidence,
+          complexity: pattern.metrics?.complexity || 5
+        },
+        locations: [{
+          file: pattern.location.file,
+          startLine: pattern.location.line,
+          endLine: pattern.location.line,
+          startColumn: 0,
+          endColumn: 0
+        }],
+        evidence: [pattern.evidence],
+        relatedPatterns: [],
+        causesPatterns: [],
+        requiredBy: []
       };
 
-      await this.qpfm.store(qpfmPattern);
+      await this.qpfm.store(harmonicPattern);
       stats.qpfmPatterns++;
     }
   }
@@ -308,7 +353,7 @@ export class PatternStoreReconciler extends EventEmitter {
     const stats: ReconciliationStats = {
       totalPatterns: 0,
       duckLakeStored: 0,
-      neo4jRelationships: 0,
+      storageRelationships: 0,
       qpfmPatterns: 0,
       errors: 0,
       duration: 0
@@ -342,7 +387,7 @@ export class PatternStoreReconciler extends EventEmitter {
         }
       }));
       
-      await this.storeToNeo4j(neo4jPatterns, stats);
+      await this.storeToStorage(neo4jPatterns, stats);
 
       // Store high-value patterns in QPFM
       const qpfmPatterns = batch
@@ -384,15 +429,21 @@ export class PatternStoreReconciler extends EventEmitter {
       limit: sampleSize
     });
 
+    const db = this.storage.getDatabase();
+    
     for (const pattern of duckLakePatterns) {
-      // Check if exists in Neo4j
-      const neo4jExists = await this.neo4j.patternExists(
-        pattern.symbol_id,
-        pattern.pattern_type
-      );
+      // Check if exists in storage
+      const result = await db.query(`
+        SELECT * FROM pattern 
+        WHERE id = $patternId
+      `, {
+        patternId: `${pattern.symbol_id}_${pattern.pattern_type}`
+      });
       
-      if (!neo4jExists) {
-        issues.push(`Pattern ${pattern.id} missing from Neo4j`);
+      const storageExists = result[0]?.result?.length > 0;
+      
+      if (!storageExists) {
+        issues.push(`Pattern ${pattern.id} missing from storage`);
       }
 
       // Check QPFM for high-score patterns
@@ -426,8 +477,8 @@ export async function createPatternReconciler(
   duckLake: DuckDBDataLake,
   config?: Partial<ReconciliationConfig>
 ): Promise<PatternStoreReconciler> {
-  const neo4j = storageManager.neo4j;
+  const storage = storageManager.storage;
   const qpfm = new QuantumProbabilityFieldMemory(undefined, storageManager);
   
-  return new PatternStoreReconciler(duckLake, neo4j, qpfm, config);
+  return new PatternStoreReconciler(duckLake, storage, qpfm, config);
 }

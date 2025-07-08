@@ -19,6 +19,14 @@ export class QuantumFieldGenerator {
   // Field shape functions
   private fieldShapes: Map<string, FieldShapeFunction> = new Map();
   
+  // Category statistics for dynamic centering
+  private categoryStats: Map<string, {
+    avgStrength: number;
+    avgComplexity: number;
+    avgOccurrences: number;
+    count: number;
+  }> = new Map();
+  
   constructor() {
     this.hasher = new EnhancedParameterHash();
     this.initializeFieldShapes();
@@ -109,7 +117,56 @@ export class QuantumFieldGenerator {
     // SPEC LORD FIX 1: Normalize to uppercase for coordinate consistency
     pattern = pattern.toUpperCase();
 
-    // Apply DPCM logic gate composition
+    // CRITICAL FIX: For category queries without operations, use semantic coordinates
+    // to match how memories are stored in DPCM
+    if ((!operations || operations.length === 0) && !harmonicSignature) {
+      // Use dynamic category statistics if available
+      const stats = this.categoryStats.get(pattern);
+      if (stats && stats.count > 0) {
+        // Use actual average values from stored patterns
+        return this.hasher.generateSemanticCoordinates(
+          pattern,
+          stats.avgStrength,
+          stats.avgComplexity,
+          stats.avgOccurrences
+        );
+      } else {
+        // Fallback: use average values that should be closer to typical patterns
+        // This helps queries work before we have category statistics
+        return this.hasher.generateSemanticCoordinates(
+          pattern,
+          0.8,  // typical strength for most patterns
+          0.6,  // typical complexity
+          50    // typical occurrences
+        );
+      }
+    }
+
+    // If we have harmonic signature, use its properties for better alignment
+    if (harmonicSignature && (!operations || operations.length === 0)) {
+      // For discovery queries with harmonic signature, we want to find memories
+      // in the general area, not an exact coordinate match
+      const stats = this.categoryStats.get(pattern);
+      if (stats && stats.count > 0) {
+        // Blend query signature with category averages for better coverage
+        return this.hasher.generateSemanticCoordinates(
+          pattern,
+          (harmonicSignature.strength + stats.avgStrength) / 2,
+          (harmonicSignature.complexity + stats.avgComplexity) / 2,
+          harmonicSignature.occurrences || stats.avgOccurrences
+        );
+      } else {
+        // Use harmonic signature values directly
+        return this.hasher.generateSemanticCoordinates(
+          pattern,
+          harmonicSignature.strength || 0.8,
+          harmonicSignature.complexity || 0.6,
+          harmonicSignature.occurrences || 50
+        );
+      }
+    }
+
+    // For queries with operations, apply DPCM logic gate composition
     const composition = this.serializeLogicOperations(operations || []);
     
     // Generate composed hash using DPCM algorithm
@@ -170,21 +227,21 @@ export class QuantumFieldGenerator {
     switch (queryType) {
       case 'precision':
         config = {
-          radius: 0.5 + (1 - confidenceLevel) * 0.4, // FIXED: Larger radius for coordinate space coverage
+          radius: 0.8 + (1 - confidenceLevel) * 0.2, // Large radius to handle coordinate variance
           shape: 'spherical',
           falloffFunction: 'gaussian', // SPEC LORD FIX 4: Use Gaussian for smoother gradients
           amplitude: 1.5,
-          gradientSteepness: 1.5 // FIXED: Lower steepness for broader coverage
+          gradientSteepness: 1.2 // Gentler gradient for better coverage
         };
         break;
 
       case 'discovery':
         config = {
-          radius: 0.5 + explorationDesire * 0.3, // Wide for exploration
+          radius: 0.8 + explorationDesire * 0.3, // Wider for better discovery
           shape: 'elliptical',
           falloffFunction: 'gaussian', // SPEC LORD FIX 4: Use Gaussian for smoother gradients
-          amplitude: 1.0,
-          gradientSteepness: 1.8 // Adjusted for Gaussian
+          amplitude: 1.2,
+          gradientSteepness: 1.0 // Very gentle gradient for maximum reach
         };
         break;
 
@@ -458,5 +515,40 @@ export class QuantumFieldGenerator {
       amplitude: field.amplitude * (1 - pulseAmplitude + pulseAmplitude * pulsePhase),
       gradientSteepness: field.gradientSteepness * (1 + pulseAmplitude * 0.5 * pulsePhase)
     };
+  }
+
+  /**
+   * Update category statistics when a new pattern is stored
+   * This allows dynamic adaptation to actual stored patterns
+   */
+  updateCategoryStats(
+    category: string,
+    strength: number,
+    complexity: number,
+    occurrences: number
+  ): void {
+    const normalizedCategory = category.toUpperCase();
+    const stats = this.categoryStats.get(normalizedCategory) || {
+      avgStrength: 0,
+      avgComplexity: 0,
+      avgOccurrences: 0,
+      count: 0
+    };
+
+    // Update running averages
+    const newCount = stats.count + 1;
+    stats.avgStrength = (stats.avgStrength * stats.count + strength) / newCount;
+    stats.avgComplexity = (stats.avgComplexity * stats.count + complexity) / newCount;
+    stats.avgOccurrences = (stats.avgOccurrences * stats.count + occurrences) / newCount;
+    stats.count = newCount;
+
+    this.categoryStats.set(normalizedCategory, stats);
+  }
+
+  /**
+   * Get current category statistics (for debugging/monitoring)
+   */
+  getCategoryStats(): Map<string, any> {
+    return new Map(this.categoryStats);
   }
 }

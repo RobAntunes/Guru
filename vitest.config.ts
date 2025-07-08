@@ -5,6 +5,14 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    setupFiles: ['./tests/setup.ts'],
+    pool: 'forks',  // Use forks for tests due to DuckDB native module issues
+    poolOptions: {
+      forks: {
+        // Single fork mode can improve test performance
+        singleFork: false
+      }
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

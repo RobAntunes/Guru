@@ -4,9 +4,28 @@
  */
 
 import sqlite3 from 'sqlite3';
-import { Neo4jRelationshipStore, SymbolNode, SymbolRelationship } from '../storage/neo4j-relationship-store.js';
+import { UnifiedStorageManager } from '../storage/unified-storage-manager.js';
 import { promisify } from 'util';
 import path from 'path';
+
+// Legacy types for compatibility
+interface SymbolNode {
+  id: string;
+  name: string;
+  type: 'function' | 'class' | 'variable' | 'module' | 'import';
+  file: string;
+  startLine: number;
+  endLine: number;
+  complexity: number;
+  properties?: Record<string, any>;
+}
+
+interface SymbolRelationship {
+  from: string;
+  to: string;
+  type: 'calls' | 'imports' | 'extends' | 'implements' | 'references' | 'contains';
+  properties?: Record<string, any>;
+}
 
 interface SQLiteSymbol {
   id: string;
@@ -31,13 +50,13 @@ interface SQLiteReference {
 
 export class SymbolMigrationEngine {
   private db: sqlite3.Database;
-  private neo4j: Neo4jRelationshipStore;
+  private storage: UnifiedStorageManager;
   private dbGet: (sql: string, params?: any[]) => Promise<any>;
   private dbAll: (sql: string, params?: any[]) => Promise<any[]>;
 
   constructor(sqlitePath: string) {
     this.db = new sqlite3.Database(sqlitePath);
-    this.neo4j = new Neo4jRelationshipStore();
+    this.storage = new UnifiedStorageManager();
     
     // Promisify database methods
     this.dbGet = promisify(this.db.get.bind(this.db));
@@ -45,12 +64,12 @@ export class SymbolMigrationEngine {
   }
 
   async connect(): Promise<void> {
-    await this.neo4j.connect();
-    console.log('✅ Connected to Neo4j for symbol migration');
+    await this.storage.initialize();
+    console.log('✅ Connected to storage for symbol migration');
   }
 
   async disconnect(): Promise<void> {
-    await this.neo4j.disconnect();
+    await this.storage.close();
     this.db.close();
     console.log('📴 Disconnected from databases');
   }
@@ -58,12 +77,12 @@ export class SymbolMigrationEngine {
   /**
    * Main migration method
    */
-  async migrateSymbolsToNeo4j(): Promise<{
+  async migrateSymbolsToStorage(): Promise<{
     symbolsCreated: number;
     relationshipsCreated: number;
     errors: string[];
   }> {
-    console.log('🚀 Starting Symbol Migration to Neo4j...\n');
+    console.log('🚀 Starting Symbol Migration to Storage...\n');
     
     const stats = {
       symbolsCreated: 0,
@@ -182,7 +201,8 @@ export class SymbolMigrationEngine {
       }
     };
 
-    await this.neo4j.createSymbol(symbolNode);
+    // Create symbol in storage
+    await this.storage.getDatabase().create('symbol', symbolNode);
   }
 
   /**
@@ -198,7 +218,17 @@ export class SymbolMigrationEngine {
       }
     };
 
-    await this.neo4j.createSymbolRelationship(relationship);
+    // Create relationship in storage
+    const db = this.storage.getDatabase();
+    await db.query(`
+      RELATE symbol:⟨$from⟩->${type}->symbol:⟨$to⟩
+      SET properties = $properties
+    `, {
+      from: relationship.from,
+      to: relationship.to,
+      type: relationship.type,
+      properties: relationship.properties || {}
+    });
   }
 
   /**
@@ -244,13 +274,12 @@ export class SymbolMigrationEngine {
             }
             
             if (isDirectChild) {
-              await this.neo4j.createSymbolRelationship({
+              await this.storage.getDatabase().query(`
+                RELATE symbol:⟨$from⟩->contains->symbol:⟨$to⟩
+                SET direct = true
+              `, {
                 from: parent.id,
-                to: child.id,
-                type: 'contains',
-                properties: {
-                  direct: true
-                }
+                to: child.id
               });
             }
           }
@@ -316,13 +345,16 @@ export class SymbolMigrationEngine {
     const sqliteSymbolCount = await this.dbGet('SELECT COUNT(*) as count FROM symbols');
     const sqliteRefCount = await this.dbGet('SELECT COUNT(*) as count FROM symbol_edges');
     
-    const neo4jStats = await this.neo4j.healthCheck();
+    // Get storage stats
+    const db = this.storage.getDatabase();
+    const symbolCount = await db.query('SELECT count() FROM symbol');
+    const relationshipCount = await db.query('SELECT count() FROM ->calls->symbol, ->imports->symbol, ->extends->symbol, ->implements->symbol, ->references->symbol, ->contains->symbol');
     
     return {
       sqliteSymbols: sqliteSymbolCount?.count || 0,
       sqliteReferences: sqliteRefCount?.count || 0,
-      neo4jSymbols: neo4jStats.nodeCount,
-      neo4jRelationships: neo4jStats.relationshipCount
+      neo4jSymbols: symbolCount[0]?.result?.[0]?.['count'] || 0,
+      neo4jRelationships: relationshipCount[0]?.result?.[0]?.['count'] || 0
     };
   }
 }
@@ -333,7 +365,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const engine = new SymbolMigrationEngine(sqlitePath);
   
   engine.connect()
-    .then(() => engine.migrateSymbolsToNeo4j())
+    .then(() => engine.migrateSymbolsToStorage())
     .then(stats => {
       console.log('\n📊 Migration Complete:');
       console.log(`   Symbols created: ${stats.symbolsCreated}`);

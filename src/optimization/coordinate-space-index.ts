@@ -244,7 +244,15 @@ export class CoordinateSpaceIndex {
     };
   }
 
-  private insertEntry(node: RTreeNode, entry: RTreeEntry): void {
+  private insertEntry(node: RTreeNode, entry: RTreeEntry, depth: number = 0): void {
+    // Prevent infinite recursion
+    if (depth > 100) {
+      console.warn('R-tree insertion depth exceeded, forcing leaf insertion');
+      node.entries.push(entry);
+      this.updateBBox(node);
+      return;
+    }
+    
     if (node.isLeaf) {
       // Add to leaf node
       node.entries.push(entry);
@@ -257,8 +265,14 @@ export class CoordinateSpaceIndex {
     } else {
       // Choose subtree with minimum enlargement
       const bestChild = this.chooseSubtree(node, entry.bbox);
-      this.insertEntry(bestChild, entry);
-      this.updateBBox(node);
+      if (bestChild === node) {
+        // Can't find a proper child, force as leaf
+        node.entries.push(entry);
+        this.updateBBox(node);
+      } else {
+        this.insertEntry(bestChild, entry, depth + 1);
+        this.updateBBox(node);
+      }
     }
   }
 

@@ -4,7 +4,7 @@
  */
 
 import { HarmonicPatternMemory, PatternCategory } from '../memory/types.js';
-import { StorageManager } from './storage-manager.js';
+import { UnifiedStorageManager } from './unified-storage-manager.js';
 import { Logger } from '../logging/logger.js';
 
 export interface QualityTier {
@@ -77,7 +77,7 @@ export class PatternQualityManager {
     ['default', { strength: 0.35, confidence: 0.25, complexity: 0.25, occurrences: 0.15 }]
   ]);
 
-  constructor(private storageManager: StorageManager) {}
+  constructor(private storageManager: UnifiedStorageManager) {}
 
   /**
    * Assess pattern quality and determine storage tier

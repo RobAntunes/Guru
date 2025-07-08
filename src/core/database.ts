@@ -976,6 +976,16 @@ export class GuruDatabase {
     return this.db.transaction(fn)();
   }
 
+  // Execute raw SQL (for migrations and schema operations)
+  exec(sql: string): void {
+    this.db.exec(sql);
+  }
+
+  // Prepare a statement (for migrations and direct queries)
+  prepare(sql: string): Database.Statement {
+    return this.db.prepare(sql);
+  }
+
   // Clear all data (for testing)
   async clearAllData(): Promise<void> {
     const tables = [

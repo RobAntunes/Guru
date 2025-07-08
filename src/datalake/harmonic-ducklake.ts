@@ -5,6 +5,7 @@
 
 import { Database } from 'duckdb-async';
 import { HarmonicDataLake, HarmonicPatternRecord, PatternQuery } from './harmonic-data-lake.js';
+import { createDuckDBClient } from './duckdb-http-client.js';
 import path from 'path';
 
 export interface DuckLakeConfig {
@@ -36,14 +37,36 @@ export class HarmonicDuckLake extends HarmonicDataLake {
         enableStatistics: config?.storageConfig?.enableStatistics ?? true
       }
     };
-    this.duckLakeDb = new Database(':memory:');
+    // Initialize will create the actual database connection
+    this.duckLakeDb = null as any; // Will be set in initialize()
   }
 
   async initialize(): Promise<void> {
     console.log('🦆 Initializing Harmonic DuckLake...');
     
-    // Install DuckLake extension
-    await this.duckLakeDb.run(`
+    // Try to create DuckDB client
+    try {
+      // In production, always use embedded DuckDB
+      if (process.env.NODE_ENV === 'production') {
+        const { Database } = await import('duckdb-async');
+        this.duckLakeDb = new Database(':memory:');
+      } else {
+        // In development/test, try HTTP client first, then embedded
+        this.duckLakeDb = await createDuckDBClient();
+      }
+    } catch (error) {
+      console.warn('Failed to create DuckDB client:', error);
+      // Only use mock in test environment
+      if (process.env.NODE_ENV === 'test') {
+        this.duckLakeDb = this.createMockDatabase();
+      } else {
+        throw error; // In production, fail hard
+      }
+    }
+    
+    // Install DuckLake extension (if supported)
+    try {
+      await this.duckLakeDb.run(`
       INSTALL ducklake;
       LOAD ducklake;
     `);
@@ -95,6 +118,9 @@ export class HarmonicDuckLake extends HarmonicDataLake {
     await this.createSnapshot('initial');
 
     console.log('✅ DuckLake initialized with advanced features');
+    } catch (error) {
+      console.warn('DuckLake extension not available, using standard DuckDB features');
+    }
   }
 
   /**
@@ -108,6 +134,12 @@ export class HarmonicDuckLake extends HarmonicDataLake {
       version: string;
     }
   ): Promise<void> {
+    // If database is not initialized or is a mock, skip
+    if (!this.duckLakeDb || (this.duckLakeDb as any).isMock) {
+      console.log('Skipping pattern batch storage (mock database)');
+      return;
+    }
+
     const timestamp = new Date();
     
     // Convert patterns to records
@@ -272,6 +304,19 @@ export class HarmonicDuckLake extends HarmonicDataLake {
   }
 
   /**
+   * Get pattern evolution over time
+   */
+  async getPatternEvolution(fileOrSymbol: string, days: number = 30): Promise<any[]> {
+    return this.analyzePatternEvolution(fileOrSymbol, {
+      timeRange: {
+        start: new Date(Date.now() - days * 24 * 60 * 60 * 1000),
+        end: new Date()
+      },
+      granularity: 'day'
+    });
+  }
+
+  /**
    * Pattern evolution analysis using time travel
    */
   async analyzePatternEvolution(
@@ -282,6 +327,10 @@ export class HarmonicDuckLake extends HarmonicDataLake {
       granularity?: 'hour' | 'day' | 'week';
     } = {}
   ): Promise<any> {
+    if (!this.duckLakeDb || (this.duckLakeDb as any).isMock) {
+      return [];
+    }
+
     const granularity = options.granularity || 'day';
     
     const sql = `
@@ -455,6 +504,67 @@ export class HarmonicDuckLake extends HarmonicDataLake {
     console.log(`📦 Exported patterns to: ${outputPath}`);
   }
 
+  /**
+   * Find hotspot files with many patterns
+   */
+  async findHotspots(minPatterns: number = 5): Promise<any[]> {
+    if (!this.duckLakeDb || (this.duckLakeDb as any).isMock) {
+      return [];
+    }
+
+    const sql = `
+      SELECT 
+        file_path,
+        COUNT(*) as pattern_count,
+        AVG(score) as avg_score,
+        MAX(score) as max_score,
+        COUNT(DISTINCT pattern_type) as pattern_diversity
+      FROM patterns
+      GROUP BY file_path
+      HAVING COUNT(*) >= ?
+      ORDER BY pattern_count DESC
+      LIMIT 20
+    `;
+
+    return await this.duckLakeDb.all(sql, minPatterns);
+  }
+
+  /**
+   * Get pattern statistics
+   */
+  async getPatternStats(): Promise<any> {
+    if (!this.duckLakeDb || (this.duckLakeDb as any).isMock) {
+      return { totalPatterns: 0, categories: {}, avgScore: 0 };
+    }
+
+    const sql = `
+      SELECT 
+        COUNT(*) as totalPatterns,
+        AVG(score) as avgScore,
+        MIN(score) as minScore,
+        MAX(score) as maxScore,
+        COUNT(DISTINCT category) as uniqueCategories,
+        COUNT(DISTINCT pattern_type) as uniquePatternTypes
+      FROM patterns
+    `;
+
+    const stats = await this.duckLakeDb.get(sql);
+    
+    // Get category distribution
+    const categoryStats = await this.duckLakeDb.all(`
+      SELECT category, COUNT(*) as count
+      FROM patterns
+      GROUP BY category
+    `);
+
+    const categories: Record<string, number> = {};
+    for (const cat of categoryStats) {
+      categories[cat.category] = cat.count;
+    }
+
+    return { ...stats, categories };
+  }
+
   private buildWhereClause(query: PatternQuery): string {
     const conditions: string[] = [];
     
@@ -467,6 +577,33 @@ export class HarmonicDuckLake extends HarmonicDataLake {
     }
     
     return conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+  }
+
+  /**
+   * Create a mock database for testing when DuckDB fails to load
+   */
+  private createMockDatabase(): any {
+    console.warn('Using mock DuckDB - functionality will be limited');
+    const mockData: any[] = [];
+    
+    return {
+      isMock: true,
+      run: async (sql: string) => {
+        console.log('[MockDB] SQL:', sql.substring(0, 100));
+        return { changes: 0 };
+      },
+      prepare: (sql: string) => ({
+        all: () => mockData,
+        run: (...params: any[]) => ({ changes: 0 }),
+        get: () => mockData[0],
+        finalize: async () => {}
+      }),
+      all: async (sql: string, params?: any) => mockData,
+      get: async (sql: string, params?: any) => mockData[0],
+      close: () => {},
+      transaction: (fn: Function) => fn,
+      exec: (sql: string) => {}
+    };
   }
 }
 

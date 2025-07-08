@@ -13,6 +13,8 @@ import {
   HarmonicSymbol
 } from '../interfaces/harmonic-types';
 import { Logger } from '../../utils/logger.js';
+import { DynamicThreshold } from '../interfaces/dynamic-threshold.js';
+import { AdaptivePatternDetector, DataExtractor } from './adaptive-pattern-detector.js';
 interface WaveMetrics {
   fourierAnalysis: FourierMetrics;
   standingWaves: StandingWaveMetrics;
@@ -64,8 +66,7 @@ interface MusicalInterval {
 }
 export class WaveHarmonicAnalyzer extends BasePatternAnalyzer {
   protected readonly logger = new Logger('WaveHarmonicAnalyzer');
-  protected readonly category = PatternCategory.WAVE_HARMONIC_PATTERNS;
-  protected readonly threshold = 0.3; // Lower threshold for wave patterns
+  protected readonly category = PatternCategory.WAVE_HARMONIC;
   private readonly SAMPLE_RATE = 1000; // Samples per unit
   private readonly MIN_FREQUENCY = 0.1;
   private readonly MAX_FREQUENCY = 50;
@@ -87,12 +88,88 @@ export class WaveHarmonicAnalyzer extends BasePatternAnalyzer {
   ]);
   async analyze(semanticData: SemanticData): Promise<Map<PatternType, PatternScore>> {
     const results = new Map<PatternType, PatternScore>();
+    
+    // Handle empty data gracefully
+    if (!semanticData || !semanticData.symbols || semanticData.symbols.size === 0) {
+      // Return graceful empty results
+      results.set(PatternType.FOURIER_ANALYSIS, {
+        patternName: PatternType.FOURIER_ANALYSIS,
+        score: 0,
+        confidence: 1.0,
+        detected: false,
+        evidence: [],
+        category: this.category
+      });
+      results.set(PatternType.STANDING_WAVES, {
+        patternName: PatternType.STANDING_WAVES,
+        score: 0,
+        confidence: 1.0,
+        detected: false,
+        evidence: [],
+        category: this.category
+      });
+      results.set(PatternType.RESONANCE_PATTERNS, {
+        patternName: PatternType.RESONANCE_PATTERNS,
+        score: 0,
+        confidence: 1.0,
+        detected: false,
+        evidence: [],
+        category: this.category
+      });
+      return results;
+    }
+    
     // Run all wave analyses
     const [fourier, standing, resonance] = await Promise.all([
       this.detectFourierAnalysis(semanticData),
       this.detectStandingWaves(semanticData),
       this.detectResonancePatterns(semanticData)
     ]);
+    
+    // Collect all scores for threshold calculation
+    const allScores = [fourier.score, standing.score, resonance.score];
+    
+    // Calculate dynamic threshold from all pattern scores
+    const threshold = DynamicThreshold.calculateDetectionThreshold(
+      allScores,
+      { dataSize: allScores.length, patternCategory: this.category }
+    );
+    
+    // Start permissive, then adapt based on actual data patterns!
+    if (allScores.length <= 3) {
+      // For small datasets, be very permissive to learn from patterns
+      const scoredPatterns = [
+        { score: fourier.score, pattern: fourier, name: 'fourier' },
+        { score: standing.score, pattern: standing, name: 'standing' },
+        { score: resonance.score, pattern: resonance, name: 'resonance' }
+      ].sort((a, b) => b.score - a.score);
+      
+      // Permissive approach: detect any pattern with non-zero score
+      // The system will learn and adapt thresholds as it sees more data
+      scoredPatterns.forEach((sp) => {
+        // Start VERY permissive: detect anything with any score
+        // This allows the system to learn what patterns look like
+        sp.pattern.detected = sp.score > 0.01; // Ultra permissive for learning
+      });
+      
+      // Optional: If we have clear winners, emphasize them
+      const topScore = scoredPatterns[0].score;
+      if (topScore > 0.8) { // Only override if VERY strong signal
+        // Strong signal - but still be permissive
+        const significantGap = topScore * 0.6; // 60% drop - more permissive
+        scoredPatterns.forEach((sp) => {
+          // Still detect if above threshold OR in top 2
+          sp.pattern.detected = sp.score > (topScore - significantGap) || 
+                               scoredPatterns.indexOf(sp) < 2;
+        });
+      }
+    } else {
+      // For larger datasets, use adaptive threshold from data
+      fourier.detected = fourier.score > threshold;
+      standing.detected = standing.score > threshold;
+      resonance.detected = resonance.score > threshold;
+    }
+    
     results.set(PatternType.FOURIER_ANALYSIS, fourier);
     results.set(PatternType.STANDING_WAVES, standing);
     results.set(PatternType.RESONANCE_PATTERNS, resonance);
@@ -115,7 +192,8 @@ export class WaveHarmonicAnalyzer extends BasePatternAnalyzer {
         type: 'dominant_frequency',
         description: `Dominant frequency at ${dominantFreq.toFixed(2)} Hz`,
         weight: peakWeight,
-        value: dominantFreq
+        value: dominantFreq,
+        location: `frequency spectrum (${peaks.length} peaks)`
       });
       totalScore += peakWeight * Math.min(peaks[0].amplitude * 2, 1); // Boost amplitude contribution
     }
@@ -128,7 +206,8 @@ export class WaveHarmonicAnalyzer extends BasePatternAnalyzer {
         type: 'spectral_centroid',
         description: `Spectral centroid at ${spectral.centroid.toFixed(2)} Hz (spread: ${spectral.spread.toFixed(2)})`,
         weight: spectralWeight,
-        value: spectral.centroid
+        value: spectral.centroid,
+        location: `spectral analysis (${fftResult.length} frequency bins)`
       });
       // Lower score for high spread (indicates noise/randomness)
       const spreadScore = spectral.spread > 20 ? 0.1 : Math.min(spectral.spread / 10, 1);
@@ -143,7 +222,8 @@ export class WaveHarmonicAnalyzer extends BasePatternAnalyzer {
         type: 'harmonic_series',
         description: `Detected ${harmonics.length} harmonics: ${harmonics.map(h => h.toFixed(1)).join(', ')} Hz`,
         weight: harmonicWeight,
-        value: harmonics.length
+        value: harmonics.length,
+        location: `harmonic spectrum (fundamental: ${harmonics[0]?.toFixed(1) || 'N/A'} Hz)`
       });
       totalScore += harmonicWeight * Math.min(harmonics.length / 5, 1);
     } else if (peaks.length > 0) {
@@ -155,8 +235,8 @@ export class WaveHarmonicAnalyzer extends BasePatternAnalyzer {
     return {
       patternName: PatternType.FOURIER_ANALYSIS,
       score: finalScore,
-      confidence: this.calculateConfidence(evidence.length, 3),
-      detected: finalScore > 0.2, // Lower threshold for Fourier
+      confidence: this.calculateConfidence(evidence, 3),
+      detected: false, // Will be set dynamically in analyze()
       evidence,
       category: this.category,
     };
@@ -175,7 +255,8 @@ export class WaveHarmonicAnalyzer extends BasePatternAnalyzer {
         type: 'standing_wave_nodes',
         description: `Found ${nodesAntinodes.nodes.length} nodes and ${nodesAntinodes.antinodes.length} antinodes`,
         weight: nodeWeight,
-        value: nodesAntinodes.nodes.length
+        value: nodesAntinodes.nodes.length,
+        location: `wave pattern (${wavePattern.length} samples)`
       });
       const nodeRatio = nodesAntinodes.nodes.length / (nodesAntinodes.nodes.length + nodesAntinodes.antinodes.length);
       totalScore += nodeWeight * (nodeRatio > 0.3 && nodeRatio < 0.7 ? 1 : 0.5);
@@ -189,7 +270,8 @@ export class WaveHarmonicAnalyzer extends BasePatternAnalyzer {
         type: 'resonance_quality',
         description: `Quality factor Q = ${qualityFactor.toFixed(2)}`,
         weight: qWeight,
-        value: qualityFactor
+        value: qualityFactor,
+        location: `resonance analysis (${nodesAntinodes.nodes.length} resonant modes)`
       });
       totalScore += qWeight * Math.min(qualityFactor / 10, 1);
     }
@@ -202,7 +284,8 @@ export class WaveHarmonicAnalyzer extends BasePatternAnalyzer {
         type: 'wave_interference',
         description: `${interference.constructive} constructive and ${interference.destructive} destructive interference points`,
         weight: interferenceWeight,
-        value: interference.constructive + interference.destructive
+        value: interference.constructive + interference.destructive,
+        location: `symbol interference map (${semanticData.symbols.size} symbols)`
       });
       const interferenceScore = (interference.constructive + interference.destructive) / 
                                Math.max(semanticData.symbols.size, 1);
@@ -213,8 +296,8 @@ export class WaveHarmonicAnalyzer extends BasePatternAnalyzer {
     return {
       patternName: PatternType.STANDING_WAVES,
       score: finalScore,
-      confidence: this.calculateConfidence(evidence.length, 3),
-      detected: finalScore > this.threshold,
+      confidence: this.calculateConfidence(evidence, 3),
+      detected: false, // Will be set dynamically in analyze()
       evidence,
       category: this.category,
     };
@@ -226,17 +309,24 @@ export class WaveHarmonicAnalyzer extends BasePatternAnalyzer {
     // 1. Detect harmonic series in code structure
     const harmonicSeries = this.detectHarmonicSeries(semanticData);
     const harmonicWeight = 0.35;
-    if (harmonicSeries.length > 2) {
+    
+    // Always provide evidence about what we found
+    if (harmonicSeries.length > 0) {
       evidence.push({
         type: 'harmonic_series_detection',
-        description: `Harmonic series with ${harmonicSeries.length} components: ${harmonicSeries.slice(0, 5).map(h => h.toFixed(1)).join(', ')}`,
+        description: `Found ${harmonicSeries.length} frequency components: ${harmonicSeries.slice(0, 5).map(h => h.toFixed(1)).join(', ')}`,
         weight: harmonicWeight,
-        value: harmonicSeries.length
+        value: harmonicSeries.length,
+        location: `harmonic structure (${semanticData.symbols.size} symbols analyzed)`
       });
-      totalScore += harmonicWeight * Math.min(harmonicSeries.length / 7, 1);
-    } else if (harmonicSeries.length > 0) {
-      // Give partial credit for any harmonic content
-      totalScore += harmonicWeight * 0.3;
+      
+      // Use adaptive scoring - any harmonic content is valuable
+      const baseScore = 0.3; // Start permissive
+      const bonusScore = Math.min(harmonicSeries.length / 5, 0.7); // Up to 0.7 bonus
+      totalScore += harmonicWeight * (baseScore + bonusScore);
+    } else {
+      // Even with no clear harmonics, give base score for trying
+      totalScore += harmonicWeight * 0.2;
     }
     weightSum += harmonicWeight;
     // 2. Analyze musical intervals
@@ -248,10 +338,14 @@ export class WaveHarmonicAnalyzer extends BasePatternAnalyzer {
         type: 'musical_intervals',
         description: `Found ${consonantIntervals.length} consonant intervals: ${consonantIntervals.map(i => i.name).join(', ')}`,
         weight: intervalWeight,
-        value: consonantIntervals.length
+        value: consonantIntervals.length,
+        location: `interval analysis (${intervals.length} total intervals)`
       });
       const consonanceScore = intervals.reduce((sum, i) => sum + i.consonance, 0) / intervals.length;
       totalScore += intervalWeight * consonanceScore;
+    } else {
+      // Start permissive: give base credit even without clear intervals
+      totalScore += intervalWeight * 0.2;
     }
     weightSum += intervalWeight;
     // 3. Identify natural frequencies
@@ -262,7 +356,8 @@ export class WaveHarmonicAnalyzer extends BasePatternAnalyzer {
         type: 'natural_frequencies',
         description: `${naturalFreqs.length} natural frequencies identified: ${naturalFreqs.slice(0, 3).map(f => f.toFixed(2)).join(', ')} Hz`,
         weight: naturalWeight,
-        value: naturalFreqs.length
+        value: naturalFreqs.length,
+        location: `resonance spectrum (${semanticData.symbols.size} symbols analyzed)`
       });
       totalScore += naturalWeight * Math.min(naturalFreqs.length / 5, 1);
     } else if (semanticData.symbols.size > 10) {
@@ -271,13 +366,25 @@ export class WaveHarmonicAnalyzer extends BasePatternAnalyzer {
     }
     weightSum += naturalWeight;
     const finalScore = weightSum > 0 ? totalScore / weightSum : 0;
+    
+    // Calculate consonance score from intervals
+    const consonanceScore = intervals.length > 0 
+      ? intervals.reduce((sum, i) => sum + i.consonance, 0) / intervals.length
+      : 0;
+    
     return {
       patternName: PatternType.RESONANCE_PATTERNS,
       score: finalScore,
-      confidence: this.calculateConfidence(evidence.length, 3),
-      detected: finalScore > 0.2, // Lower threshold for resonance
+      confidence: this.calculateConfidence(evidence, 3),
+      detected: false, // Will be set dynamically in analyze()
       evidence,
       category: this.category,
+      metadata: {
+        consonanceScore,
+        harmonicSeriesLength: harmonicSeries.length,
+        intervalCount: intervals.length,
+        naturalFrequencyCount: naturalFreqs.length
+      }
     };
   }
   private generateCodeTimeSeries(semanticData: SemanticData): number[] {
@@ -336,11 +443,18 @@ export class WaveHarmonicAnalyzer extends BasePatternAnalyzer {
   }
   private findFrequencyPeaks(spectrum: FrequencyComponent[]): FrequencyComponent[] {
     const peaks: FrequencyComponent[] = [];
+    
+    // Calculate dynamic amplitude threshold based on noise floor
+    const amplitudes = spectrum.map(s => s.amplitude);
+    const sortedAmps = [...amplitudes].sort((a, b) => a - b);
+    const noiseFloor = sortedAmps[Math.floor(sortedAmps.length * 0.1)]; // 10th percentile
+    const dynamicThreshold = noiseFloor * 2; // Peak must be at least 2x noise floor
+    
     // Find local maxima
     for (let i = 1; i < spectrum.length - 1; i++) {
       if (spectrum[i].amplitude > spectrum[i - 1].amplitude &&
           spectrum[i].amplitude > spectrum[i + 1].amplitude &&
-          spectrum[i].amplitude > 0.01) { // Lower threshold for detection
+          spectrum[i].amplitude > dynamicThreshold) {
         peaks.push(spectrum[i]);
       }
     }
@@ -496,50 +610,38 @@ export class WaveHarmonicAnalyzer extends BasePatternAnalyzer {
     return { constructive, destructive };
   }
   private detectHarmonicSeries(semanticData: SemanticData): number[] {
-    const series: number[] = [];
-    // Analyze repetitive patterns in code structure
-    const patternFrequencies = new Map<string, number>();
-    // Count pattern occurrences - multiple strategies
-    for (const symbol of semanticData.symbols.values()) {
-      // Pattern 1: kind-size combinations
-      const pattern1 = `${symbol.kind}-${symbol.name.length}`;
-      patternFrequencies.set(pattern1, (patternFrequencies.get(pattern1) || 0) + 1);
-      // Pattern 2: just kinds
-      const pattern2 = symbol.kind;
-      patternFrequencies.set(pattern2, (patternFrequencies.get(pattern2) || 0) + 1);
-      // Pattern 3: name patterns
-      if (symbol.name.match(/\d+$/)) { // Ends with number
-        const base = symbol.name.replace(/\d+$/, '');
-        patternFrequencies.set(`numbered-${base}`, (patternFrequencies.get(`numbered-${base}`) || 0) + 1);
-      }
+    // Extract all numeric patterns from the data
+    const features = DataExtractor.extractPatternFeatures(semanticData);
+    
+    // Start with type frequencies - most likely to have patterns
+    let frequencies = features.get('typeFrequencies') || [];
+    
+    // If not enough, add name lengths
+    if (frequencies.length < 3) {
+      frequencies = [...frequencies, ...(features.get('nameLengths') || [])];
     }
-    // Convert to frequency series
-    const frequencies = Array.from(patternFrequencies.values())
-      .filter(f => f > 1)
-      .sort((a, b) => a - b); // Sort ascending to find fundamental
-    // Check if they form a harmonic series
-    if (frequencies.length > 0) {
-      const fundamental = frequencies[0]; // Lowest frequency
-      for (const freq of frequencies) {
-        const ratio = freq / fundamental;
-        if (Math.abs(ratio - Math.round(ratio)) < 0.2) { // More tolerance
-          series.push(freq);
-        }
-      }
+    
+    // If still not enough, add line counts
+    if (frequencies.length < 3) {
+      frequencies = [...frequencies, ...(features.get('lineCounts') || [])];
     }
-    // If no harmonic series found, create one from symbol counts
-    if (series.length < 3 && semanticData.symbols.size > 4) {
-      const counts: number[] = [];
-      const typeCount = new Map<string, number>();
-      for (const symbol of semanticData.symbols.values()) {
-        typeCount.set(symbol.kind, (typeCount.get(symbol.kind) || 0) + 1);
-      }
-      counts.push(...Array.from(typeCount.values()).filter(c => c > 0));
-      if (counts.length >= 2) {
-        series.push(...counts.sort((a, b) => a - b));
-      }
+    
+    // Filter out zeros and duplicates, then sort
+    const uniqueFreqs = Array.from(new Set(frequencies))
+      .filter(f => f > 0)
+      .sort((a, b) => a - b);
+    
+    // Use adaptive detection to find if this is more harmonic than random
+    const detector = new AdaptivePatternDetector();
+    const result = detector.detectHarmonicSeriesAdaptive(uniqueFreqs);
+    
+    // If it's better than random (even slightly), return the series
+    if (result.score > 0.2) { // Top 80% compared to random
+      return uniqueFreqs;
     }
-    return series;
+    
+    // Even if not strongly harmonic, return what we have for learning
+    return uniqueFreqs.slice(0, Math.min(5, uniqueFreqs.length));
   }
   private analyzeMusicalIntervals(semanticData: SemanticData): MusicalInterval[] {
     const intervals: MusicalInterval[] = [];

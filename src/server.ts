@@ -1,6 +1,6 @@
 import Fastify from 'fastify';
 import { config } from 'dotenv';
-import { StorageManager } from './storage/storage-manager.js';
+import { UnifiedStorageManager } from './storage/unified-storage-manager.js';
 
 // Load environment variables
 config();
@@ -12,7 +12,7 @@ const fastify = Fastify({
 });
 
 // Initialize storage manager
-const storage = new StorageManager();
+const storage = new UnifiedStorageManager();
 
 // Health check endpoint
 fastify.get('/health', async (request, reply) => {

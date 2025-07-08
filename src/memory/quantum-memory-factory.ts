@@ -4,7 +4,7 @@
  */
 
 import { QuantumProbabilityFieldMemory, QPFMConfig } from './quantum-memory-system.js';
-import { StorageManager } from '../storage/storage-manager.js';
+import { UnifiedStorageManager } from '../storage/unified-storage-manager.js';
 
 export interface CreateQPFMOptions {
   config?: Partial<QPFMConfig>;
@@ -24,12 +24,12 @@ export async function createQuantumMemory(
     autoInitialize = true 
   } = options;
 
-  let storageManager: StorageManager | undefined;
+  let storageManager: UnifiedStorageManager | undefined;
 
   // If storage is requested, create and connect StorageManager
   if (useStorage) {
     console.log('🔌 Connecting to storage layers for QPFM...');
-    storageManager = new StorageManager();
+    storageManager = new UnifiedStorageManager();
     
     try {
       await storageManager.connect();

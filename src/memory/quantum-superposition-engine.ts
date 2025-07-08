@@ -14,6 +14,7 @@ import {
 } from './quantum-types.js';
 import { HarmonicPatternMemory } from './types.js';
 import { QuantumFieldGenerator } from './quantum-field-generator.js';
+import { calculateAdaptiveThreshold } from './quantum-threshold-manager.js';
 
 export class QuantumSuperpositionEngine {
   private fieldGenerator: QuantumFieldGenerator;
@@ -62,15 +63,20 @@ export class QuantumSuperpositionEngine {
     memories: QuantumMemoryNode[]
   ): Promise<QuantumMemoryState> {
     
+    // First pass: calculate all probabilities
+    const probabilities = memories.map(memory => 
+      this.fieldGenerator.calculateProbability(memory.coordinates, field)
+    );
+    
+    // Calculate adaptive threshold based on actual probability distribution
+    const threshold = calculateAdaptiveThreshold(probabilities, 'permissive');
+    
     // Calculate probability for each memory
-    const superpositionStates = memories.map(memory => {
-      const probability = this.fieldGenerator.calculateProbability(
-        memory.coordinates,
-        field
-      );
+    const superpositionStates = memories.map((memory, index) => {
+      const probability = probabilities[index];
       
-      // FIXED: More permissive threshold for better memory discovery
-      if (probability < 0.0001) {
+      // Use adaptive threshold instead of hardcoded value
+      if (probability < threshold) {
         return null;
       }
 

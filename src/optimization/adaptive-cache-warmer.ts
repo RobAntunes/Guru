@@ -3,7 +3,7 @@
  * Pre-loads frequently accessed patterns based on usage patterns
  */
 
-import { StorageManager } from '../storage/storage-manager.js';
+import { UnifiedStorageManager } from '../storage/unified-storage-manager.js';
 import { RedisCache } from '../storage/redis-cache.js';
 import { HarmonicPatternMemory } from '../memory/types.js';
 import { Logger } from '../logging/logger.js';
@@ -56,7 +56,7 @@ export class AdaptiveCacheWarmer extends EventEmitter {
   };
 
   constructor(
-    private storageManager: StorageManager,
+    private storageManager: UnifiedStorageManager,
     private cache: RedisCache,
     private config: WarmingConfig = {} as WarmingConfig
   ) {

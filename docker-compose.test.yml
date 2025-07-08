@@ -1,0 +1,24 @@
+version: '3.8'
+
+# Test-specific Docker Compose configuration
+# Use this for running integration tests with embedded databases
+
+services:
+  # DuckDB Server for tests (optional)
+  duckdb-test:
+    build:
+      context: ./docker/duckdb
+      dockerfile: Dockerfile
+    container_name: guru-duckdb-test
+    ports:
+      - "8080:8080"
+    environment:
+      - DUCKDB_PATH=:memory:  # Use in-memory for tests
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    profiles:
+      - external-analytics

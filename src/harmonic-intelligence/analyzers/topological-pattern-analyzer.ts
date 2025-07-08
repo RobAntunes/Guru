@@ -88,7 +88,8 @@ export class TopologicalPatternAnalyzer extends BasePatternAnalyzer {
           type: 'scale_free_network',
           description: `Scale-free network detected with exponent ${scaleFree.exponent.toFixed(2)}`,
           weight: scaleFreeWeight,
-          value: scaleFree.exponent
+          value: scaleFree.exponent,
+          location: `network graph (${metrics.nodes} nodes, ${metrics.edges} edges)`
         });
         totalScore += scaleFreeWeight * Math.max(scaleFree.confidence, 0.6);
       }
@@ -102,7 +103,8 @@ export class TopologicalPatternAnalyzer extends BasePatternAnalyzer {
           type: 'small_world_coefficient',
           description: `High small-world coefficient: ${smallWorldCoeff.toFixed(2)}`,
           weight: 0.3,
-          value: smallWorldCoeff
+          value: smallWorldCoeff,
+          location: `dependency network (${metrics.nodes} nodes)`
         });
         totalScore += 0.3 * Math.min(smallWorldCoeff / 3, 1);
       }
@@ -115,7 +117,8 @@ export class TopologicalPatternAnalyzer extends BasePatternAnalyzer {
         type: 'high_clustering',
         description: `High clustering coefficient: ${metrics.clusteringCoefficient.toFixed(3)}`,
         weight: clusteringWeight,
-        value: metrics.clusteringCoefficient
+        value: metrics.clusteringCoefficient,
+        location: `symbol network (avg degree: ${metrics.avgDegree.toFixed(1)})`
       });
       totalScore += clusteringWeight * Math.min(metrics.clusteringCoefficient / 0.5, 1);
     }
@@ -127,7 +130,8 @@ export class TopologicalPatternAnalyzer extends BasePatternAnalyzer {
         type: 'network_structure',
         description: `Network with ${metrics.nodes} nodes and ${metrics.edges} edges (density: ${networkDensity.toFixed(3)})`,
         weight: 0.2,
-        value: networkDensity
+        value: networkDensity,
+        location: `code graph structure`
       });
       totalScore += 0.2 * Math.min(networkDensity * 2, 1);
       weightSum += 0.2;
@@ -153,7 +157,8 @@ export class TopologicalPatternAnalyzer extends BasePatternAnalyzer {
         type: 'entanglement_complexity',
         description: `High entanglement complexity: ${entanglement.complexity.toFixed(3)}`,
         weight: 0.3,
-        value: entanglement.complexity
+        value: entanglement.complexity,
+        location: entanglement.location || `dependency graph (${entanglement.cycleCount || 0} cycles)`
       });
       totalScore += 0.3 * Math.min(entanglement.complexity * 2, 1);
     }
@@ -166,7 +171,8 @@ export class TopologicalPatternAnalyzer extends BasePatternAnalyzer {
         type: 'crossing_number',
         description: `Minimal crossing number: ${crossings.minimal}`,
         weight: crossingWeight,
-        value: crossings.minimal
+        value: crossings.minimal,
+        location: crossings.location || `planar graph projection (${crossings.edges || 0} edges)`
       });
       totalScore += crossingWeight * Math.min(crossings.minimal / 5, 1);
     }
@@ -179,7 +185,8 @@ export class TopologicalPatternAnalyzer extends BasePatternAnalyzer {
         type: 'alexander_polynomial',
         description: `Non-trivial Alexander polynomial: ${invariants.alexanderPolynomial}`,
         weight: invariantWeight,
-        value: invariants.degree
+        value: invariants.degree,
+        location: invariants.location || `knot structure (degree ${invariants.degree})`
       });
       totalScore += invariantWeight * Math.min(invariants.degree / 3, 1);
     }
@@ -210,7 +217,8 @@ export class TopologicalPatternAnalyzer extends BasePatternAnalyzer {
         type: 'watts_strogatz_sigma',
         description: `Small-world sigma: ${wsMetrics.sigma.toFixed(2)}`,
         weight: 0.4,
-        value: wsMetrics.sigma
+        value: wsMetrics.sigma,
+        location: `dependency network (${metrics.nodes} nodes, ${metrics.edges} edges)`
       });
       totalScore += 0.4 * Math.min(wsMetrics.sigma / 3, 1);
     }
@@ -221,7 +229,8 @@ export class TopologicalPatternAnalyzer extends BasePatternAnalyzer {
         type: 'small_world_tradeoff',
         description: `Optimal small-world trade-off: high clustering (${wsMetrics.clusteringRatio.toFixed(2)}x), low path length (${wsMetrics.pathLengthRatio.toFixed(2)}x)`,
         weight: 0.3,
-        value: wsMetrics.clusteringRatio / wsMetrics.pathLengthRatio
+        value: wsMetrics.clusteringRatio / wsMetrics.pathLengthRatio,
+        location: `network topology (C/L ratio: ${(wsMetrics.clusteringRatio / wsMetrics.pathLengthRatio).toFixed(2)})`
       });
       totalScore += 0.3;
     }
@@ -235,12 +244,14 @@ export class TopologicalPatternAnalyzer extends BasePatternAnalyzer {
         type: 'rewire_probability',
         description: `${optimalRewire ? 'Optimal' : 'Detected'} rewiring probability: ${(rewireProb * 100).toFixed(1)}%`,
         weight: rewireWeight,
-        value: rewireProb
+        value: rewireProb,
+        location: `edge rewiring analysis (${graph.size} nodes)`
       });
       totalScore += rewireWeight * (optimalRewire ? 1 : Math.min(rewireProb * 10, 0.5));
     }
     weightSum += rewireWeight;
     const finalScore = weightSum > 0 ? totalScore / weightSum : 0;
+    const isSmallWorld = wsMetrics.sigma > this.SMALL_WORLD_THRESHOLD && finalScore > this.threshold;
     return {
       patternName: PatternType.SMALL_WORLD_NETWORKS,
       score: finalScore,
@@ -248,6 +259,14 @@ export class TopologicalPatternAnalyzer extends BasePatternAnalyzer {
       detected: finalScore > this.threshold,
       evidence,
       category: this.category,
+      metadata: {
+        isSmallWorld,
+        wattsStrogatzSigma: wsMetrics.sigma,
+        clusteringRatio: wsMetrics.clusteringRatio,
+        pathLengthRatio: wsMetrics.pathLengthRatio,
+        nodeCount: metrics.nodes,
+        edgeCount: metrics.edges
+      }
     };
   }
   private buildGraph(semanticData: SemanticData): Map<string, GraphNode> {

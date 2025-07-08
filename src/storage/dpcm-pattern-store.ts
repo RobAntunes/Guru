@@ -91,9 +91,15 @@ export class DPCMPatternStore {
     
     // Generate target coordinates using DPCM composition
     const targetCoords = this.composeCoordinates(basePattern, operations);
-
+    
     // Find patterns in coordinate neighborhood
     const candidates = this.findInRadius(targetCoords, options.radius || 1.5);
+
+    // If no operations, return all candidates that match the base pattern
+    if (operations.length === 0) {
+      // For simple queries, return candidates scored by relevance
+      return this.scoreAndRank(candidates, targetCoords, options);
+    }
 
     // Apply boolean logic filtering
     const filtered = this.applyLogicFilters(candidates, operations);
@@ -122,6 +128,7 @@ export class DPCMPatternStore {
     patternsWithCoords.forEach(pattern => {
       // Store in main memory
       this.memoryStore.set(pattern.id, pattern);
+      
       
       // Skip spatial index (already bulk inserted)
       if (!this.useSpatialIndex || patternsWithCoords.length <= 10) {
@@ -441,11 +448,20 @@ export class DPCMPatternStore {
     // SPEC LORD FIX 1: Normalize to uppercase for coordinate consistency
     const normalizedPattern = basePattern.toUpperCase();
     
-    // SPEC LORD FIX 2: Handle empty operations consistently
-    let operationsPart = '';
-    if (operations.length > 0) {
-      operationsPart = `_${operations.map(op => `${op.type}_${op.params.join(',')}`).join('_')}`;
+    // For base queries without operations, generate semantic coordinates
+    // This ensures queries match the stored pattern coordinates
+    if (operations.length === 0) {
+      // Use average values for unknown properties when querying
+      return this.hasher.generateSemanticCoordinates(
+        normalizedPattern,
+        0.7,  // average strength
+        0.5,  // average complexity
+        50    // average occurrences
+      );
     }
+    
+    // SPEC LORD FIX 2: Handle operations consistently
+    const operationsPart = `_${operations.map(op => `${op.type}_${op.params.join(',')}`).join('_')}`;
     
     // For now, use simple hash-based composition
     // This can be enhanced with more sophisticated DPCM logic

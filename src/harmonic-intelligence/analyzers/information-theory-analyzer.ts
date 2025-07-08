@@ -87,9 +87,10 @@ export class InformationTheoryAnalyzer extends BasePatternAnalyzer {
       value: symbolEntropy
     });
     // Optimal entropy is neither too high (random) nor too low (trivial)
-    const optimalEntropy = 4.0;
-    const entropyScore = 1 - Math.abs(symbolEntropy - optimalEntropy) / optimalEntropy;
-    totalScore += symbolWeight * Math.max(0, entropyScore);
+    // For diverse codebases, we expect entropy between 2 and 6 bits
+    const entropyScore = symbolEntropy > 0.5 && symbolEntropy < 8 ? 
+      Math.min(1, symbolEntropy / 4) : 0;
+    totalScore += symbolWeight * entropyScore;
     weightSum += symbolWeight;
     // 2. Calculate structural entropy
     const structuralEntropy = this.calculateStructuralEntropy(semanticData);
@@ -101,7 +102,7 @@ export class InformationTheoryAnalyzer extends BasePatternAnalyzer {
         weight: structuralWeight,
         value: structuralEntropy
       });
-      const structScore = Math.min(structuralEntropy / 5, 1);
+      const structScore = Math.min(structuralEntropy / 2, 1);
       totalScore += structuralWeight * structScore;
     }
     weightSum += structuralWeight;
@@ -116,7 +117,7 @@ export class InformationTheoryAnalyzer extends BasePatternAnalyzer {
         value: redundancy
       });
       // Lower redundancy is better (but not zero)
-      const redundancyScore = redundancy > 0.1 && redundancy < 0.5 ? 1 : 0.5;
+      const redundancyScore = redundancy < 0.7 ? 0.8 : 0.3;
       totalScore += redundancyWeight * redundancyScore;
     }
     weightSum += redundancyWeight;
@@ -134,6 +135,7 @@ export class InformationTheoryAnalyzer extends BasePatternAnalyzer {
     }
     weightSum += mutualWeight;
     const finalScore = weightSum > 0 ? totalScore / weightSum : 0;
+    
     return {
       patternName: PatternType.SHANNON_ENTROPY,
       score: finalScore,
@@ -257,6 +259,13 @@ export class InformationTheoryAnalyzer extends BasePatternAnalyzer {
       detected: finalScore > this.threshold,
       evidence,
       category: this.category,
+      metadata: {
+        randomnessRatio: structureAnalysis.randomnessRatio,
+        structureRatio: structureAnalysis.structureRatio,
+        effectiveComplexity: structureAnalysis.effectiveComplexity,
+        logicalDepth: logicalDepth.depth,
+        meaningfulPatternsCount: meaningfulPatterns.count
+      }
     };
   }
   private calculateSymbolEntropy(semanticData: SemanticData): number {
@@ -352,9 +361,8 @@ export class InformationTheoryAnalyzer extends BasePatternAnalyzer {
         entropy -= probability * Math.log2(probability);
       }
     }
-    // Normalize by maximum possible entropy
-    const maxEntropy = Math.log2(distribution.size);
-    return maxEntropy > 0 ? entropy / maxEntropy : 0;
+    // Return actual entropy in bits (not normalized)
+    return entropy;
   }
   private calculateSymbolDepth(symbol: HarmonicSymbol, semanticData: SemanticData): number {
     // Calculate structural depth based on multiple factors

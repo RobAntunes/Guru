@@ -70,34 +70,47 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
           type: 'complexity_boundary',
           description: `Fractal complexity boundary detected: ${boundary.description}`,
           weight: 0.3,
-          value: boundary.dimension
+          value: boundary.dimension,
+          location: boundary.location || `fractal boundary (dim: ${boundary.dimension.toFixed(2)})`
         });
         totalScore += 0.3 * boundary.confidence;
       }
       weightSum += 0.3;
     }
     // 2. Calculate fractal dimension of code structure
-    const fractalDimension = this.calculateCodeFractalDimension(semanticData);
-    if (fractalDimension > 1.0 && fractalDimension < 2.0) {
+    const fractalResult = this.calculateCodeFractalDimension(semanticData);
+    if (fractalResult.dimension > 1.0 && fractalResult.dimension < 2.0) {
       evidence.push({
         type: 'fractal_dimension',
-        description: `Code exhibits fractal dimension: ${fractalDimension.toFixed(3)}`,
+        description: `Code exhibits fractal dimension: ${fractalResult.dimension.toFixed(3)}`,
         weight: 0.35,
-        value: fractalDimension
+        value: fractalResult.dimension,
+        location: fractalResult.context
       });
-      totalScore += 0.35 * ((fractalDimension - 1.0) / 1.0); // Normalize to 0-1
+      totalScore += 0.35 * ((fractalResult.dimension - 1.0) / 1.0); // Normalize to 0-1
     }
     weightSum += 0.35;
     // 3. Detect self-similarity at different scales
     const selfSimilarity = this.detectSelfSimilarity(semanticData);
-    if (selfSimilarity.confidence > 0.5) {
+    if (selfSimilarity.confidence > 0) {
       evidence.push({
         type: 'self_similarity',
         description: `Self-similar patterns detected across ${selfSimilarity.iterations} scales`,
         weight: 0.35,
-        value: selfSimilarity.confidence
+        value: selfSimilarity.confidence,
+        location: selfSimilarity.patterns.length > 0 ? selfSimilarity.patterns[0] : `scale range: 1-${selfSimilarity.scale}`
       });
       totalScore += 0.35 * selfSimilarity.confidence;
+    } else if (selfSimilarity.iterations > 0) {
+      // Even if confidence is low, give some credit for having structure
+      evidence.push({
+        type: 'self_similarity',
+        description: `Weak self-similar patterns detected across ${selfSimilarity.iterations} scales`,
+        weight: 0.35,
+        value: 0.1,
+        location: `${selfSimilarity.iterations} hierarchical levels`
+      });
+      totalScore += 0.35 * 0.1;
     }
     weightSum += 0.35;
     const finalScore = weightSum > 0 ? totalScore / weightSum : 0;
@@ -121,7 +134,8 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
         type: 'parameter_sensitivity',
         description: `Chaotic parameter sensitivity detected: small changes lead to ${parameterSensitivity.divergence}x divergence`,
         weight: 0.3,
-        value: parameterSensitivity.score
+        value: parameterSensitivity.score,
+        location: parameterSensitivity.location
       });
       totalScore += 0.3 * parameterSensitivity.score;
     }
@@ -133,7 +147,8 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
         type: 'julia_connectivity',
         description: `Julia set-like connectivity pattern: ${connectivity.description}`,
         weight: 0.35,
-        value: connectivity.score
+        value: connectivity.score,
+        location: connectivity.location
       });
       totalScore += 0.35 * connectivity.score;
     }
@@ -148,7 +163,8 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
           type: 'dynamic_system',
           description: `Dynamic system with Julia-like behavior: ${system.name}`,
           weight: 0.35,
-          value: system.score
+          value: system.score,
+          location: system.location || system.name
         });
         dynamicScore += system.score;
         dynamicCount++;
@@ -179,7 +195,8 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
           type: 'recursive_growth',
           description: `L-system growth pattern: ${pattern.description}`,
           weight: 0.35,
-          value: pattern.score
+          value: pattern.score,
+          location: pattern.location || 'recursive structures'
         });
       }
     }
@@ -191,7 +208,8 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
         type: 'branching_factor',
         description: `Biological branching pattern: average factor ${branchingAnalysis.averageFactor.toFixed(2)}`,
         weight: 0.3,
-        value: branchingAnalysis.score
+        value: branchingAnalysis.score,
+        location: branchingAnalysis.location
       });
     }
     
@@ -202,7 +220,8 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
         type: 'biological_pattern',
         description: `Matches ${pattern.type} growth: ${pattern.similarity}% similar`,
         weight: 0.35,
-        value: pattern.similarity / 100
+        value: pattern.similarity / 100,
+        location: pattern.location || 'growth patterns'
       });
     }
     
@@ -233,7 +252,8 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
         type: 'box_counting',
         description: `Hausdorff dimension via box-counting: ${boxDimension.dimension.toFixed(3)}`,
         weight: 0.4,
-        value: boxDimension.dimension
+        value: boxDimension.dimension,
+        location: boxDimension.context
       });
       // Score based on how far from integer dimension (more fractal)
       const fractionalPart = boxDimension.dimension % 1;
@@ -248,7 +268,8 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
           type: 'structure_dimension',
           description: `${structure.name} has fractal dimension: ${structure.dimension.toFixed(3)}`,
           weight: 0.3,
-          value: structure.dimension
+          value: structure.dimension,
+          location: structure.location || structure.name
         });
         totalScore += 0.3 * structure.confidence;
       }
@@ -261,7 +282,8 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
         type: 'fractal_complexity',
         description: `High fractal complexity: ${complexityScore.description}`,
         weight: 0.3,
-        value: complexityScore.score
+        value: complexityScore.score,
+        location: complexityScore.context
       });
       totalScore += 0.3 * complexityScore.score;
     }
@@ -291,7 +313,8 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
           confidence: fractalAnalysis.confidence,
           description: fractalAnalysis.description,
           boxCountingDimension: fractalAnalysis.boxCountingDimension,
-          informationDimension: fractalAnalysis.informationDimension
+          informationDimension: fractalAnalysis.informationDimension,
+          location: boundary.location || boundary.type || 'structural boundary'
         });
       }
     }
@@ -334,6 +357,7 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
       if (dependencies.size > 2) {
         boundaries.push({
           type: 'file',
+          location: file,
           complexity: dependencies.size,
           connections: Array.from(dependencies)
         });
@@ -614,10 +638,10 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
     };
     return getDepth(symbol.id, 0);
   }
-  private calculateCodeFractalDimension(semanticData: SemanticData): number {
+  private calculateCodeFractalDimension(semanticData: SemanticData): { dimension: number; context: string } {
     // Simplified fractal dimension calculation based on code structure
     const symbols = Array.from(semanticData.symbols.values());
-    if (symbols.length === 0) return 1.0;
+    if (symbols.length === 0) return { dimension: 1.0, context: 'empty codebase' };
     // Group symbols by depth/scale
     const depthGroups = new Map<number, number>();
     symbols.forEach(symbol => {
@@ -643,7 +667,17 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
         }
       }
     }
-    return count > 0 ? totalDimension / count : 1.0;
+    const dimension = count > 0 ? totalDimension / count : 1.0;
+    
+    // Determine context based on depth distribution
+    const maxDepth = Math.max(...depths);
+    const symbolTypes = new Set(symbols.map(s => s.kind));
+    const dominantType = Array.from(symbolTypes).sort((a, b) => 
+      symbols.filter(s => s.kind === b).length - symbols.filter(s => s.kind === a).length
+    )[0];
+    
+    const context = `${dominantType || 'symbol'} hierarchy (depth 0-${maxDepth})`;
+    return { dimension, context };
   }
   private calculateSymbolDepth(symbol: HarmonicSymbol, semanticData: SemanticData): number {
     // Calculate nesting depth
@@ -772,20 +806,34 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
   }
   private buildStructuralHierarchy(semanticData: SemanticData): any[][] {
     const hierarchy: any[][] = [];
-    // Level 0: Modules
-    const modules = semanticData.structure.modules.map(module => ({
-      type: 'module',
-      name: module,
-      complexity: this.calculateModuleComplexity(module, semanticData)
-    }));
-    hierarchy.push(modules);
+    
+    // Level 0: Packages or Modules  
+    if (semanticData.structure.packages && semanticData.structure.packages.length > 0) {
+      const packages = semanticData.structure.packages.map(pkg => ({
+        type: 'package',
+        name: pkg,
+        complexity: this.calculatePackageComplexity(pkg, semanticData)
+      }));
+      hierarchy.push(packages);
+    } else if (semanticData.structure.modules && semanticData.structure.modules.length > 0) {
+      const modules = semanticData.structure.modules.map(module => ({
+        type: 'module',
+        name: module,
+        complexity: this.calculateModuleComplexity(module, semanticData)
+      }));
+      hierarchy.push(modules);
+    }
+    
     // Level 1: Files
-    const files = semanticData.structure.files.map(file => ({
-      type: 'file',
-      name: file,
-      complexity: this.calculateFileComplexity(file, semanticData)
-    }));
-    hierarchy.push(files);
+    if (semanticData.structure.files && semanticData.structure.files.length > 0) {
+      const files = semanticData.structure.files.map(file => ({
+        type: 'file',
+        name: file,
+        complexity: this.calculateFileComplexity(file, semanticData)
+      }));
+      hierarchy.push(files);
+    }
+    
     // Level 2: Classes/Interfaces
     const classes = Array.from(semanticData.symbols.values())
       .filter(s => s.kind === 'class' || s.kind === 'interface')
@@ -794,7 +842,10 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
         name: cls.name,
         complexity: this.calculateSymbolComplexity(cls, semanticData)
       }));
-    hierarchy.push(classes);
+    if (classes.length > 0) {
+      hierarchy.push(classes);
+    }
+    
     // Level 3: Methods/Functions
     const methods = Array.from(semanticData.symbols.values())
       .filter(s => s.kind === 'method' || s.kind === 'function')
@@ -803,7 +854,10 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
         name: method.name,
         complexity: this.calculateSymbolComplexity(method, semanticData)
       }));
-    hierarchy.push(methods);
+    if (methods.length > 0) {
+      hierarchy.push(methods);
+    }
+    
     return hierarchy;
   }
   private calculateLevelSimilarity(level1: any[], level2: any[]): number {
@@ -1000,6 +1054,12 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
   }
   private comparePatternDistributions(dist1: Map<string, number>, dist2: Map<string, number>): number {
     return this.compareDistributions(dist1, dist2);
+  }
+  private calculatePackageComplexity(pkg: string, semanticData: SemanticData): number {
+    const packageSymbols = Array.from(semanticData.symbols.values())
+      .filter(s => s.filePath.includes(`/${pkg}/`) || s.filePath.includes(`${pkg}/`));
+    return packageSymbols.reduce((sum, s) => 
+      sum + this.calculateSymbolComplexity(s, semanticData), 0);
   }
   private calculateModuleComplexity(module: string, semanticData: SemanticData): number {
     const moduleSymbols = Array.from(semanticData.symbols.values())
@@ -1205,11 +1265,19 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
     const isConnected = connectivityRatio > 0.8;
     // Julia-like if highly connected with complex boundaries
     const juliaLike = isConnected && this.hasComplexBoundaries(relationships);
+    // Determine the main connected component context
+    const mainComponents = Array.from(connected).slice(0, 3);
+    const componentNames = mainComponents.map(id => symbols.get(id)?.name || id).join(', ');
+    const location = connected.size > 3 
+      ? `${componentNames}, ... (${connected.size} nodes)`
+      : componentNames || 'graph structure';
+    
     return {
       isConnected,
       juliaLike,
       score: connectivityRatio,
-      description: `${(connectivityRatio * 100).toFixed(0)}% connected`
+      description: `${(connectivityRatio * 100).toFixed(0)}% connected`,
+      location
     };
   }
   private hasComplexBoundaries(relationships: Map<string, string[]>): boolean {
@@ -1370,10 +1438,21 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
     // Biological branching typically between 1.5 and 3
     const biological = avgFactor >= 1.5 && avgFactor <= 3;
     const score = biological ? 1 - Math.abs(avgFactor - 2.2) / 2.2 : 0;
+    // Find nodes with highest branching
+    const topBranching = Array.from(semanticData.relationships.entries())
+      .filter(([_, relations]) => relations.length > avgFactor)
+      .sort((a, b) => b[1].length - a[1].length)
+      .slice(0, 3);
+    
+    const location = topBranching.length > 0
+      ? topBranching.map(([id]) => semanticData.symbols.get(id)?.name || id).join(', ')
+      : `${branchingFactors.length} nodes`;
+    
     return {
       biological,
       averageFactor: avgFactor,
-      score
+      score,
+      location
     };
   }
   private matchBiologicalPatterns(semanticData: SemanticData): any[] {
@@ -1459,9 +1538,15 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
     }
     // Calculate dimension from scaling relationship
     const dimension = this.calculateDimensionFromCounts(scales, counts);
+    // Determine context from the distribution
+    const fileCount = new Set(symbols.map(s => s.filePath)).size;
+    const avgComplexity = symbols.reduce((sum, s) => sum + (s.complexity || 1), 0) / symbols.length;
+    const context = `${symbols.length} symbols across ${fileCount} files (avg complexity: ${avgComplexity.toFixed(1)})`;
+    
     return {
       isValid: dimension > 0 && dimension < 3,
-      dimension
+      dimension,
+      context
     };
   }
   private calculateDimensionFromCounts(scales: number[], counts: number[]): number {
@@ -1596,9 +1681,20 @@ export class FractalPatternAnalyzer extends BasePatternAnalyzer {
     const branchingStats = this.analyzeBranchingFactors(semanticData);
     metrics.push(branchingStats.score);
     const avgScore = metrics.reduce((a, b) => a + b, 0) / metrics.length;
+    // Determine which aspect is strongest
+    const aspects = [
+      { name: 'self-similarity', score: selfSim.confidence, count: selfSim.iterations },
+      { name: 'recursion', score: recursiveRatio, count: recursiveSymbols.length },
+      { name: 'branching', score: branchingStats.score, count: Math.round(branchingStats.averageFactor * 10) }
+    ].sort((a, b) => b.score - a.score);
+    
+    const topAspect = aspects[0];
+    const context = `${topAspect.name} (${topAspect.count} instances)`;
+    
     return {
       score: avgScore,
-      description: `Self-similarity: ${(selfSim.confidence * 100).toFixed(0)}%, Recursive: ${(recursiveRatio * 100).toFixed(0)}%`
+      description: `Self-similarity: ${(selfSim.confidence * 100).toFixed(0)}%, Recursive: ${(recursiveRatio * 100).toFixed(0)}%`,
+      context
     };
   }
   // Utility methods

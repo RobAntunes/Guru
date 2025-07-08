@@ -158,6 +158,39 @@ This is normal! Guru is honest about uncertainty:
 - 60-80% = Medium confidence, useful but verify
 - <60% = Low confidence, needs more context
 
+## 🏗️ Technical Architecture
+
+### **Fully Embedded Storage**
+Guru uses a modern, fully embedded database architecture for single-binary deployment:
+
+- **[SurrealDB](https://surrealdb.com/)** (Embedded Mode)
+  - Multi-model database: Graph + Document + Key-Value
+  - Replaces Neo4j (graph), Redis (cache), and SQLite (local storage)
+  - Zero network dependencies - runs entirely in-process
+  - ACID transactions with SQL-like query language
+
+- **[DuckDB](https://duckdb.org/)** (Embedded Analytics)
+  - Columnar OLAP database for time-series analytics
+  - Handles pattern evolution and historical analysis
+  - Parquet file support for data export
+  - Lightning-fast aggregations and window functions
+
+### **Storage Capabilities**
+- **Symbol Graph**: Millions of symbols and relationships
+- **Pattern Store**: Time-series pattern tracking with sub-second queries
+- **Intelligent Caching**: TTL-based with pattern invalidation
+- **File Analysis Cache**: Incremental analysis with hash tracking
+- **Transaction Support**: ACID guarantees for data consistency
+
+### **Zero External Dependencies**
+Everything runs in a single Node.js process:
+- **No Docker required for production!**
+- No separate database servers
+- No network configuration
+- Just `npm install` and `npm start`!
+
+> **Note**: Docker is only used for testing when DuckDB native module has issues with test runners. Production always uses embedded DuckDB directly.
+
 ## 🎊 What Makes This Awesome
 
 ### **Context Engineering > Prompt Engineering**

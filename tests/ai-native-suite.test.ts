@@ -311,11 +311,8 @@ describe('AI-Native Guru Test Suite - Comprehensive Functionality', () => {
         includeTests: false,
       });
       
-      // Don't reset database for incremental test as it needs to preserve state
-      if (!ctx.task.name.includes('incremental')) {
-        // Reset database adapter to ensure clean state - fresh in-memory DB each time
-        DatabaseAdapter.reset();
-      }
+      // Reset database adapter to ensure clean state - fresh in-memory DB each time
+      DatabaseAdapter.reset();
       
       ({ Guru } = await import('../dist/index.js'));
       guru = new Guru();
@@ -326,22 +323,28 @@ describe('AI-Native Guru Test Suite - Comprehensive Functionality', () => {
     it('should only re-analyze changed and dependent files (incremental)', async () => {
       console.log('[TEST][DEBUG] Testing incremental analysis with explicit scanMode parameter');
       
+      // Reset database to ensure clean state for this test
+      DatabaseAdapter.reset();
+      
       // Skip the beforeEach database reset for this test by manually doing setup
       const { Guru } = await import('../dist/index.js');
       
-      // Use the shared guru instance to preserve database state
-      const result1 = await guru.analyzeCodebase(tempDir, undefined, 'incremental');
+      // Create a fresh guru instance for this test
+      const testGuru = new Guru();
+      
+      // Use the test-specific guru instance to preserve database state
+      const result1 = await testGuru.analyzeCodebase(tempDir, undefined, 'incremental');
       console.log('Test received analysisMetadata (run 1):', result1.metadata);
       expect(result1.metadata.filesAnalyzed).toBe(3);
       
       // Second run - should be incremental (same guru instance)  
-      const result2 = await guru.analyzeCodebase(tempDir, undefined, 'incremental');
+      const result2 = await testGuru.analyzeCodebase(tempDir, undefined, 'incremental');
       console.log('Test received analysisMetadata (run 2):', result2.metadata);
       expect(result2.metadata.filesAnalyzed).toBe(0); // no changes
       
       // Change only fileC
       await writeFile(fileC, 'import { b } from "./b"; export function c() { return b() + 1; }');
-      const result3 = await guru.analyzeCodebase(tempDir, undefined, 'incremental');
+      const result3 = await testGuru.analyzeCodebase(tempDir, undefined, 'incremental');
       console.log('Test received analysisMetadata (run 3):', result3.metadata);
       expect(result3.metadata.filesAnalyzed).toBe(1);
     }, 20000);

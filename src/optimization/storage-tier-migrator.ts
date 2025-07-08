@@ -3,7 +3,7 @@
  * Automatically moves patterns between storage tiers based on usage patterns
  */
 
-import { StorageManager } from '../storage/storage-manager.js';
+import { UnifiedStorageManager } from '../storage/unified-storage-manager.js';
 import { HarmonicPatternMemory, PatternCategory } from '../memory/types.js';
 import { Logger } from '../logging/logger.js';
 import { EventEmitter } from 'events';
@@ -59,7 +59,7 @@ export class StorageTierMigrator extends EventEmitter {
   };
 
   constructor(
-    private storageManager: StorageManager,
+    private storageManager: UnifiedStorageManager,
     private config: MigrationConfig = {} as MigrationConfig
   ) {
     super();

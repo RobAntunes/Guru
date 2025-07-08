@@ -9,9 +9,19 @@ import {
   PatternCategory
 } from '../interfaces/harmonic-types.js';
 import { Logger } from '../../utils/logger.js';
+import { DynamicThreshold, smoothThreshold, AdaptiveThreshold } from '../interfaces/dynamic-threshold.js';
 export abstract class BasePatternAnalyzer {
   protected abstract readonly logger: Logger;
   protected abstract readonly category: PatternCategory;
+  
+  // Adaptive threshold for each analyzer instance - initialized on first use
+  protected adaptiveThreshold: AdaptiveThreshold | null = null;
+  
+  // Historical scores for dynamic threshold calculation
+  protected scoreHistory: number[] = [];
+  
+  // Collect initial scores before determining threshold
+  protected initialScores: number[] = [];
   /**
    * Analyze patterns in the semantic data
    * @param semanticData The semantic data to analyze
@@ -136,5 +146,160 @@ export abstract class BasePatternAnalyzer {
       }
     });
     return { outliers, indices };
+  }
+  
+  /**
+   * Initialize adaptive threshold based on actual score distribution
+   * Uses statistical properties of the data instead of arbitrary values
+   */
+  protected initializeThreshold(scores: number[]): void {
+    if (this.adaptiveThreshold === null && scores.length > 0) {
+      // Calculate initial threshold from data properties
+      const sorted = [...scores].sort((a, b) => a - b);
+      
+      // Use interquartile range method
+      const q1 = sorted[Math.floor(sorted.length * 0.25)];
+      const q3 = sorted[Math.floor(sorted.length * 0.75)];
+      const iqr = q3 - q1;
+      
+      // Initial threshold: Q1 + 0.5 * IQR
+      // This captures values above the lower quartile but not outliers
+      let initialThreshold = q1 + 0.5 * iqr;
+      
+      // If IQR is too small (uniform distribution), use mean + 0.5 * stddev
+      if (iqr < 0.1) {
+        const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
+        const stddev = Math.sqrt(
+          scores.reduce((sum, s) => sum + Math.pow(s - mean, 2), 0) / scores.length
+        );
+        initialThreshold = mean + 0.5 * stddev;
+      }
+      
+      // Ensure threshold is in valid range
+      initialThreshold = Math.max(0.05, Math.min(0.95, initialThreshold));
+      
+      this.adaptiveThreshold = new AdaptiveThreshold(initialThreshold);
+      // Log initialization if logger is available
+      if (this.logger) {
+        this.logger.debug(`Initialized threshold to ${initialThreshold.toFixed(3)} based on ${scores.length} scores`);
+      }
+    }
+  }
+  
+  /**
+   * Calculate dynamic detection threshold based on pattern scores
+   * Replaces hardcoded thresholds with statistical approach
+   */
+  protected calculateDynamicThreshold(scores: number[]): number {
+    // Initialize threshold if needed
+    this.initializeThreshold(scores);
+    
+    // Update adaptive threshold with new scores
+    if (this.adaptiveThreshold) {
+      this.adaptiveThreshold.update(scores);
+      return this.adaptiveThreshold.getThreshold();
+    }
+    
+    // Fallback: calculate from current scores
+    return DynamicThreshold.calculateDetectionThreshold(scores, { 
+      dataSize: scores.length, 
+      patternCategory: this.category 
+    });
+  }
+  
+  /**
+   * Determine if pattern is detected using smooth threshold
+   * Avoids binary decisions from hardcoded values
+   */
+  protected isPatternDetected(score: number, threshold?: number): boolean {
+    // Collect initial scores
+    this.initialScores.push(score);
+    
+    // Initialize threshold after collecting enough data
+    if (this.adaptiveThreshold === null && this.initialScores.length >= 3) {
+      this.initializeThreshold(this.initialScores);
+    }
+    
+    // Use provided threshold or calculate from data
+    let dynamicThreshold: number;
+    if (threshold !== undefined) {
+      dynamicThreshold = threshold;
+    } else if (this.adaptiveThreshold) {
+      dynamicThreshold = this.adaptiveThreshold.getThreshold();
+    } else if (this.initialScores.length >= 2) {
+      // Calculate threshold from available scores
+      dynamicThreshold = DynamicThreshold.calculateDetectionThreshold(
+        this.initialScores, 
+        { dataSize: this.initialScores.length, patternCategory: this.category }
+      );
+    } else {
+      // With only 1 score, use z-score approach
+      // Assume scores follow a beta distribution (common for bounded [0,1] data)
+      // For beta(2,2), mean=0.5, std≈0.224
+      // Score is significant if |z-score| > 1
+      const assumedMean = 0.5;
+      const assumedStd = 0.224;
+      const zScore = (score - assumedMean) / assumedStd;
+      
+      // Threshold at 1 standard deviation from mean
+      dynamicThreshold = assumedMean + assumedStd;
+      
+      // But if score is already high, adjust threshold to just below it
+      if (score > dynamicThreshold) {
+        dynamicThreshold = score - assumedStd * 0.5;
+      }
+    }
+    
+    // Use smooth transition instead of hard cutoff
+    const smoothScore = smoothThreshold(score, dynamicThreshold);
+    return smoothScore > 0.5; // More than 50% confidence after smoothing
+  }
+  
+  /**
+   * Calculate confidence without arbitrary magic numbers
+   * Based on evidence quality and statistical significance
+   */
+  protected calculateConfidence(evidence: any[], expectedEvidence: number = 3): number {
+    if (evidence.length === 0) return 0;
+    
+    // Base confidence from evidence count
+    const evidenceRatio = Math.min(1, evidence.length / expectedEvidence);
+    
+    // Weight-based confidence
+    const totalWeight = evidence.reduce((sum, e) => sum + (e.weight || 0), 0);
+    const maxPossibleWeight = evidence.length; // Assuming max weight of 1 per evidence
+    const weightRatio = totalWeight / maxPossibleWeight;
+    
+    // Value-based confidence (if evidence has values)
+    let valueConfidence = 0;
+    const evidenceWithValues = evidence.filter(e => e.value !== undefined);
+    if (evidenceWithValues.length > 0) {
+      valueConfidence = evidenceWithValues.reduce((sum, e) => {
+        const normalizedValue = Math.max(0, Math.min(1, e.value));
+        return sum + normalizedValue * (e.weight || 1);
+      }, 0) / evidenceWithValues.length;
+    }
+    
+    // Combine all factors
+    const factors = [evidenceRatio, weightRatio];
+    if (valueConfidence > 0) factors.push(valueConfidence);
+    
+    // Use geometric mean for more balanced confidence
+    const product = factors.reduce((prod, f) => prod * f, 1);
+    const confidence = Math.pow(product, 1 / factors.length);
+    
+    // Apply statistical significance adjustment
+    const sampleSize = evidence.length;
+    const significanceAdjustment = 1 - Math.exp(-sampleSize / 3); // Asymptotic to 1
+    
+    return confidence * significanceAdjustment;
+  }
+  
+  /**
+   * Calculate dynamic tolerance based on data variance
+   * Replaces hardcoded percentage tolerances
+   */
+  protected calculateDynamicTolerance(values: number[], target: number): number {
+    return DynamicThreshold.calculateTolerance(values, target, {});
   }
 }

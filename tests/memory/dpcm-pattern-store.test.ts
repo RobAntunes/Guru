@@ -23,7 +23,7 @@ describe('DPCMPatternStore', () => {
     it('should store and retrieve patterns by ID', () => {
       const pattern: HarmonicPatternMemory = {
         id: 'test-pattern-1',
-        timestamp: new Date(),
+        accessCount: 0, lastAccessed: Date.now(), createdAt: Date.now(), locations: [], evidence: [], relatedPatterns: [], causesPatterns: [], requiredBy: [],
         content: {
           title: 'Test Pattern',
           description: 'A test pattern for DPCM',
@@ -55,7 +55,7 @@ describe('DPCMPatternStore', () => {
     it('should bulk store multiple patterns', () => {
       const patterns: HarmonicPatternMemory[] = Array.from({ length: 10 }, (_, i) => ({
         id: `pattern-${i}`,
-        timestamp: new Date(),
+        accessCount: 0, lastAccessed: Date.now(), createdAt: Date.now(), locations: [], evidence: [], relatedPatterns: [], causesPatterns: [], requiredBy: [],
         content: {
           title: `Pattern ${i}`,
           description: `Description ${i}`,
@@ -81,7 +81,7 @@ describe('DPCMPatternStore', () => {
     it('should remove patterns correctly', () => {
       const pattern: HarmonicPatternMemory = {
         id: 'removable-pattern',
-        timestamp: new Date(),
+        accessCount: 0, lastAccessed: Date.now(), createdAt: Date.now(), locations: [], evidence: [], relatedPatterns: [], causesPatterns: [], requiredBy: [],
         content: {
           title: 'Removable',
           description: 'To be removed',
@@ -115,7 +115,7 @@ describe('DPCMPatternStore', () => {
       const testPatterns: HarmonicPatternMemory[] = [
         {
           id: 'auth-1',
-          timestamp: new Date(),
+          accessCount: 0, lastAccessed: Date.now(), createdAt: Date.now(), locations: [], evidence: [], relatedPatterns: [], causesPatterns: [], requiredBy: [],
           content: {
             title: 'Authentication Handler',
             description: 'Handles user authentication',
@@ -135,7 +135,7 @@ describe('DPCMPatternStore', () => {
         },
         {
           id: 'auth-2',
-          timestamp: new Date(),
+          accessCount: 0, lastAccessed: Date.now(), createdAt: Date.now(), locations: [], evidence: [], relatedPatterns: [], causesPatterns: [], requiredBy: [],
           content: {
             title: 'OAuth Provider',
             description: 'OAuth2 authentication provider',
@@ -155,7 +155,7 @@ describe('DPCMPatternStore', () => {
         },
         {
           id: 'data-1',
-          timestamp: new Date(),
+          accessCount: 0, lastAccessed: Date.now(), createdAt: Date.now(), locations: [], evidence: [], relatedPatterns: [], causesPatterns: [], requiredBy: [],
           content: {
             title: 'Data Processor',
             description: 'Processes incoming data streams',
@@ -277,7 +277,7 @@ describe('DPCMPatternStore', () => {
       // Add diverse patterns
       const patterns: HarmonicPatternMemory[] = Array.from({ length: 20 }, (_, i) => ({
         id: `diverse-${i}`,
-        timestamp: new Date(),
+        accessCount: 0, lastAccessed: Date.now(), createdAt: Date.now(), locations: [], evidence: [], relatedPatterns: [], causesPatterns: [], requiredBy: [],
         content: {
           title: `Pattern ${i}`,
           description: `Description ${i}`,
@@ -338,7 +338,7 @@ describe('DPCMPatternStore', () => {
     it('should find similar patterns based on coordinates', () => {
       const basePattern: HarmonicPatternMemory = {
         id: 'base-similarity',
-        timestamp: new Date(),
+        accessCount: 0, lastAccessed: Date.now(), createdAt: Date.now(), locations: [], evidence: [], relatedPatterns: [], causesPatterns: [], requiredBy: [],
         content: {
           title: 'Base Pattern',
           description: 'Pattern to find similar to',
@@ -391,7 +391,7 @@ describe('DPCMPatternStore', () => {
       const patterns: HarmonicPatternMemory[] = [
         {
           id: 'stat-1',
-          timestamp: new Date(),
+          accessCount: 0, lastAccessed: Date.now(), createdAt: Date.now(), locations: [], evidence: [], relatedPatterns: [], causesPatterns: [], requiredBy: [],
           content: { title: 'Stat 1', description: '', type: 'function', tags: [], data: {} },
           harmonicProperties: {
             category: PatternCategory.FUNCTIONAL,
@@ -405,7 +405,7 @@ describe('DPCMPatternStore', () => {
         },
         {
           id: 'stat-2',
-          timestamp: new Date(),
+          accessCount: 0, lastAccessed: Date.now(), createdAt: Date.now(), locations: [], evidence: [], relatedPatterns: [], causesPatterns: [], requiredBy: [],
           content: { title: 'Stat 2', description: '', type: 'function', tags: [], data: {} },
           harmonicProperties: {
             category: PatternCategory.FUNCTIONAL,

@@ -88,7 +88,8 @@ export class TilingCrystallographicAnalyzer extends BasePatternAnalyzer {
         type: 'regular_tiling',
         description: `${moduleTiling.type} tiling detected in module structure`,
         weight: 0.4,
-        value: moduleTiling.packingFraction
+        value: moduleTiling.packingFraction,
+        location: `module tiling (${moduleTiling.moduleCount || 0} modules)`
       });
       totalScore += 0.4 * moduleTiling.packingFraction;
     }
@@ -101,7 +102,8 @@ export class TilingCrystallographicAnalyzer extends BasePatternAnalyzer {
           type: 'class_tessellation',
           description: `Valid ${pattern.type} tessellation with ${pattern.vertices} vertices`,
           weight: 0.3,
-          value: pattern.packingFraction
+          value: pattern.packingFraction,
+          location: `class structure (${pattern.vertices} vertices)`
         });
         totalScore += 0.3 * pattern.packingFraction;
       }
@@ -114,7 +116,8 @@ export class TilingCrystallographicAnalyzer extends BasePatternAnalyzer {
         type: 'packing_efficiency',
         description: `High packing efficiency: ${(packingEfficiency * 100).toFixed(1)}%`,
         weight: 0.3,
-        value: packingEfficiency
+        value: packingEfficiency,
+        location: `code structure (${semanticData.symbols.size} symbols)`
       });
       totalScore += 0.3 * packingEfficiency;
     }
@@ -141,7 +144,8 @@ export class TilingCrystallographicAnalyzer extends BasePatternAnalyzer {
           type: 'crystal_lattice',
           description: `${lattice.bravaisLattice} lattice with packing fraction ${lattice.packingFraction.toFixed(3)}`,
           weight: 0.4,
-          value: lattice.packingFraction
+          value: lattice.packingFraction,
+          location: `${lattice.location || 'lattice structure'} (${lattice.unitCells || 0} unit cells)`
         });
         totalScore += 0.4 * lattice.packingFraction;
       }
@@ -155,7 +159,8 @@ export class TilingCrystallographicAnalyzer extends BasePatternAnalyzer {
           type: 'coordination_number',
           description: `${entity} has coordination number ${coordNum}`,
           weight: 0.3,
-          value: coordNum / 12 // Normalize to 0-1
+          value: coordNum / 12, // Normalize to 0-1
+          location: `${entity} connectivity`
         });
         totalScore += 0.3 * (coordNum / 12);
         break; // Only count first match
@@ -169,7 +174,8 @@ export class TilingCrystallographicAnalyzer extends BasePatternAnalyzer {
         type: 'crystal_symmetry',
         description: `Crystal point group ${symmetryOps.pointGroup} detected`,
         weight: 0.3,
-        value: this.getSymmetryScore(symmetryOps)
+        value: this.getSymmetryScore(symmetryOps),
+        location: `symmetry analysis (${symmetryOps.operations || 0} operations)`
       });
       totalScore += 0.3 * this.getSymmetryScore(symmetryOps);
     }
@@ -196,7 +202,8 @@ export class TilingCrystallographicAnalyzer extends BasePatternAnalyzer {
           type: 'aperiodic_pattern',
           description: `${pattern.type} Penrose tiling with aperiodicity ${pattern.aperiodicity.toFixed(3)}`,
           weight: 0.4,
-          value: pattern.aperiodicity
+          value: pattern.aperiodicity,
+          location: `${pattern.location || 'tiling pattern'} (${pattern.tiles || 0} tiles)`
         });
         totalScore += 0.4 * pattern.aperiodicity;
       }
@@ -209,7 +216,8 @@ export class TilingCrystallographicAnalyzer extends BasePatternAnalyzer {
         type: 'five_fold_symmetry',
         description: `Five-fold symmetry detected with ${fiveFoldSymmetry.instances} instances`,
         weight: 0.3,
-        value: Math.min(fiveFoldSymmetry.instances / 5, 1)
+        value: Math.min(fiveFoldSymmetry.instances / 5, 1),
+        location: `pentagonal symmetry (${fiveFoldSymmetry.location || 'structure'})`
       });
       totalScore += 0.3 * Math.min(fiveFoldSymmetry.instances / 5, 1);
     }
@@ -223,7 +231,8 @@ export class TilingCrystallographicAnalyzer extends BasePatternAnalyzer {
         type: 'golden_ratio_tiling',
         description: `${goldenRatios.length} golden ratio relationships in tiling`,
         weight: 0.3,
-        value: goldenScore
+        value: goldenScore,
+        location: `golden ratio pattern (avg deviation: ${avgDeviation.toFixed(3)})`
       });
       totalScore += 0.3 * goldenScore;
     }

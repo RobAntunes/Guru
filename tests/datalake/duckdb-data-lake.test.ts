@@ -220,9 +220,9 @@ describe('DuckDBDataLake', () => {
         s.category === 'ARCHITECTURAL' && s.pattern_type === 'singleton'
       );
       expect(archStats).toBeDefined();
-      expect(archStats.count).toBe(2);
+      expect(Number(archStats.count)).toBe(2);
       expect(archStats.avg_score).toBeCloseTo(0.875, 2);
-      expect(archStats.file_count).toBe(2);
+      expect(Number(archStats.file_count)).toBe(2);
     });
   });
 

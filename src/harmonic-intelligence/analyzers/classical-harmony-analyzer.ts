@@ -97,11 +97,13 @@ export class ClassicalHarmonyAnalyzer extends BasePatternAnalyzer {
     if (this.isFibonacciLike(paramCounts)) {
       totalScore += 0.9;
       detectionCount++;
+      const functionSymbols = symbols.filter(s => s.kind === 'function' || s.kind === 'method');
       evidence.push({
         type: 'parameter_progression',
         value: paramCounts,
         weight: 0.9,
-        description: 'Function parameters follow Fibonacci-like progression'
+        description: 'Function parameters follow Fibonacci-like progression',
+        location: `function signatures (${functionSymbols.length} functions)`
       });
     }
     // Analyze method counts per class
@@ -113,7 +115,8 @@ export class ClassicalHarmonyAnalyzer extends BasePatternAnalyzer {
         type: 'method_count_progression',
         value: methodCounts,
         weight: 0.8,
-        description: 'Methods per class follow Fibonacci pattern'
+        description: 'Methods per class follow Fibonacci pattern',
+        location: `class methods (${methodCounts.length} classes)`
       });
     }
     // Analyze branching factors
@@ -125,6 +128,7 @@ export class ClassicalHarmonyAnalyzer extends BasePatternAnalyzer {
         type: 'branching_progression',
         value: branchingFactors,
         weight: 0.85,
+        location: `code branching (${branchingFactors.length} branch points)`,
         description: 'Code branching follows natural growth pattern'
       });
     }
@@ -157,7 +161,8 @@ export class ClassicalHarmonyAnalyzer extends BasePatternAnalyzer {
         type: 'prime_module_count',
         value: moduleCount,
         weight: 0.7,
-        description: `Module count (${moduleCount}) is prime - indicating atomic modularity`
+        description: `Module count (${moduleCount}) is prime - indicating atomic modularity`,
+        location: `module structure (${moduleCount} modules)`
       });
     }
     // Check function counts in prime ranges
@@ -171,7 +176,8 @@ export class ClassicalHarmonyAnalyzer extends BasePatternAnalyzer {
         type: 'prime_function_distribution',
         value: primeRatio,
         weight: primeRatio,
-        description: `${(primeRatio * 100).toFixed(1)}% of files have prime function counts`
+        description: `${(primeRatio * 100).toFixed(1)}% of files have prime function counts`,
+        location: `function distribution (${functionCounts.length} files)`
       });
     }
     // Analyze hash distribution (simplified)
@@ -183,7 +189,8 @@ export class ClassicalHarmonyAnalyzer extends BasePatternAnalyzer {
         type: 'hash_prime_distribution',
         value: hashModuloPrimes,
         weight: hashModuloPrimes,
-        description: 'Symbol hashes show prime number distribution patterns'
+        description: 'Symbol hashes show prime number distribution patterns',
+        location: `hash analysis (${symbols.length} symbols)`
       });
     }
     const score = detectionCount > 0 ? totalScore / detectionCount : 0;
@@ -216,7 +223,8 @@ export class ClassicalHarmonyAnalyzer extends BasePatternAnalyzer {
         type: 'complexity_growth_rate',
         value: complexityGrowth.rate,
         weight: accuracy,
-        description: `Complexity grows at rate ${complexityGrowth.rate.toFixed(3)} (e ≈ ${this.E.toFixed(3)})`
+        description: `Complexity grows at rate ${complexityGrowth.rate.toFixed(3)} (e ≈ ${this.E.toFixed(3)})`,
+        location: `complexity analysis (${symbols.length} symbols)`
       });
     }
     // Check natural logarithmic relationships
@@ -249,7 +257,7 @@ export class ClassicalHarmonyAnalyzer extends BasePatternAnalyzer {
     const files = semanticData.structure.files;
     const packages = semanticData.structure.packages;
     if (packages.length === 0) {
-      return { score: 0, evidence: { type: 'empty', value: 0, weight: 0, description: 'No data available' } };
+      return { score: 0, evidence: { type: 'empty', value: 0, weight: 0, description: 'No data available', location: 'insufficient data' } };
     }
     const ratio = files.length / packages.length;
     const goldenError = Math.abs(ratio - this.PHI) / this.PHI;
@@ -260,7 +268,8 @@ export class ClassicalHarmonyAnalyzer extends BasePatternAnalyzer {
         type: 'file_package_ratio',
         value: ratio,
         weight: score,
-        description: `File to package ratio (${ratio.toFixed(3)}) approximates φ`
+        description: `File to package ratio (${ratio.toFixed(3)}) approximates φ`,
+        location: `project structure (${files.length} files, ${packages.length} packages)`
       }
     };
   }
@@ -268,7 +277,7 @@ export class ClassicalHarmonyAnalyzer extends BasePatternAnalyzer {
     const symbols = Array.from(semanticData.symbols.values());
     const functions = symbols.filter(s => s.kind === 'function' || s.kind === 'method');
     if (functions.length < 2) {
-      return { score: 0, evidence: { type: 'empty', value: 0, weight: 0, description: 'No data available' } };
+      return { score: 0, evidence: { type: 'empty', value: 0, weight: 0, description: 'No data available', location: 'insufficient data' } };
     }
     // Sort by line count and check adjacent ratios
     functions.sort((a, b) => (a.endLine - a.line) - (b.endLine - b.line));
@@ -287,7 +296,8 @@ export class ClassicalHarmonyAnalyzer extends BasePatternAnalyzer {
         type: 'function_length_progression',
         value: goldenRatioCount,
         weight: score,
-        description: `${goldenRatioCount} function pairs show golden ratio length relationship`
+        description: `${goldenRatioCount} function pairs show golden ratio length relationship`,
+        location: `function analysis (${functions.length} functions)`
       }
     };
   }
@@ -323,7 +333,8 @@ export class ClassicalHarmonyAnalyzer extends BasePatternAnalyzer {
         type: 'dependency_balance',
         value: goldenRatioCount,
         weight: score,
-        description: `${goldenRatioCount} symbols show golden ratio in/out dependency balance`
+        description: `${goldenRatioCount} symbols show golden ratio in/out dependency balance`,
+        location: `dependency graph (${totalChecked} symbols checked)`
       }
     };
   }
@@ -335,7 +346,7 @@ export class ClassicalHarmonyAnalyzer extends BasePatternAnalyzer {
       .filter(s => s.kind === 'function' || s.kind === 'method')
       .map(s => s.depth || 0);
     if (nestingLevels.length < 2) {
-      return { score: 0, evidence: { type: 'empty', value: 0, weight: 0, description: 'No data available' } };
+      return { score: 0, evidence: { type: 'empty', value: 0, weight: 0, description: 'No data available', location: 'insufficient data' } };
     }
     // Check for golden ratio in nesting progression
     nestingLevels.sort((a, b) => a - b);
@@ -353,6 +364,7 @@ export class ClassicalHarmonyAnalyzer extends BasePatternAnalyzer {
       score,
       evidence: {
         type: 'nesting_depth_progression',
+        location: `nesting analysis (${nestingLevels.length} functions)`,
         value: goldenCount,
         weight: score,
         description: 'Nesting depths show golden ratio progression'
@@ -491,7 +503,8 @@ export class ClassicalHarmonyAnalyzer extends BasePatternAnalyzer {
         type: 'logarithmic_size_distribution',
         value: linearityScore,
         weight: linearityScore,
-        description: 'File sizes follow logarithmic distribution'
+        description: 'File sizes follow logarithmic distribution',
+        location: `file size analysis (${sizes.length} files)`
       }
     };
   }
@@ -514,7 +527,7 @@ export class ClassicalHarmonyAnalyzer extends BasePatternAnalyzer {
       }
     }
     if (distances.length === 0) {
-      return { score: 0, evidence: { type: 'empty', value: 0, weight: 0, description: 'No data available' } };
+      return { score: 0, evidence: { type: 'empty', value: 0, weight: 0, description: 'No data available', location: 'insufficient data' } };
     }
     // Check if decay approximates e^(-x)
     const avgDecay = distances.reduce((a, b) => a + b, 0) / distances.length;
@@ -526,7 +539,8 @@ export class ClassicalHarmonyAnalyzer extends BasePatternAnalyzer {
         type: 'dependency_decay_rate',
         value: avgDecay,
         weight: score,
-        description: `Dependency decay rate (${avgDecay.toFixed(3)}) approximates e^(-1)`
+        description: `Dependency decay rate (${avgDecay.toFixed(3)}) approximates e^(-1)`,
+        location: `dependency analysis (${relationships.size} nodes)`
       }
     };
   }

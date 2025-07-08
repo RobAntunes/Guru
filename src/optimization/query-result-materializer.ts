@@ -3,7 +3,7 @@
  * Pre-computes and caches expensive query results for instant access
  */
 
-import { StorageManager } from '../storage/storage-manager.js';
+import { UnifiedStorageManager } from '../storage/unified-storage-manager.js';
 import { RedisCache } from '../storage/redis-cache.js';
 import { HarmonicPatternMemory, PatternCategory } from '../memory/types.js';
 import { Logger } from '../logging/logger.js';
@@ -89,7 +89,7 @@ export class QueryResultMaterializer extends EventEmitter {
   ];
 
   constructor(
-    private storageManager: StorageManager,
+    private storageManager: UnifiedStorageManager,
     private cache: RedisCache,
     private config: MaterializationConfig = {} as MaterializationConfig
   ) {

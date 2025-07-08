@@ -6,7 +6,7 @@
 import { MCPTool, MCPToolResponse } from '../qpfm-mcp-tools.js';
 import { MCPPatternGateway, MCPQuery, MCPQueryType } from './mcp-pattern-gateway.js';
 import { createDuckDBDataLake, DuckDBDataLake } from '../../datalake/duckdb-data-lake.js';
-import { Neo4jRelationshipStore } from '../../storage/neo4j-relationship-store.js';
+import { UnifiedStorageManager } from '../../storage/unified-storage-manager.js';
 import { QuantumProbabilityFieldMemory } from '../../memory/quantum-memory-system.js';
 import { StorageManager } from '../../storage/storage-manager.js';
 
@@ -532,11 +532,11 @@ export async function createMCPToolset(
   // Initialize storage systems
   const duckLake = await createDuckDBDataLake();
   
-  const neo4j = storageManager.neo4j;
+  const storage = storageManager.storage;
   const qpfm = new QuantumProbabilityFieldMemory(undefined, storageManager);
 
   // Create gateway
-  const gateway = new MCPPatternGateway(duckLake as any, neo4j, qpfm, {
+  const gateway = new MCPPatternGateway(duckLake as any, storage, qpfm, {
     cacheSize: 1000,
     cacheTTL: 300000,
     enableStreaming: true,

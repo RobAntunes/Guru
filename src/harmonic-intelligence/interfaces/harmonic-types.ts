@@ -32,6 +32,7 @@ export interface PatternScore {
   confidence: number; // 0-1
   detected: boolean;
   evidence: PatternEvidence[];
+  metadata?: Record<string, any>;
 }
 
 /**
@@ -42,6 +43,7 @@ export interface PatternEvidence {
   value: any;
   weight: number;
   description: string;
+  location?: string;
 }
 
 /**

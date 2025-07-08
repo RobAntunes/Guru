@@ -5,10 +5,9 @@
 
 import { MCPTool, MCPToolResponse } from '../qpfm-mcp-tools.js';
 import { DuckDBDataLake } from '../../datalake/duckdb-data-lake.js';
-import { Neo4jRelationshipStore } from '../../storage/neo4j-relationship-store.js';
 import { QuantumProbabilityFieldMemory } from '../../memory/quantum-memory-system.js';
 import { UnifiedPatternQuery } from '../../integration/unified-pattern-query.js';
-import { StorageManager } from '../../storage/storage-manager.js';
+import { UnifiedStorageManager } from '../../storage/unified-storage-manager.js';
 import { IntelligentQueryRouter } from './intelligent-query-router.js';
 import { Logger } from '../../logging/logger.js';
 import { EventEmitter } from 'events';
@@ -68,15 +67,15 @@ export class MCPPatternGateway extends EventEmitter {
   private config: Required<MCPGatewayConfig>;
   private queryMetrics = new Map<MCPQueryType, { count: number; avgTime: number }>();
   private duckLake: DuckDBDataLake;
-  private neo4j: Neo4jRelationshipStore;
+  private neo4j: any;  // SurrealDB adapter
   private qpfm: QuantumProbabilityFieldMemory;
   private queryRouter: IntelligentQueryRouter;
 
-  constructor(storageManagerOrDuckLake: StorageManager | DuckDBDataLake, ...args: any[]) {
+  constructor(storageManagerOrDuckLake: UnifiedStorageManager | DuckDBDataLake, ...args: any[]) {
     super();
     
     // Handle both constructor signatures
-    if (storageManagerOrDuckLake instanceof StorageManager) {
+    if (storageManagerOrDuckLake instanceof UnifiedStorageManager) {
       // Constructor with StorageManager
       const storageManager = storageManagerOrDuckLake;
       const config = args[0] as MCPGatewayConfig | undefined;
@@ -84,7 +83,7 @@ export class MCPPatternGateway extends EventEmitter {
       // Create default instances if not available
       this.duckLake = new DuckDBDataLake();
       this.duckLake.initialize().catch(err => this.logger.error('DuckDB init failed:', err));
-      this.neo4j = storageManager.neo4j || new Neo4jRelationshipStore();
+      this.neo4j = storageManager.surrealdb;  // Use SurrealDB adapter
       this.qpfm = storageManager.qpfm || new QuantumProbabilityFieldMemory();
       
       this.config = {
@@ -96,7 +95,7 @@ export class MCPPatternGateway extends EventEmitter {
     } else {
       // Original constructor with individual storage instances
       this.duckLake = storageManagerOrDuckLake;
-      this.neo4j = args[0] as Neo4jRelationshipStore;
+      this.neo4j = args[0] as any;  // SurrealDB adapter
       this.qpfm = args[1] as QuantumProbabilityFieldMemory;
       const config = args[2] as MCPGatewayConfig | undefined;
       
@@ -175,13 +174,14 @@ export class MCPPatternGateway extends EventEmitter {
         response = await this.routeQuery(query);
       }
       
-      // Add execution metadata
+      // Add execution metadata (preserve existing metadata if present)
       response.metadata = {
+        ...response.metadata,
         queryType: query.type,
         executionTime: Date.now() - startTime,
-        sourceSystems: route.storage === 'unified' 
+        sourceSystems: response.metadata?.sourceSystems || (route.storage === 'unified' 
           ? ['duckdb', 'neo4j', 'qpfm'] 
-          : [route.storage],
+          : [route.storage]),
         cacheHit: false
       };
 
@@ -941,18 +941,21 @@ export async function createMCPGateway(
 ): Promise<MCPPatternGateway> {
   const gateway = new MCPPatternGateway(duckLake, neo4j, qpfm, config);
   
-  // Pre-warm cache with common queries
-  const commonTargets = [
-    'src/core/guru.ts',
-    'src/memory/quantum-memory-system.ts',
-    'src/harmonic-intelligence/core/harmonic-analysis-engine.ts'
-  ];
-  
-  for (const target of commonTargets) {
-    gateway.handleMCPRequest({
-      type: 'quality_assessment',
-      target
-    }).catch(() => {}); // Ignore errors during pre-warming
+  // Skip pre-warming in test environment
+  if (process.env.NODE_ENV !== 'test') {
+    // Pre-warm cache with common queries
+    const commonTargets = [
+      'src/core/guru.ts',
+      'src/memory/quantum-memory-system.ts',
+      'src/harmonic-intelligence/core/harmonic-analysis-engine.ts'
+    ];
+    
+    for (const target of commonTargets) {
+      gateway.handleMCPRequest({
+        type: 'quality_assessment',
+        target
+      }).catch(() => {}); // Ignore errors during pre-warming
+    }
   }
   
   return gateway;
