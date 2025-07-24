@@ -1,0 +1,17 @@
+{
+  "/Users/boss/Documents/projects/guru/tests/ai-native-incremental-test-persistent/a.ts": {
+    "fileHash": "8fa5d4943227bb2d88d6e74035c73304eb123eca04960d8c958aa9ebac5e2ab6",
+    "position": 0,
+    "size": 232
+  },
+  "/Users/boss/Documents/projects/guru/tests/ai-native-incremental-test-persistent/b.ts": {
+    "fileHash": "489ce188e7b9167bc10d33c174ffa5762b6911facb7f34277060592dd933f7dd",
+    "position": 232,
+    "size": 235
+  },
+  "/Users/boss/Documents/projects/guru/tests/ai-native-incremental-test-persistent/c.ts": {
+    "fileHash": "94143ed131d90178dfa2a0d5c5d6b416409a477d21cfa3e6412b8263d91a94c6",
+    "position": 467,
+    "size": 234
+  }
+}

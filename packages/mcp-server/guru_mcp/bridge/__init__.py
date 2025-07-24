@@ -1,0 +1,1 @@
+# Bridge package for connecting MCP server to Guru core systems

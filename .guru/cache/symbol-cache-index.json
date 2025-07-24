@@ -1,47 +1,617 @@
 {
-  "/Users/boss/Documents/projects/guru/stress-memory-test.ts": {
-    "fileHash": "9f6878ee2ab5ade16851c301f2ecd25260aacf58f8ad2c1c2ad00a9b9a8cb9b0",
-    "position": 3130663,
+  "/Users/boss/Documents/projects/guru/edge-malformed-2.ts": {
+    "fileHash": "10b155393d978d779b8aed61b1248e991beee4d284afab84a8033bd5dc4a8acd",
+    "position": 3202790,
+    "size": 103
+  },
+  "/Users/boss/Documents/projects/guru/edge-malformed-3.ts": {
+    "fileHash": "79b364cf84390f698618811ee1147362edce65c346d36aa756fe5c0b0a61f0fa",
+    "position": 3202893,
+    "size": 106
+  },
+  "/Users/boss/Documents/projects/guru/edge-malformed-4.ts": {
+    "fileHash": "af1d0a85263673ead682fba561bba8628f35fbfd2e21b44185f40eff3a4904a0",
+    "position": 3203808,
+    "size": 246
+  },
+  "/Users/boss/Documents/projects/guru/edge-minimal-0.ts": {
+    "fileHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "position": 3204054,
+    "size": 103
+  },
+  "/Users/boss/Documents/projects/guru/edge-minimal-1.ts": {
+    "fileHash": "17eb8cbd3d1d4a7dea0c40d20fe991d5952e2fc7ccbe0b5a15af05fac40d4a7e",
+    "position": 3204157,
+    "size": 104
+  },
+  "/Users/boss/Documents/projects/guru/edge-minimal-2.ts": {
+    "fileHash": "6a3cf5192354f71615ac51034b3e97c20eda99643fcaf5bbe6d41ad59bd12167",
+    "position": 3204261,
     "size": 105
   },
-  "/Users/boss/Documents/projects/guru/stress-concurrent-0.ts": {
-    "fileHash": "6e746fe3547ab73f457f6d130ea4350d17ad8ca9d4cd464603a9a989bead85ad",
-    "position": 3130768,
-    "size": 154
+  "/Users/boss/Documents/projects/guru/edge-minimal-3.ts": {
+    "fileHash": "3f41cbb303012f33212c92326b27f6cc604fd414e20315cb10f2be7f1f6bb83c",
+    "position": 3204366,
+    "size": 244
   },
-  "/Users/boss/Documents/projects/guru/stress-concurrent-1.ts": {
-    "fileHash": "4fa823450ecfa0bcbbfcd386ec1fbedaa4d463595979739342bc9dd2dc17257c",
-    "position": 3130922,
-    "size": 154
+  "/Users/boss/Documents/projects/guru/edge-minimal-4.ts": {
+    "fileHash": "9f085b1079ab38f776bbb3930dfd067a838ca3e0483aff8625f88837e8ed964c",
+    "position": 3204610,
+    "size": 105
   },
-  "/Users/boss/Documents/projects/guru/stress-concurrent-2.ts": {
-    "fileHash": "b1b1f087858dac9b5077116d50c77f4d685d5a1f9a2b845d804f843e9ef106c5",
-    "position": 3131076,
-    "size": 251
+  "/Users/boss/Documents/projects/guru/stress-memory-test.ts": {
+    "fileHash": "9f6878ee2ab5ade16851c301f2ecd25260aacf58f8ad2c1c2ad00a9b9a8cb9b0",
+    "position": 3211459,
+    "size": 105
   },
-  "/Users/boss/Documents/projects/guru/stress-concurrent-4.ts": {
-    "fileHash": "6508c7b171db5650564ed23782fc21d137eb15b62543235e4d463ef408df739b",
-    "position": 3131327,
-    "size": 252
+  "/Users/boss/Documents/projects/guru/test-flow-type/flow-test.ts": {
+    "fileHash": "1cda5ff1214baf56f4e9dfe010b9b51940a6cdf6f017c678c1e5555a614e5906",
+    "position": 3222755,
+    "size": 492
   },
-  "/Users/boss/Documents/projects/guru/stress-concurrent-3.ts": {
-    "fileHash": "afad39aa63667e0b1d1afb80449ec6f1c87d093ba876aaa9d531377805c93316",
-    "position": 3131579,
-    "size": 249
-  },
-  "/Users/boss/Documents/projects/guru/project/src/main.js": {
-    "fileHash": "bfcf237d7af6d494b59a60cd68526b5a92234f3dee9cb015e3edb86f5f9b9849",
-    "position": 3131828,
-    "size": 354
+  "/Users/boss/Documents/projects/guru/test-flow-type/type-test.ts": {
+    "fileHash": "9b732fbd8d4073c2f27cc5c194563cea437334746aaf3dbd3a35dc55bb1e4e67",
+    "position": 3222388,
+    "size": 367
   },
   "/Users/boss/Documents/projects/guru/project/src/utils.ts": {
     "fileHash": "4c3566c35e2a58d57e04f9342c9fc0facc46997dc45d5538b2d2de3da87b32bf",
-    "position": 3132182,
+    "position": 3214903,
     "size": 259
   },
   "/Users/boss/Documents/projects/guru/project/scripts/process.py": {
     "fileHash": "1ef2e08425750083bdc32a57f10b886c92efeec07191ccd7ef1d1c0e66ad09fa",
-    "position": 3132441,
+    "position": 3214589,
     "size": 314
+  },
+  "/Users/boss/Documents/projects/guru/project/src/main.js": {
+    "fileHash": "bfcf237d7af6d494b59a60cd68526b5a92234f3dee9cb015e3edb86f5f9b9849",
+    "position": 3215162,
+    "size": 354
+  },
+  "/Users/boss/Documents/projects/guru/ai-native-test-temp.js": {
+    "fileHash": "b46a4a16b0117e13e9992c4c52344706a1cf940159876e0f75072c8cfb8be11f",
+    "position": 3177085,
+    "size": 298
+  },
+  "/Users/boss/Documents/projects/guru/ai-native-test-clustering.js": {
+    "fileHash": "9463e5a1b07b7a6317c5291d6f61c48b884fb9f0e08913034ac51d68ba59e18e",
+    "position": 3177383,
+    "size": 311
+  },
+  "/Users/boss/Documents/projects/guru/ai-native-test-patterns.js": {
+    "fileHash": "d19871b341a4549a427ff1fac306ae75d748c983777f1ec8ff92e9d897fb8b60",
+    "position": 3177694,
+    "size": 303
+  },
+  "/Users/boss/Documents/projects/guru/ai-native-test-entry.js": {
+    "fileHash": "5ed5a139867f5f4769223f516fc8173a523fff3e099de7fccf0952ee53cd7367",
+    "position": 3177997,
+    "size": 289
+  },
+  "/Users/boss/Documents/projects/guru/ai-native-test-trace.js": {
+    "fileHash": "6ec8e8defe067fd58ef8e06e4cadb28581884094cad562c5572e38cfc19a5483",
+    "position": 3200978,
+    "size": 301
+  },
+  "/Users/boss/Documents/projects/guru/ai-native-test-integration.js": {
+    "fileHash": "bc17e01b57e691fa1b707d30dacd914e66330a91e04d866eefd38c9a7d981701",
+    "position": 3201661,
+    "size": 428
+  },
+  "/Users/boss/Documents/projects/guru/ai-native-incremental-test-persistent/a.ts": {
+    "fileHash": "8fa5d4943227bb2d88d6e74035c73304eb123eca04960d8c958aa9ebac5e2ab6",
+    "position": 3179015,
+    "size": 232
+  },
+  "/Users/boss/Documents/projects/guru/ai-native-incremental-test-persistent/b.ts": {
+    "fileHash": "489ce188e7b9167bc10d33c174ffa5762b6911facb7f34277060592dd933f7dd",
+    "position": 3179247,
+    "size": 235
+  },
+  "/Users/boss/Documents/projects/guru/ai-native-incremental-test-persistent/c.ts": {
+    "fileHash": "d01d3894d2f6ce1a298efe9046d331d2e783ff17c5d4cc2b8558333a1c3d476b",
+    "position": 3179716,
+    "size": 234
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-7.ts": {
+    "fileHash": "4100463bd2342634c1df4274d8bc15b5fb9a5430735bbef591048f0f3dc2fa01",
+    "position": 3179950,
+    "size": 247
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-8.ts": {
+    "fileHash": "bb7b689b308cf17f43ff565eabf579c7e83adcb8c69d1d95f2ab96898dc2ea40",
+    "position": 3180197,
+    "size": 244
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-13.ts": {
+    "fileHash": "3b95c09dd3cbe39f0124fe8bfe6d9be62237d718472dc0d81e78ae36ec656fd6",
+    "position": 3180441,
+    "size": 246
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-5.ts": {
+    "fileHash": "54fd742a0222583267fa0b9ae9066a793054eada4742cd3c151c71953407cf0b",
+    "position": 3180687,
+    "size": 245
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-14.ts": {
+    "fileHash": "80a9452965101f6a3bc56e11c1c2852e919345c870048233d16ac7008759d62f",
+    "position": 3180932,
+    "size": 248
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-15.ts": {
+    "fileHash": "a78e54cd658355920b51e38008384fff4f40357935a8c8abeb2e1100a745d758",
+    "position": 3181180,
+    "size": 247
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-12.ts": {
+    "fileHash": "773806bb6f45b88e2e8cd6ea4287cc202722ad905519dab465553f25bdf99804",
+    "position": 3181427,
+    "size": 247
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-9.ts": {
+    "fileHash": "76a60222bc19b09d10be2fe020fbaacd70b67d9fe25a722a8732d3e64783277b",
+    "position": 3181674,
+    "size": 244
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-0.ts": {
+    "fileHash": "96e0f412d4fa06978d15f9a0ac799c2744485ec9b083e2fd23ed5def9c7ad537",
+    "position": 3181918,
+    "size": 246
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-11.ts": {
+    "fileHash": "4004fd216e4327d6524e505c741f65eb531d0bafb8867175380333b20af0f581",
+    "position": 3182164,
+    "size": 247
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-18.ts": {
+    "fileHash": "dbf5beaa8571cba5ba79f007b5d09366e7f073392e322a5bbca981ac35100d20",
+    "position": 3182411,
+    "size": 246
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-17.ts": {
+    "fileHash": "b5aa97575207a4113a5be77fb00853973d5895e54376768909769ee8e0314139",
+    "position": 3182657,
+    "size": 246
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-16.ts": {
+    "fileHash": "5adcef8145ae7fc0201503d1b772fec4ccf2e54d9687e6dca18bd6407488bcd7",
+    "position": 3182903,
+    "size": 245
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-19.ts": {
+    "fileHash": "62a427ee842c41adf5d5bf6fd403f6b49ae092edd851f964cfec2fc7ba9c689b",
+    "position": 3183148,
+    "size": 246
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-3.ts": {
+    "fileHash": "6796d8e9b8625f4b5d7bbbbf640620c1e8191d187af3f3bb831fe897e1f4d0af",
+    "position": 3183394,
+    "size": 246
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-1.ts": {
+    "fileHash": "b8d17d98bb81ce5a2a3e0bc0c4eaa8f2a915155a07023b9600cd3c92d3afc92e",
+    "position": 3183640,
+    "size": 244
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-6.ts": {
+    "fileHash": "895cad23d2aab89bb587a1e62a3a330e95e9afc5a6be923067c3de1dbbeab135",
+    "position": 3183884,
+    "size": 244
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-10.ts": {
+    "fileHash": "569eb5230d36ac7275b7ba6ddc2ccbd6f499d553da7910390ea9283e290b2818",
+    "position": 3184128,
+    "size": 247
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-4.ts": {
+    "fileHash": "ce59ea6af547c5c91b097f12dce55bcd6f3663acef348303bc0f471814955883",
+    "position": 3184375,
+    "size": 246
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-Yeeaqf/benchmark-2.ts": {
+    "fileHash": "459d3017829a280135d7ec2981c0e4e29647c0e36d4fe0ed4a413bd06385c35e",
+    "position": 3184621,
+    "size": 246
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-1.ts": {
+    "fileHash": "578abc6f773dca636488ec92190629b5d3d30cae5fea8f638f97412beaea65c3",
+    "position": 3184867,
+    "size": 251
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-9.ts": {
+    "fileHash": "e3a1e0eac8ed39bf924735f1f35c4edafda4563173383112b1255cb896be6893",
+    "position": 3185118,
+    "size": 251
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-3.ts": {
+    "fileHash": "e3dc5cb04a70b7487eee5f9af6abce82ba2ec385863091dfd2ce3df9ae254f89",
+    "position": 3185369,
+    "size": 250
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-2.ts": {
+    "fileHash": "054c922a1afe900a5d0d3fe68db77da02a2159fa577d9a05b2934e95b5ccaf98",
+    "position": 3185619,
+    "size": 251
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-8.ts": {
+    "fileHash": "882f4f2c22de25e60af509e2753d15a4a76b945a80e32be7ae4ff18b3fae0754",
+    "position": 3185870,
+    "size": 251
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-11.ts": {
+    "fileHash": "54f57a2023a7e2a3ffc35ba7a06f7176a14bf332a20a7bc622a441d81c071094",
+    "position": 3186121,
+    "size": 252
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-14.ts": {
+    "fileHash": "2a4db54885782830bc0babe5dc3a63deb646ab8e5ccf70b5b051f22d310c353b",
+    "position": 3186373,
+    "size": 252
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-17.ts": {
+    "fileHash": "4be37156029431fb3b56404f301c78d31619e0102db3a7af65f2f286e62c2c92",
+    "position": 3186625,
+    "size": 253
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-21.ts": {
+    "fileHash": "afdd90d31d27e01de5a232994b38cff0e1824873d6cfd28dce73e1d2cdfe46d2",
+    "position": 3186878,
+    "size": 252
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-12.ts": {
+    "fileHash": "5e8781c059049f49de7ebf57b5004deb096292fc60fc68292af0ebe9ae587002",
+    "position": 3187130,
+    "size": 252
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-18.ts": {
+    "fileHash": "a41c25a6b2901cdacb11774167bff079ae19b6a74c9866c333985031194a00b0",
+    "position": 3187382,
+    "size": 253
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-24.ts": {
+    "fileHash": "623338967fd647fcefad5ebffe86350e06dd8d068a6386dc807eb3a217755c1d",
+    "position": 3187635,
+    "size": 253
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-26.ts": {
+    "fileHash": "e69ce430695680063b6590bae76920425cf77658cb40476d5cf88c26fad2bc8f",
+    "position": 3187888,
+    "size": 253
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-19.ts": {
+    "fileHash": "4f3dd7930e9e2725fddf0fd4d3df654f5f0b603164ee59dfc4462cedacd0454f",
+    "position": 3188141,
+    "size": 253
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-23.ts": {
+    "fileHash": "56e2a3832f8539085accf9d5146644adda6f02162c4644faf5ed5c4506cd149a",
+    "position": 3188394,
+    "size": 252
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-22.ts": {
+    "fileHash": "7eabf72e78bacd5528526090980a36eef5bb60c9ed81fcc84f3e0aa5f87c5564",
+    "position": 3188646,
+    "size": 252
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-29.ts": {
+    "fileHash": "2b7201fce606bc4ae495411c6d3894a9c1216ec8ac91c940ffa37c143bdf2cfa",
+    "position": 3188898,
+    "size": 252
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-28.ts": {
+    "fileHash": "148e7f40f0a4ff190bd7873e66bf50b0dbe95e54ff7e39619e9e88ec7f8ec1f9",
+    "position": 3189150,
+    "size": 252
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-27.ts": {
+    "fileHash": "92b9ee6b61ae8abd964f5b4852ed050ed09411ddb890dacab36d8f08d681705b",
+    "position": 3189402,
+    "size": 253
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-7.ts": {
+    "fileHash": "3fa64eb4e3a8c48ec0d70ff4a4715953d49b9baf1cebbb1112792fda600adbba",
+    "position": 3189655,
+    "size": 251
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-13.ts": {
+    "fileHash": "8f75a004cd3a2e0a76a17aff44a472a0dc571941d1ebd66aebe12ed31f29c724",
+    "position": 3189906,
+    "size": 253
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-10.ts": {
+    "fileHash": "7e94deb9e266eaa91069318797cb0496bab02f0a4ab4fd33eb15557def4a0c6a",
+    "position": 3190159,
+    "size": 252
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-25.ts": {
+    "fileHash": "553a38a5a86746b49573e8be858fbe8cf12b676ad049421715b6cc6382a74e00",
+    "position": 3190411,
+    "size": 253
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-5.ts": {
+    "fileHash": "a68c0350496be5db1778089ea85745c82ca4c3d11d3946550f24af425336b60c",
+    "position": 3190664,
+    "size": 252
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-20.ts": {
+    "fileHash": "0810f4adbeefe56d75121cac10d85de93ea3b2c1de6639e28834bbb890cf87d3",
+    "position": 3190916,
+    "size": 253
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-16.ts": {
+    "fileHash": "da229cec69ba70f684bef858ba2d1f910ebe086ef51d3c5c9b4e0c6e4054e5a6",
+    "position": 3191169,
+    "size": 253
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-4.ts": {
+    "fileHash": "962235badc34ac7df4b1f1cdc3b49719f3147edb83489fd26d60b887e80ab0a2",
+    "position": 3191422,
+    "size": 251
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-0.ts": {
+    "fileHash": "23d7a081134a4e07190218b24bbd1aee393bc2fd611952d59834f08aac6ac8b0",
+    "position": 3191673,
+    "size": 251
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-6.ts": {
+    "fileHash": "7ba830c40c3930ba15def8ba7a0009d35efeca7091cb9abb0fc053a7d23c4781",
+    "position": 3191924,
+    "size": 251
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-perf-ZgSYYI/benchmark-15.ts": {
+    "fileHash": "de666301ac3d464cd297028aa7d2110220e2dec7cc3b94c834d3b296cae621f7",
+    "position": 3192175,
+    "size": 252
+  },
+  "/Users/boss/Documents/projects/guru/ai-native-react-test.tsx": {
+    "fileHash": "d7ff238fd1964697767634b7181114232de47955e3cb3101d72745d609ab8b81",
+    "position": 3223247,
+    "size": 364
+  },
+  "/Users/boss/Documents/projects/guru/ai-native-complex-test.ts": {
+    "fileHash": "2659f6234c332ac78a6ccecd4be33c4b3da1319199bbbfae8670f0906fc2eca8",
+    "position": 3223611,
+    "size": 400
+  },
+  "/Users/boss/Documents/projects/guru/ai-native-perf-test.ts": {
+    "fileHash": "4ac2b00856f280aa9b6b99fe0de3b4c79e52e6ce9d8a1a2a64d0907d62f64dec",
+    "position": 3224011,
+    "size": 386
+  },
+  "/Users/boss/Documents/projects/guru/ai-native-patterns-test.ts": {
+    "fileHash": "f464cc6f298685c2e4ff88270fa7a0116790fb42d732f612537e4e4a17ad7695",
+    "position": 3224397,
+    "size": 304
+  },
+  "/Users/boss/Documents/projects/guru/ai-native-large-test.tsx": {
+    "fileHash": "c785dcdeefd31ac1a3db26a53a7b43ccd120969c9997b0d9ac82409c846e831d",
+    "position": 3224701,
+    "size": 319
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-MHvbJ1/file2.js": {
+    "fileHash": "f32e9bde10e8aafea3d82dac765eec4ce93adcf9533bc4e26466457f90b021f8",
+    "position": 3195978,
+    "size": 259
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-MHvbJ1/file3.js": {
+    "fileHash": "566496d7fd3b59c6057b3ef0fb5e75c05f795fb6f8a17281017970063ed9c144",
+    "position": 3196237,
+    "size": 258
+  },
+  "/Users/boss/Documents/projects/guru/stress-deep-nesting.ts": {
+    "fileHash": "66bc30480f23558ef92f0b5a9b35fd7eabdcd2d043f0a82a3e7fe761f6f00462",
+    "position": 3199573,
+    "size": 460
+  },
+  "/Users/boss/Documents/projects/guru/test-samples/hello-world/index.js": {
+    "fileHash": "d0a8adf734e6b4325e1b83906c78e4d7981c3d803fe513a9034a0688e52b6190",
+    "position": 3211772,
+    "size": 104
+  },
+  "/Users/boss/Documents/projects/guru/test-samples/simple.ts": {
+    "fileHash": "045d274b0eec1c090609ee2e11d2c532cadc26c7d2d4b2a7cb70a9f85e9f4b65",
+    "position": 3211876,
+    "size": 316
+  },
+  "/Users/boss/Documents/projects/guru/test-samples/web-server/server.js": {
+    "fileHash": "43c2026694e4be83dbf65e6c6d8ee7ea6d1ee61bdf8b828ede2f0cbcf36a89a2",
+    "position": 3212192,
+    "size": 286
+  },
+  "/Users/boss/Documents/projects/guru/test-samples/cli-tool/cli.js": {
+    "fileHash": "f23507d61cef47f645663f61c9cf202873e020f56c7d601c4b24c332a7601f21",
+    "position": 3211669,
+    "size": 103
+  },
+  "/Users/boss/Documents/projects/guru/stress-concurrent-3.ts": {
+    "fileHash": "afad39aa63667e0b1d1afb80449ec6f1c87d093ba876aaa9d531377805c93316",
+    "position": 3212478,
+    "size": 249
+  },
+  "/Users/boss/Documents/projects/guru/stress-concurrent-4.ts": {
+    "fileHash": "6508c7b171db5650564ed23782fc21d137eb15b62543235e4d463ef408df739b",
+    "position": 3212727,
+    "size": 252
+  },
+  "/Users/boss/Documents/projects/guru/stress-concurrent-1.ts": {
+    "fileHash": "4fa823450ecfa0bcbbfcd386ec1fbedaa4d463595979739342bc9dd2dc17257c",
+    "position": 3212979,
+    "size": 251
+  },
+  "/Users/boss/Documents/projects/guru/stress-concurrent-0.ts": {
+    "fileHash": "6e746fe3547ab73f457f6d130ea4350d17ad8ca9d4cd464603a9a989bead85ad",
+    "position": 3213230,
+    "size": 249
+  },
+  "/Users/boss/Documents/projects/guru/stress-concurrent-2.ts": {
+    "fileHash": "b1b1f087858dac9b5077116d50c77f4d685d5a1f9a2b845d804f843e9ef106c5",
+    "position": 3213479,
+    "size": 251
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-bxp3Ux/file2.js": {
+    "fileHash": "f32e9bde10e8aafea3d82dac765eec4ce93adcf9533bc4e26466457f90b021f8",
+    "position": 3225257,
+    "size": 259
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-bxp3Ux/file3.js": {
+    "fileHash": "566496d7fd3b59c6057b3ef0fb5e75c05f795fb6f8a17281017970063ed9c144",
+    "position": 3225516,
+    "size": 258
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-SYk8Sl/moduleA.js": {
+    "fileHash": "d5c50759865b28cba249970df71269cde740de3a8f44ce4d3d79990c41d61407",
+    "position": 3225774,
+    "size": 281
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-SYk8Sl/moduleB.js": {
+    "fileHash": "d70fd5dea442672d72ad27cd45b1e02adc9e81f90477f0f34d67d3e7f227a277",
+    "position": 3226055,
+    "size": 280
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-SYk8Sl/moduleC.js": {
+    "fileHash": "eb86edf8ec06ecd55e7386b6a7b0c5b4f9472686089418cda5f0a805300943ea",
+    "position": 3226335,
+    "size": 280
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-delta-test-WEqomG/cycleB.js": {
+    "fileHash": "a8d16db7093ad3873a2448f6e6f53bc075ca9d534d1266ee34b5269ef8ed6dba",
+    "position": 3226615,
+    "size": 279
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-jnDCgj/story.js": {
+    "fileHash": "580b60e492f283f5ad9e1baf5a9579affd94d0251ed76cc2173458979f242cf6",
+    "position": 3229089,
+    "size": 372
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-jnDCgj/research.js": {
+    "fileHash": "2ec8ac1106a64e954e2241edaca762e1acf7824b385aeca4362c1c80bdc973cd",
+    "position": 3228616,
+    "size": 473
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-jnDCgj/algorithm.js": {
+    "fileHash": "2f38dbb89da462fd211edf52bf33c1f9e54e81be8873e5407095f50cbf89798a",
+    "position": 3228111,
+    "size": 505
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-6pqSck/story.js": {
+    "fileHash": "580b60e492f283f5ad9e1baf5a9579affd94d0251ed76cc2173458979f242cf6",
+    "position": 3231656,
+    "size": 372
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-6pqSck/research.js": {
+    "fileHash": "2ec8ac1106a64e954e2241edaca762e1acf7824b385aeca4362c1c80bdc973cd",
+    "position": 3231183,
+    "size": 473
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-6pqSck/algorithm.js": {
+    "fileHash": "2f38dbb89da462fd211edf52bf33c1f9e54e81be8873e5407095f50cbf89798a",
+    "position": 3230678,
+    "size": 505
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-vCMhZG/story.js": {
+    "fileHash": "580b60e492f283f5ad9e1baf5a9579affd94d0251ed76cc2173458979f242cf6",
+    "position": 3234223,
+    "size": 372
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-vCMhZG/research.js": {
+    "fileHash": "2ec8ac1106a64e954e2241edaca762e1acf7824b385aeca4362c1c80bdc973cd",
+    "position": 3233750,
+    "size": 473
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-vCMhZG/algorithm.js": {
+    "fileHash": "2f38dbb89da462fd211edf52bf33c1f9e54e81be8873e5407095f50cbf89798a",
+    "position": 3233245,
+    "size": 505
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-IufBCA/story.js": {
+    "fileHash": "580b60e492f283f5ad9e1baf5a9579affd94d0251ed76cc2173458979f242cf6",
+    "position": 3236790,
+    "size": 372
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-IufBCA/research.js": {
+    "fileHash": "2ec8ac1106a64e954e2241edaca762e1acf7824b385aeca4362c1c80bdc973cd",
+    "position": 3236317,
+    "size": 473
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-IufBCA/algorithm.js": {
+    "fileHash": "2f38dbb89da462fd211edf52bf33c1f9e54e81be8873e5407095f50cbf89798a",
+    "position": 3235812,
+    "size": 505
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-be1Sks/writing/story.js": {
+    "fileHash": "580b60e492f283f5ad9e1baf5a9579affd94d0251ed76cc2173458979f242cf6",
+    "position": 3237162,
+    "size": 372
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-be1Sks/research/research.js": {
+    "fileHash": "2ec8ac1106a64e954e2241edaca762e1acf7824b385aeca4362c1c80bdc973cd",
+    "position": 3237534,
+    "size": 473
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-be1Sks/coding/algorithm.js": {
+    "fileHash": "2f38dbb89da462fd211edf52bf33c1f9e54e81be8873e5407095f50cbf89798a",
+    "position": 3238007,
+    "size": 505
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-0TVA3k/writing/story.js": {
+    "fileHash": "580b60e492f283f5ad9e1baf5a9579affd94d0251ed76cc2173458979f242cf6",
+    "position": 3238512,
+    "size": 372
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-0TVA3k/research/research.js": {
+    "fileHash": "2ec8ac1106a64e954e2241edaca762e1acf7824b385aeca4362c1c80bdc973cd",
+    "position": 3238884,
+    "size": 473
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-0TVA3k/coding/algorithm.js": {
+    "fileHash": "2f38dbb89da462fd211edf52bf33c1f9e54e81be8873e5407095f50cbf89798a",
+    "position": 3239357,
+    "size": 505
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-HG807D/writing/story.js": {
+    "fileHash": "580b60e492f283f5ad9e1baf5a9579affd94d0251ed76cc2173458979f242cf6",
+    "position": 3239862,
+    "size": 372
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-HG807D/research/research.js": {
+    "fileHash": "2ec8ac1106a64e954e2241edaca762e1acf7824b385aeca4362c1c80bdc973cd",
+    "position": 3240234,
+    "size": 473
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-HG807D/coding/algorithm.js": {
+    "fileHash": "2f38dbb89da462fd211edf52bf33c1f9e54e81be8873e5407095f50cbf89798a",
+    "position": 3240707,
+    "size": 505
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-CxBoWl/writing/story.js": {
+    "fileHash": "580b60e492f283f5ad9e1baf5a9579affd94d0251ed76cc2173458979f242cf6",
+    "position": 3241212,
+    "size": 372
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-CxBoWl/research/research.js": {
+    "fileHash": "2ec8ac1106a64e954e2241edaca762e1acf7824b385aeca4362c1c80bdc973cd",
+    "position": 3241584,
+    "size": 473
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-CxBoWl/coding/algorithm.js": {
+    "fileHash": "2f38dbb89da462fd211edf52bf33c1f9e54e81be8873e5407095f50cbf89798a",
+    "position": 3242057,
+    "size": 505
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-VsME6u/writing/story.js": {
+    "fileHash": "580b60e492f283f5ad9e1baf5a9579affd94d0251ed76cc2173458979f242cf6",
+    "position": 3242562,
+    "size": 372
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-VsME6u/research/research.js": {
+    "fileHash": "2ec8ac1106a64e954e2241edaca762e1acf7824b385aeca4362c1c80bdc973cd",
+    "position": 3242934,
+    "size": 473
+  },
+  "/var/folders/3s/cwlqcwpd1dq41bj3v8f_jskm0000gn/T/guru-universality-VsME6u/coding/algorithm.js": {
+    "fileHash": "2f38dbb89da462fd211edf52bf33c1f9e54e81be8873e5407095f50cbf89798a",
+    "position": 3243407,
+    "size": 505
   }
 }

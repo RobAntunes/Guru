@@ -1,0 +1,54 @@
+[tool.poetry]
+name = "guru-mcp-server"
+version = "1.0.0"
+description = "Guru MCP Server - Universal AI Cognitive Enhancement via Model Context Protocol"
+authors = ["Guru Team <team@guruai.dev>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "guru_mcp"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+mcp = "^1.0.0"
+asyncio-mqtt = "^0.16.2"
+pydantic = "^2.6.1"
+uvloop = "^0.19.0"
+loguru = "^0.7.2"
+numpy = "^1.26.4"
+torch = "^2.2.0"
+transformers = "^4.37.2"
+onnxruntime = "^1.17.0"
+llama-cpp-python = "^0.2.56"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+pytest-asyncio = "^0.23.5"
+black = "^24.1.1"
+isort = "^5.13.2"
+mypy = "^1.8.0"
+ruff = "^0.2.1"
+
+[tool.poetry.scripts]
+guru-mcp = "guru_mcp.server:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
