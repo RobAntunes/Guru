@@ -126,6 +126,7 @@ impl Phi4Analysis {
             .iter()
             .zip(self.pattern_detection.confidence_scores.iter())
             .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
+            .map(|(pattern, &score)| (pattern, score))
     }
     
     /// Check if analysis meets minimum confidence threshold

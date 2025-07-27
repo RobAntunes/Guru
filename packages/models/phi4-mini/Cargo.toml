@@ -6,7 +6,7 @@ description = "Phi-4 Mini integration for Guru cognitive systems"
 
 [dependencies]
 # ONNX Runtime for fast inference
-ort = { version = "2.0", features = ["load-dynamic"] }
+ort = { version = "2.0.0-rc.10", features = ["load-dynamic"] }
 
 # Tokenization
 tokenizers = "0.19"
@@ -28,6 +28,10 @@ log = "0.4"
 
 # Math utilities
 ndarray = "0.15"
+rand = "0.8"
+
+# HTTP client for model download
+reqwest = { version = "0.11", features = ["json"] }
 
 [dev-dependencies]
 tokio-test = "0.4"

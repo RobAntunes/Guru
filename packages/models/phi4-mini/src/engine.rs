@@ -1,9 +1,10 @@
 use std::path::Path;
-use ort::{GraphOptimizationLevel, Session, Value};
+use ort::session::{Session, builder::GraphOptimizationLevel};
 use tokenizers::Tokenizer;
 use log::{info, debug, warn};
 
 use crate::{Phi4Config, Phi4Result, Phi4Error, Phi4Analysis, CognitiveAnalysis};
+use crate::generation::{TextGenerator, GenerationConfig};
 
 /// High-performance Phi-4 Mini inference engine using ONNX Runtime
 pub struct Phi4MiniEngine {
@@ -31,10 +32,9 @@ impl Phi4MiniEngine {
         // Initialize ONNX Runtime session
         debug!("🔧 Setting up ONNX Runtime session");
         let session = Session::builder()?
-            .with_optimization_level(GraphOptimizationLevel::All)?
-            .with_intra_threads(config.num_threads)?
-            .with_inter_threads(1)?
-            .commit_from_file(&config.model_path)?;
+            .with_optimization_level(GraphOptimizationLevel::Level3)?
+            .with_intra_threads(config.num_threads as i16)?
+            .with_model_from_file(&config.model_path)?;
             
         // Load tokenizer
         debug!("📝 Loading tokenizer");
@@ -62,7 +62,7 @@ impl Phi4MiniEngine {
         
         // Tokenize input
         let encoding = self.tokenizer
-            .encode(&enhanced_prompt, true)
+            .encode(&enhanced_prompt[..], true)
             .map_err(Phi4Error::TokenizerError)?;
             
         let input_ids: Vec<i64> = encoding
@@ -71,36 +71,33 @@ impl Phi4MiniEngine {
             .map(|&x| x as i64)
             .collect();
         
-        // Truncate if too long
-        let input_ids = if input_ids.len() > self.config.max_length {
-            warn!("🔪 Truncating input from {} to {} tokens", input_ids.len(), self.config.max_length);
-            input_ids[..self.config.max_length].to_vec()
+        // Truncate if too long (leave room for generation)
+        let max_input_length = self.config.max_length - 500; // Reserve 500 tokens for generation
+        let input_ids = if input_ids.len() > max_input_length {
+            warn!("🔪 Truncating input from {} to {} tokens", input_ids.len(), max_input_length);
+            input_ids[..max_input_length].to_vec()
         } else {
             input_ids
         };
         
-        // Create ONNX tensor
-        let input_shape = [1_i64, input_ids.len() as i64];
-        let input_tensor = Value::from_array((input_shape, input_ids))?;
+        // Create text generator with appropriate config
+        let gen_config = GenerationConfig {
+            max_new_tokens: 500,
+            temperature: self.config.temperature,
+            top_k: 50,
+            top_p: 0.9,
+            repetition_penalty: 1.1,
+            do_sample: true,
+            num_layers: 32,
+            num_heads: 32,
+            head_dim: 96,
+        };
         
-        // Run inference
-        debug!("⚡ Running ONNX inference");
-        let outputs = self.session.run(vec![input_tensor])?;
+        let generator = TextGenerator::new(&self.session, &self.tokenizer, gen_config);
         
-        // Extract logits
-        let logits_tensor = &outputs[0];
-        let logits = logits_tensor
-            .try_extract_tensor::<f32>()?
-            .view()
-            .to_owned();
-        
-        // Sample tokens from logits
-        let response_tokens = self.sample_from_logits(&logits)?;
-        
-        // Decode response
-        let response = self.tokenizer
-            .decode(&response_tokens, true)
-            .map_err(Phi4Error::TokenizerError)?;
+        // Generate response using proper text generation with KV cache
+        debug!("⚡ Running text generation with KV cache");
+        let response = generator.generate(input_ids).await?;
         
         debug!("📝 Generated response length: {}", response.len());
         
@@ -146,47 +143,6 @@ Please provide your analysis in this JSON format:
 "#,
             user_prompt = user_prompt
         )
-    }
-    
-    /// Sample tokens from logits using temperature sampling
-    fn sample_from_logits(&self, logits: &ndarray::ArrayView2<f32>) -> Phi4Result<Vec<u32>> {
-        // Get the last token's logits (for next token prediction)
-        let last_logits = logits
-            .row(logits.nrows() - 1)
-            .to_owned();
-        
-        // Apply temperature
-        let scaled_logits: Vec<f32> = last_logits
-            .iter()
-            .map(|&x| x / self.config.temperature)
-            .collect();
-        
-        // Convert to probabilities using softmax
-        let max_logit = scaled_logits
-            .iter()
-            .fold(f32::NEG_INFINITY, |a, &b| a.max(b));
-            
-        let exp_logits: Vec<f32> = scaled_logits
-            .iter()
-            .map(|&x| (x - max_logit).exp())
-            .collect();
-            
-        let sum_exp: f32 = exp_logits.iter().sum();
-        let probs: Vec<f32> = exp_logits
-            .iter()
-            .map(|&x| x / sum_exp)
-            .collect();
-        
-        // Sample token (simplified - just take argmax for now)
-        let token_id = probs
-            .iter()
-            .enumerate()
-            .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
-            .map(|(i, _)| i as u32)
-            .ok_or_else(|| Phi4Error::InferenceFailed("No valid token found".to_string()))?;
-        
-        // For now, return just one token - in full implementation, we'd generate until EOS
-        Ok(vec![token_id])
     }
     
     /// Parse the cognitive response into structured analysis

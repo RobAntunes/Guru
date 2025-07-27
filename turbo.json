@@ -1,0 +1,53 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "target/**", ".next/**", "build/**"],
+      "env": ["NODE_ENV"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"],
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "test/**/*.ts", "tests/**/*.ts"]
+    },
+    "lint": {
+      "outputs": [],
+      "inputs": ["src/**/*.ts", "src/**/*.tsx"]
+    },
+    "type-check": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "clean": {
+      "cache": false
+    },
+    "desktop": {
+      "dependsOn": ["@guru/core#build", "@guru/shared#build"],
+      "cache": false,
+      "persistent": true
+    },
+    "mcp": {
+      "dependsOn": ["@guru/core#build"],
+      "cache": false,
+      "persistent": true
+    }
+  },
+  "globalDependencies": [
+    "package.json",
+    "tsconfig.json",
+    ".env",
+    ".env.local"
+  ],
+  "globalEnv": [
+    "NODE_ENV",
+    "CI",
+    "GURU_MODEL_PATH",
+    "GURU_CONFIG"
+  ]
+}

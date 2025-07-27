@@ -25,6 +25,7 @@ mod engine;
 mod cognitive;
 mod quantization;
 mod download;
+mod generation;
 
 pub use engine::Phi4MiniEngine;
 pub use cognitive::{Phi4Analysis, CognitiveAnalysis, ReasoningStep};
