@@ -1,4 +1,4 @@
-# Guru (PRIVATE/PROPRIETARY)
+# Guru
 
 **NOTE:** This project is not open source. License and usage terms will be determined before any public release. Do not distribute or use without explicit permission.
 
