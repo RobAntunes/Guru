@@ -10,6 +10,7 @@ interface StoredKnowledgeBase extends KnowledgeBase {
   // Additional fields for local storage
   localId: string;
   isLocal: boolean;
+  projectId: string; // Associate with a project
 }
 
 class KnowledgeBaseStorageService {
@@ -40,7 +41,13 @@ class KnowledgeBaseStorageService {
       }
 
       const content = await readTextFile(filePath, { baseDir: BaseDirectory.AppData });
-      return JSON.parse(content);
+      const kbs = JSON.parse(content);
+      // Convert date strings back to Date objects
+      return kbs.map((kb: any) => ({
+        ...kb,
+        createdAt: new Date(kb.createdAt),
+        lastUpdated: new Date(kb.lastUpdated)
+      }));
     } catch (error) {
       console.error('Failed to read knowledge bases:', error);
       return [];
@@ -64,13 +71,21 @@ class KnowledgeBaseStorageService {
   }
 
   /**
-   * Create a new knowledge base
+   * Create a new knowledge base (legacy method - use createKnowledgeBaseWithProject)
    */
   async createKnowledgeBase(
     name: string, 
     description: string,
     cognitiveSystemsEnabled: string[] = ['harmonic', 'quantum']
   ): Promise<StoredKnowledgeBase> {
+    // Get current project ID
+    const { projectStorage } = await import('./project-storage');
+    const currentProject = await projectStorage.getCurrentProject();
+    
+    if (!currentProject) {
+      throw new Error('No project selected');
+    }
+    
     const allKBs = await this.getAllKnowledgeBases();
     
     // Generate a unique ID
@@ -81,18 +96,22 @@ class KnowledgeBaseStorageService {
       localId: id,
       name,
       description,
-      createdAt: new Date().toISOString(),
-      lastUpdated: new Date().toISOString(),
+      createdAt: new Date(),
+      lastUpdated: new Date(),
       documentCount: 0,
       chunkCount: 0,
       cognitiveSystemsEnabled,
-      isLocal: true
+      isLocal: true,
+      projectId: currentProject.id
     };
 
     await this.saveAllKnowledgeBases([...allKBs, newKB]);
     
     // Create default "Ungrouped" group for this KB
     await documentGroupsStorage.createGroup(id, 'Ungrouped', 'Documents not assigned to any group');
+    
+    // Update project metadata
+    await projectStorage.updateProjectMetadata(currentProject.id);
     
     return newKB;
   }
@@ -128,6 +147,65 @@ class KnowledgeBaseStorageService {
   async getKnowledgeBase(id: string): Promise<StoredKnowledgeBase | null> {
     const allKBs = await this.getAllKnowledgeBases();
     return allKBs.find(kb => kb.id === id) || null;
+  }
+
+  /**
+   * Get all knowledge bases for a specific project
+   */
+  async getKnowledgeBasesByProject(projectId: string): Promise<StoredKnowledgeBase[]> {
+    const allKBs = await this.getAllKnowledgeBases();
+    return allKBs.filter(kb => kb.projectId === projectId);
+  }
+
+  /**
+   * Create a knowledge base with project association
+   */
+  async createKnowledgeBaseWithProject(name: string, description: string, projectId: string): Promise<StoredKnowledgeBase> {
+    // Import projectStorage to get current project if not provided
+    const { projectStorage } = await import('./project-storage');
+    const actualProjectId = projectId || (await projectStorage.getCurrentProject())?.id;
+    
+    if (!actualProjectId) {
+      throw new Error('No project selected');
+    }
+
+    const newKB: StoredKnowledgeBase = {
+      id: `kb-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      localId: `kb-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      name,
+      description,
+      documentCount: 0,
+      chunkCount: 0,
+      createdAt: new Date(),
+      lastUpdated: new Date(),
+      isLocal: true,
+      projectId: actualProjectId
+    };
+
+    const allKBs = await this.getAllKnowledgeBases();
+    allKBs.push(newKB);
+    await this.saveAllKnowledgeBases(allKBs);
+
+    // Update project metadata
+    await projectStorage.updateProjectMetadata(actualProjectId);
+
+    return newKB;
+  }
+
+  /**
+   * Delete all knowledge bases for a project
+   */
+  async deleteKnowledgeBasesByProject(projectId: string): Promise<void> {
+    const allKBs = await this.getAllKnowledgeBases();
+    const kbsToDelete = allKBs.filter(kb => kb.projectId === projectId);
+    
+    // Delete all groups for each KB
+    for (const kb of kbsToDelete) {
+      await documentGroupsStorage.deleteGroupsByKB(kb.id);
+    }
+    
+    const filtered = allKBs.filter(kb => kb.projectId !== projectId);
+    await this.saveAllKnowledgeBases(filtered);
   }
 }
 

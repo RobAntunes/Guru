@@ -286,6 +286,67 @@ class GuruIntegrationService {
     
     return await invoke<string>('read_file_as_base64', { filePath });
   }
+
+  /**
+   * Call MCP Tool
+   * Invokes an MCP tool through the backend
+   */
+  async callMCPTool(toolName: string, args: any): Promise<any> {
+    if (USE_MOCK) {
+      // Return mock data for synthesis tool
+      if (toolName === 'guru_knowledge_synthesis') {
+        if (args.action === 'start') {
+          return {
+            session_id: `session-${Date.now()}`,
+            status: 'Session started',
+            next_action: 'analyze',
+            document_count: args.documents?.length || 0
+          };
+        } else if (args.action === 'analyze') {
+          return {
+            session_id: args.session_id,
+            status: 'Patterns analyzed',
+            pattern_templates: [
+              {
+                id: 'scamper-template-1',
+                framework: 'SCAMPER',
+                template_type: 'creative_analysis',
+                instructions: 'Apply SCAMPER methods',
+                document_refs: []
+              },
+              {
+                id: 'gap-template-1',
+                framework: 'Gap Analysis',
+                template_type: 'missing_elements',
+                instructions: 'Identify gaps',
+                document_refs: []
+              }
+            ],
+            next_action: 'select_patterns'
+          };
+        } else if (args.action === 'generate') {
+          return {
+            session_id: args.session_id,
+            status: 'Work generated',
+            work_items: [
+              {
+                id: `work-${Date.now()}`,
+                type: args.synthesis_type,
+                title: 'Generated Work Item',
+                description: 'This is a mock generated work item',
+                content: '// Generated code or content would go here'
+              }
+            ],
+            synthesis_type: args.synthesis_type,
+            stage: 'complete'
+          };
+        }
+      }
+      return {};
+    }
+    
+    return await invoke('call_mcp_tool', { toolName, args });
+  }
 }
 
 // Export singleton instance

@@ -81,6 +81,43 @@ class AdaptiveLearningService {
     this.interactions = [];
     this.patterns.clear();
   }
+
+  /**
+   * Record a thought pattern from the thought chain
+   */
+  async recordThoughtPattern(
+    pattern: string,
+    context: any,
+    outcome: { success: boolean; confidence: number }
+  ): Promise<void> {
+    await this.recordInteraction({
+      actionType: 'thought_pattern',
+      resourceType: 'reasoning',
+      resourceId: pattern,
+      duration: 0,
+      success: outcome.success,
+      metadata: { context, confidence: outcome.confidence }
+    });
+  }
+
+  /**
+   * Record a successful operation
+   */
+  async recordSuccess(
+    operation: string,
+    context: any,
+    metrics?: { duration?: number; quality?: number }
+  ): Promise<void> {
+    await this.recordInteraction({
+      actionType: 'operation',
+      resourceType: 'success',
+      resourceId: operation,
+      duration: metrics?.duration || 0,
+      success: true,
+      metadata: { context, quality: metrics?.quality }
+    });
+  }
 }
 
+// Export singleton instance
 export const adaptiveLearningService = new AdaptiveLearningService();

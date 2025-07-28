@@ -125,9 +125,10 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
               <ReactMarkdown 
                 remarkPlugins={[remarkGfm]}
                 components={{
-                  code: ({ node, inline, className, children, ...props }) => {
+                  code: ({ node, className, children, ...props }) => {
                     const match = /language-(\w+)/.exec(className || '');
                     const language = match?.[1] || '';
+                    const inline = !className;
                     
                     return !inline ? (
                       <div className="relative group my-4">
@@ -136,12 +137,12 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                             {language}
                           </div>
                         )}
-                        <pre className="bg-muted/30 rounded-md p-4 overflow-x-auto" {...props}>
+                        <pre className="bg-muted/30 rounded-md p-4 overflow-x-auto">
                           <code className={className}>{children}</code>
                         </pre>
                       </div>
                     ) : (
-                      <code className="bg-muted/30 px-1 py-0.5 rounded text-sm font-mono" {...props}>
+                      <code className="bg-muted/30 px-1 py-0.5 rounded text-sm font-mono">
                         {children}
                       </code>
                     );

@@ -750,7 +750,7 @@ export const DocumentOrganizer: React.FC<DocumentOrganizerProps> = ({
             />
             <Button
               size="sm"
-              onClick={handleCreateGroup}
+              onClick={() => handleCreateGroup()}
               className="h-8 px-3 !text-neutral-200 !bg-neutral-800"
             >
               Create

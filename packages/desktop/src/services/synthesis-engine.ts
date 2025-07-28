@@ -257,8 +257,7 @@ Structure your response with specific patterns found using these frameworks.`;
         'synthesis-analysis',
         analysisPrompt,
         {
-          temperature: 0.7,
-          maxTokens: 2000
+          responseMode: 'comprehensive'
         }
       );
       
@@ -1160,7 +1159,7 @@ export default ${insight.title.replace(/[^a-zA-Z0-9]/g, '')}Implementation;
         console.error('Sandbox execution failed:', error);
         testedWork.push({
           ...item,
-          sandboxResult: { error: error.message }
+          sandboxResult: { error: error instanceof Error ? error.message : String(error) }
         });
       }
     }
@@ -1317,7 +1316,7 @@ runTests();
    */
   private async updateLearning(
     insights: SynthesisInsight[], 
-    work: GeneratedCode[]
+    work: GeneratedWork[]
   ): Promise<any[]> {
     const outcomes: any[] = [];
     
@@ -1328,7 +1327,7 @@ runTests();
         patterns: insight.patterns.map(p => p.id),
         success: true,
         generatedCode: work.filter(w => 
-          w.purpose.includes(insight.title)
+          w.title.includes(insight.title) || w.description.includes(insight.title)
         ).length
       };
       

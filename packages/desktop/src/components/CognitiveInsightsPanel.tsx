@@ -28,8 +28,11 @@ import {
   ToggleRight
 } from 'lucide-react';
 import { documentGroupsStorage, DocumentGroup } from '../services/document-groups-storage';
+import { specStorage } from '../services/spec-storage';
 import { SynthesisPanel } from './SynthesisPanel';
 import { UnifiedContextGraph } from './UnifiedContextGraph';
+import { ToolManagementPanel } from './ToolManagementPanel';
+import { contextGraphService } from '../services/context-graph-service';
 
 interface CognitiveInsightsPanelProps {
   knowledgeBaseId?: string;
@@ -52,9 +55,9 @@ interface PanelSection {
 }
 
 const sections: PanelSection[] = [
-  { id: 'graph', title: 'AI Context', icon: Network, defaultExpanded: true },
-  { id: 'synthesis', title: 'Synthesis', icon: Atom, defaultExpanded: true },
-  { id: 'learning', title: 'Learning', icon: TrendingUp, defaultExpanded: false },
+  { id: 'graph', title: 'Global Context Overview', icon: Network, defaultExpanded: true },
+  { id: 'synthesis', title: 'Synthesis Manager', icon: Atom, defaultExpanded: true },
+  { id: 'tools', title: 'Tool Management', icon: Brain, defaultExpanded: true },
   { id: 'cognitive', title: 'Cognition', icon: Brain, defaultExpanded: false },
   { id: 'actions', title: 'Action Intelligence', icon: Target, defaultExpanded: false }
 ];
@@ -65,6 +68,7 @@ export const CognitiveInsightsPanel: React.FC<CognitiveInsightsPanelProps> = ({
   knowledgeBase,
   onDocumentToggle
 }) => {
+  const [synthesisPreferences, setSynthesisPreferences] = useState<Record<string, boolean>>({});
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(sections.filter(s => s.defaultExpanded).map(s => s.id))
   );
@@ -75,6 +79,7 @@ export const CognitiveInsightsPanel: React.FC<CognitiveInsightsPanelProps> = ({
     if (knowledgeBaseId) {
       loadGroups();
     }
+    loadSpecs();
   }, [knowledgeBaseId, documents]);
 
   const loadGroups = async () => {
@@ -105,6 +110,36 @@ export const CognitiveInsightsPanel: React.FC<CognitiveInsightsPanelProps> = ({
       setGroupMemberships(membershipMap);
     } catch (error) {
       console.error('Failed to load groups:', error);
+    }
+  };
+
+  const loadSpecs = async () => {
+    try {
+      const allSpecs = await specStorage.getAllSpecs();
+      
+      // Calculate stats by category
+      const byCategory: Record<string, number> = {};
+      allSpecs.forEach(spec => {
+        byCategory[spec.category] = (byCategory[spec.category] || 0) + 1;
+      });
+      
+      // Update spec context in the graph service
+      contextGraphService.updateSpecContext({
+        specs: allSpecs.map(spec => ({
+          id: spec.id,
+          name: spec.name,
+          category: spec.category,
+          status: spec.status,
+          immutable: spec.immutable,
+          parentSpecId: spec.parentSpecId,
+          relatedSpecs: spec.relatedSpecs
+        })),
+        totalSpecs: allSpecs.length,
+        activeSpecs: allSpecs.filter(s => s.status === 'active').length,
+        byCategory
+      });
+    } catch (error) {
+      console.error('Failed to load specs:', error);
     }
   };
 
@@ -360,9 +395,23 @@ export const CognitiveInsightsPanel: React.FC<CognitiveInsightsPanelProps> = ({
           console.log('Integration requested:', integration);
           // Handle integration request
         }}
+        onPreferencesChange={(prefs) => {
+          setSynthesisPreferences(prefs);
+          // TODO: Pass preferences to AI context
+          console.log('Synthesis preferences updated:', prefs);
+        }}
       />
     );
   };
+
+  const renderToolManagement = () => (
+    <ToolManagementPanel 
+      onToolToggle={(toolId, enabled) => {
+        console.log(`Tool ${toolId} toggled to ${enabled}`);
+        // TODO: Pass this to AI context
+      }}
+    />
+  );
 
   const renderLearningInsights = () => (
     <div className="space-y-4 h-full flex flex-col">
@@ -476,8 +525,8 @@ export const CognitiveInsightsPanel: React.FC<CognitiveInsightsPanelProps> = ({
         return renderUnifiedContextGraph();
       case 'synthesis':
         return renderQuantumSynthesis();
-      case 'learning':
-        return renderLearningInsights();
+      case 'tools':
+        return renderToolManagement();
       case 'cognitive':
         return renderCognitiveAnalysis();
       case 'actions':

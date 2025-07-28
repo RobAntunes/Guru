@@ -7,9 +7,9 @@ import { EventEmitter } from 'events';
 
 export interface ContextNode {
   id: string;
-  type: 'document' | 'file' | 'directory' | 'tool' | 'memory' | 'session' | 'group';
+  type: 'document' | 'file' | 'directory' | 'tool' | 'memory' | 'session' | 'group' | 'spec';
   label: string;
-  category: 'knowledge' | 'filesystem' | 'tools' | 'memory' | 'session';
+  category: 'knowledge' | 'filesystem' | 'tools' | 'memory' | 'session' | 'specs';
   active: boolean;
   metadata?: any;
   children?: string[]; // Child node IDs
@@ -20,7 +20,7 @@ export interface ContextEdge {
   id: string;
   source: string;
   target: string;
-  type: 'contains' | 'references' | 'uses' | 'learns_from' | 'synthesizes';
+  type: 'contains' | 'references' | 'uses' | 'learns_from' | 'synthesizes' | 'inherits' | 'relates_to';
   label?: string;
 }
 
@@ -72,6 +72,21 @@ export interface SessionContext {
   contextTokens: number;
 }
 
+export interface SpecContext {
+  specs: Array<{
+    id: string;
+    name: string;
+    category: string;
+    status: string;
+    immutable: boolean;
+    parentSpecId?: string;
+    relatedSpecs?: string[];
+  }>;
+  totalSpecs: number;
+  activeSpecs: number;
+  byCategory: Record<string, number>;
+}
+
 class ContextGraphService extends EventEmitter {
   private nodes: Map<string, ContextNode> = new Map();
   private edges: Map<string, ContextEdge> = new Map();
@@ -79,6 +94,7 @@ class ContextGraphService extends EventEmitter {
   private toolContext: ToolContext | null = null;
   private memoryContext: MemoryContext | null = null;
   private sessionContext: SessionContext | null = null;
+  private specContext: SpecContext | null = null;
 
   /**
    * Update knowledge graph nodes (documents and groups)
@@ -406,6 +422,134 @@ class ContextGraphService extends EventEmitter {
   }
 
   /**
+   * Update spec context
+   */
+  updateSpecContext(context: SpecContext): void {
+    this.specContext = context;
+
+    // Remove old spec nodes and their edges
+    const specNodes = Array.from(this.nodes.values())
+      .filter(node => node.category === 'specs');
+    specNodes.forEach(node => {
+      this.nodes.delete(node.id);
+      // Remove associated edges
+      Array.from(this.edges.values())
+        .filter(edge => edge.source === node.id || edge.target === node.id)
+        .forEach(edge => this.edges.delete(edge.id));
+    });
+
+    // Add specs root node
+    const rootNode: ContextNode = {
+      id: 'specs-root',
+      type: 'spec',
+      label: 'Specifications',
+      category: 'specs',
+      active: true,
+      metadata: {
+        totalSpecs: context.totalSpecs,
+        activeSpecs: context.activeSpecs
+      },
+      children: []
+    };
+
+    this.nodes.set(rootNode.id, rootNode);
+
+    // Group specs by category
+    const specsByCategory = context.specs.reduce((acc, spec) => {
+      if (!acc[spec.category]) acc[spec.category] = [];
+      acc[spec.category].push(spec);
+      return acc;
+    }, {} as Record<string, typeof context.specs>);
+
+    // Add category nodes
+    Object.entries(specsByCategory).forEach(([category, specs]) => {
+      const categoryNode: ContextNode = {
+        id: `specs-cat-${category}`,
+        type: 'spec',
+        label: category.charAt(0).toUpperCase() + category.slice(1),
+        category: 'specs',
+        active: true,
+        metadata: {
+          specCount: specs.length
+        },
+        parent: rootNode.id,
+        children: []
+      };
+
+      this.nodes.set(categoryNode.id, categoryNode);
+      rootNode.children!.push(categoryNode.id);
+
+      // Add edges from root to category
+      this.edges.set(`${rootNode.id}-${categoryNode.id}`, {
+        id: `${rootNode.id}-${categoryNode.id}`,
+        source: rootNode.id,
+        target: categoryNode.id,
+        type: 'contains'
+      });
+
+      // Add individual spec nodes
+      specs.forEach(spec => {
+        const specNode: ContextNode = {
+          id: `spec-${spec.id}`,
+          type: 'spec',
+          label: spec.name,
+          category: 'specs',
+          active: spec.status === 'active',
+          metadata: {
+            status: spec.status,
+            immutable: spec.immutable,
+            parentSpecId: spec.parentSpecId,
+            relatedSpecs: spec.relatedSpecs
+          },
+          parent: categoryNode.id
+        };
+
+        this.nodes.set(specNode.id, specNode);
+        categoryNode.children!.push(specNode.id);
+
+        // Add edge from category to spec
+        this.edges.set(`${categoryNode.id}-${specNode.id}`, {
+          id: `${categoryNode.id}-${specNode.id}`,
+          source: categoryNode.id,
+          target: specNode.id,
+          type: 'contains'
+        });
+
+        // Add inheritance edge if spec has parent
+        if (spec.parentSpecId) {
+          const parentId = `spec-${spec.parentSpecId}`;
+          this.edges.set(`${parentId}-${specNode.id}-inherits`, {
+            id: `${parentId}-${specNode.id}-inherits`,
+            source: parentId,
+            target: specNode.id,
+            type: 'inherits',
+            label: 'inherits from'
+          });
+        }
+
+        // Add relationship edges
+        if (spec.relatedSpecs && spec.relatedSpecs.length > 0) {
+          spec.relatedSpecs.forEach(relatedId => {
+            const relatedNodeId = `spec-${relatedId}`;
+            const edgeId = `${specNode.id}-${relatedNodeId}-relates`;
+            if (!this.edges.has(edgeId)) {
+              this.edges.set(edgeId, {
+                id: edgeId,
+                source: specNode.id,
+                target: relatedNodeId,
+                type: 'relates_to',
+                label: 'relates to'
+              });
+            }
+          });
+        }
+      });
+    });
+
+    this.emit('graphUpdated', this.getGraphData());
+  }
+
+  /**
    * Get complete graph data
    */
   getGraphData(): ContextGraphData {
@@ -457,6 +601,7 @@ class ContextGraphService extends EventEmitter {
     const summary = [
       `Total Context: ${data.stats.totalNodes} nodes (${data.stats.activeNodes} active)`,
       `Knowledge: ${data.stats.byCategory.knowledge || 0} items`,
+      `Specifications: ${this.specContext?.activeSpecs || 0} active specs`,
       `File System: ${this.fileSystemContext?.fileCount || 0} files accessible`,
       `Tools: ${this.toolContext?.activeToolCount || 0} tools enabled`,
       `Memory: ${this.memoryContext?.patterns || 0} patterns learned`,

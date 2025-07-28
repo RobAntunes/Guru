@@ -4,13 +4,11 @@ import "./App.css";
 import { guruService } from './services/guru-integration';
 import type { KnowledgeBase as GuruKnowledgeBase, FileAnalysisResult as GuruFileAnalysisResult } from './services/guru-integration';
 import { KnowledgeHub } from './components/KnowledgeHub';
-import { FileBrowser } from './components/FileBrowser';
-import { ModelDownloader } from './components/ModelDownloader';
 import { AdaptiveLearningLab } from './components/AdaptiveLearningLab';
 import { AppLayout } from './components/AppLayout';
 import { Dashboard } from './components/Dashboard';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { ThoughtChainTool } from './components/ThoughtChainTool';
+import { dataMigration } from './services/data-migration';
 import './hooks/use-tauri-api';
 
 // Guru Core Feature Interfaces
@@ -126,8 +124,29 @@ function App() {
 
   // Load initial data
   useEffect(() => {
-    loadGuruData();
+    checkAndMigrateData();
   }, []);
+
+  const checkAndMigrateData = async () => {
+    try {
+      // Check if migration is needed
+      const needsMigration = await dataMigration.isMigrationNeeded();
+      if (needsMigration) {
+        console.log('Data migration needed, starting migration...');
+        const result = await dataMigration.migrateToProjects();
+        console.log('Migration result:', result);
+        
+        if (!result.success && result.errors.length > 0) {
+          console.error('Migration errors:', result.errors);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to check/perform migration:', error);
+    }
+    
+    // Load data after migration check
+    loadGuruData();
+  };
 
   // Data Loading Functions
   const loadGuruData = async () => {
@@ -280,23 +299,6 @@ function App() {
     setUploadedFiles(files);
   };
 
-  const processUploadedFiles = async () => {
-    if (uploadedFiles.length === 0 || !selectedKB) return;
-
-    setIsLoading(true);
-    try {
-      for (const file of uploadedFiles) {
-        await guruService.addDocumentsToKnowledgeBase(selectedKB, [file]);
-      }
-
-      // Reload knowledge bases to see updated document count
-      await loadKnowledgeBases();
-      setUploadedFiles([]);
-    } catch (error) {
-      console.error("Failed to process files:", error);
-    }
-    setIsLoading(false);
-  };
 
   const performRAGQuery = async () => {
     if (!selectedKB || !ragQuery.trim()) return;
@@ -336,6 +338,11 @@ function App() {
           setKnowledgeBases={setKnowledgeBases}
           isLoading={isLoading}
           setIsLoading={setIsLoading}
+        />;
+      case 'thinking':
+        return <ThoughtChainTool 
+          goal="Explore ideas and solve problems" 
+          context="Use multi-stage thinking with executable sandbox" 
         />;
       case 'learning':
         return <AdaptiveLearningLab />;

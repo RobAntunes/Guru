@@ -33,7 +33,7 @@ export const UnifiedContextGraph: React.FC<UnifiedContextGraphProps> = ({
   const [graphData, setGraphData] = useState<ContextGraphData | null>(null);
   const [selectedNode, setSelectedNode] = useState<ContextNode | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
-    new Set(['knowledge', 'filesystem', 'tools', 'memory', 'session'])
+    new Set(['knowledge', 'filesystem', 'tools', 'memory', 'session', 'specs'])
   );
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -208,10 +208,37 @@ export const UnifiedContextGraph: React.FC<UnifiedContextGraphProps> = ({
       .data(enhancedEdges)
       .enter()
       .append('line')
-      .attr('stroke', d => d.type === 'uses' ? '#8b5cf6' : '#4a5568')
-      .attr('stroke-opacity', d => d.type === 'uses' ? 0.2 : 0.4)
-      .attr('stroke-width', d => d.type === 'uses' ? 1 : 2)
-      .attr('stroke-dasharray', d => d.type === 'uses' ? '5,5' : 'none');
+      .attr('stroke', d => {
+        switch(d.type) {
+          case 'uses': return '#8b5cf6';
+          case 'inherits': return '#06b6d4';
+          case 'relates_to': return '#10b981';
+          default: return '#4a5568';
+        }
+      })
+      .attr('stroke-opacity', d => {
+        switch(d.type) {
+          case 'uses': return 0.2;
+          case 'inherits': return 0.6;
+          case 'relates_to': return 0.3;
+          default: return 0.4;
+        }
+      })
+      .attr('stroke-width', d => {
+        switch(d.type) {
+          case 'inherits': return 2;
+          case 'relates_to': return 1.5;
+          case 'uses': return 1;
+          default: return 2;
+        }
+      })
+      .attr('stroke-dasharray', d => {
+        switch(d.type) {
+          case 'uses': return '5,5';
+          case 'relates_to': return '3,3';
+          default: return 'none';
+        }
+      });
 
     // Create node groups
     const nodeGroup = g.append('g')
@@ -265,11 +292,12 @@ export const UnifiedContextGraph: React.FC<UnifiedContextGraphProps> = ({
 
     // Position nodes based on category with better spacing
     const categoryPositions: Record<string, { x: number, y: number }> = {
-      knowledge: { x: width * 0.25, y: height * 0.3 },
-      filesystem: { x: width * 0.75, y: height * 0.3 },
-      tools: { x: width * 0.5, y: height * 0.8 },
-      memory: { x: width * 0.2, y: height * 0.7 },
-      session: { x: width * 0.8, y: height * 0.7 }
+      knowledge: { x: width * 0.2, y: height * 0.25 },
+      specs: { x: width * 0.5, y: height * 0.25 },
+      filesystem: { x: width * 0.8, y: height * 0.25 },
+      tools: { x: width * 0.2, y: height * 0.75 },
+      memory: { x: width * 0.5, y: height * 0.75 },
+      session: { x: width * 0.8, y: height * 0.75 }
     };
 
     // Initialize positions for category roots
@@ -379,6 +407,7 @@ export const UnifiedContextGraph: React.FC<UnifiedContextGraphProps> = ({
     switch (node.type) {
       case 'group': return 20;
       case 'directory': return 18;
+      case 'spec': return 16;
       case 'tool': return 16;
       case 'memory': return 16;
       case 'session': return 14;
@@ -391,6 +420,7 @@ export const UnifiedContextGraph: React.FC<UnifiedContextGraphProps> = ({
 
     switch (node.category) {
       case 'knowledge': return '#10b981'; // Green
+      case 'specs': return '#06b6d4'; // Cyan
       case 'filesystem': return '#3b82f6'; // Blue
       case 'tools': return '#8b5cf6'; // Purple
       case 'memory': return '#f59e0b'; // Orange
@@ -405,6 +435,7 @@ export const UnifiedContextGraph: React.FC<UnifiedContextGraphProps> = ({
       case 'group': return '📁';
       case 'directory': return '📂';
       case 'file': return '📄';
+      case 'spec': return '📋';
       case 'tool': return '🔧';
       case 'memory': return '🧠';
       case 'session': return '🔗';

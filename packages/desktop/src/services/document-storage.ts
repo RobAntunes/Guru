@@ -13,6 +13,7 @@ interface StoredDocument {
   metadata?: any;
   addedAt: string;
   knowledgeBaseId: string;
+  projectId: string; // Associate with a project
 }
 
 class DocumentStorageService {
@@ -77,11 +78,19 @@ class DocumentStorageService {
     isBase64: boolean;
     metadata?: any;
   }>): Promise<void> {
+    // Get the project ID from the knowledge base
+    const { knowledgeBaseStorage } = await import('./knowledge-base-storage');
+    const kb = await knowledgeBaseStorage.getKnowledgeBase(knowledgeBaseId);
+    if (!kb) {
+      throw new Error('Knowledge base not found');
+    }
+    
     const allDocs = await this.getAllDocuments();
     
     const newDocs: StoredDocument[] = documents.map(doc => ({
       ...doc,
       knowledgeBaseId,
+      projectId: kb.projectId,
       addedAt: new Date().toISOString()
     }));
 
@@ -112,6 +121,53 @@ class DocumentStorageService {
     const allDocs = await this.getAllDocuments();
     const filtered = allDocs.filter(doc => doc.knowledgeBaseId !== knowledgeBaseId);
     await this.saveAllDocuments(filtered);
+  }
+
+  /**
+   * Get all documents for a specific project
+   */
+  async getDocumentsByProject(projectId: string): Promise<StoredDocument[]> {
+    const allDocs = await this.getAllDocuments();
+    return allDocs.filter(doc => doc.projectId === projectId);
+  }
+
+  /**
+   * Delete all documents for a project
+   */
+  async deleteDocumentsByProject(projectId: string): Promise<void> {
+    const allDocs = await this.getAllDocuments();
+    const filtered = allDocs.filter(doc => doc.projectId !== projectId);
+    await this.saveAllDocuments(filtered);
+  }
+
+  /**
+   * Migrate documents to add project IDs (for existing data)
+   */
+  async migrateDocumentsToProjects(): Promise<void> {
+    const allDocs = await this.getAllDocuments();
+    const { knowledgeBaseStorage } = await import('./knowledge-base-storage');
+    const { projectStorage } = await import('./project-storage');
+    
+    // Get default project
+    const defaultProject = await projectStorage.getDefaultProject();
+    if (!defaultProject) {
+      throw new Error('No default project found');
+    }
+    
+    // Update documents without projectId
+    let updated = false;
+    for (const doc of allDocs) {
+      if (!doc.projectId) {
+        // Get project ID from knowledge base
+        const kb = await knowledgeBaseStorage.getKnowledgeBase(doc.knowledgeBaseId);
+        doc.projectId = kb?.projectId || defaultProject.id;
+        updated = true;
+      }
+    }
+    
+    if (updated) {
+      await this.saveAllDocuments(allDocs);
+    }
   }
 }
 

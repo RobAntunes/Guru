@@ -28,6 +28,9 @@ from .bridge.core_bridge import GuruCoreBridge
 from .models.phi4_mini import Phi4MiniWingman
 from .tools.synthesis_tool import SynthesisTool
 from .tools.active_knowledge_tool import ActiveKnowledgeTool
+from .tools.spec_management_tool import SpecManagementTool
+from .tools.prompt_execution_tool import PromptExecutionTool
+from .tools.wasm_sandbox import WASMSandbox
 
 
 class GuruMCPServer:
@@ -56,6 +59,9 @@ class GuruMCPServer:
         self.rag_tool = RAGKnowledgeBaseTool(self.core_bridge, self.phi4_wingman)
         self.synthesis_tool = SynthesisTool()
         self.active_knowledge_tool = ActiveKnowledgeTool()
+        self.spec_management_tool = SpecManagementTool()
+        self.prompt_execution_tool = PromptExecutionTool()
+        self.wasm_sandbox = WASMSandbox(self.core_bridge)
         
         # Register all MCP handlers
         self._register_handlers()
@@ -592,6 +598,18 @@ class GuruMCPServer:
                                 "enum": ["features", "architecture", "roadmap", "gaps", "opportunities"],
                                 "description": "Type of work to generate (required for 'generate' action)"
                             },
+                            "synthesis_preferences": {
+                                "type": "object",
+                                "properties": {
+                                    "patterns": {"type": "boolean", "description": "Enable pattern finding"},
+                                    "features": {"type": "boolean", "description": "Enable feature generation"},
+                                    "architecture": {"type": "boolean", "description": "Enable architecture design"},
+                                    "roadmap": {"type": "boolean", "description": "Enable roadmap planning"},
+                                    "gaps": {"type": "boolean", "description": "Enable gap analysis"},
+                                    "opportunities": {"type": "boolean", "description": "Enable opportunity discovery"}
+                                },
+                                "description": "User preferences for which synthesis types to focus on (optional)"
+                            },
                             "context": {
                                 "type": "object",
                                 "properties": {
@@ -637,6 +655,118 @@ class GuruMCPServer:
                         },
                         "required": ["action"]
                     }
+                ),
+                types.Tool(
+                    name="guru_spec_management",
+                    description="Access and query system specifications (immutable structured knowledge)",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "action": {
+                                "type": "string",
+                                "enum": ["list", "get", "query", "get_by_category"],
+                                "description": "Action to perform: list (all specs), get (specific spec), query (search specs), get_by_category (filter by category)"
+                            },
+                            "spec_id": {
+                                "type": "string",
+                                "description": "Spec ID (required for 'get' action)"
+                            },
+                            "spec_name": {
+                                "type": "string",
+                                "description": "Spec name (alternative to spec_id for 'get' action)"
+                            },
+                            "query": {
+                                "type": "string",
+                                "description": "Search query (for 'query' action)"
+                            },
+                            "category": {
+                                "type": "string",
+                                "enum": ["api", "business", "architecture", "workflow", "constraints", "goals"],
+                                "description": "Category filter"
+                            },
+                            "status": {
+                                "type": "string",
+                                "enum": ["draft", "active", "deprecated"],
+                                "description": "Status filter (for 'query' action)"
+                            },
+                            "immutable": {
+                                "type": "boolean",
+                                "description": "Filter by immutability (for 'query' action)"
+                            }
+                        },
+                        "required": ["action"]
+                    }
+                ),
+                types.Tool(
+                    name="guru_prompt_execution",
+                    description="Execute and manage prompt templates with variables for consistent AI interactions",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "action": {
+                                "type": "string",
+                                "enum": ["list", "get", "resolve", "execute", "validate"],
+                                "description": "Action: list (all templates), get (template details), resolve (fill variables), execute (run prompt), validate (check variables)"
+                            },
+                            "template_id": {
+                                "type": "string",
+                                "description": "Template ID (required for get/resolve/execute/validate)"
+                            },
+                            "template_name": {
+                                "type": "string",
+                                "description": "Template name (alternative to template_id)"
+                            },
+                            "category": {
+                                "type": "string",
+                                "enum": ["general", "analysis", "generation", "transformation", "synthesis", "custom"],
+                                "description": "Category filter (for 'list' action)"
+                            },
+                            "variables": {
+                                "type": "object",
+                                "description": "Variable values for template resolution/execution"
+                            }
+                        },
+                        "required": ["action"]
+                    }
+                ),
+                types.Tool(
+                    name="guru_wasm_sandbox",
+                    description="Execute code experiments in a secure WASM sandbox with AI-driven optimization",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "experiment_type": {
+                                "type": "string",
+                                "default": "general",
+                                "description": "Type of experiment: general, algorithm_optimization, performance_testing, security_testing"
+                            },
+                            "problem_context": {
+                                "type": "object",
+                                "description": "Context for the problem being solved"
+                            },
+                            "hypothesis": {
+                                "type": "string",
+                                "description": "What you expect to discover or prove"
+                            },
+                            "code_attempts": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "string"},
+                                        "approach": {"type": "string"},
+                                        "language": {"type": "string", "enum": ["javascript", "python", "rust"]}
+                                    }
+                                },
+                                "description": "Code variations to test"
+                            },
+                            "success_criteria": {
+                                "type": "object",
+                                "description": "Criteria for successful execution"
+                            }
+                        },
+                        "required": ["code_attempts"]
+                    }
                 )
             ]
         
@@ -679,6 +809,12 @@ class GuruMCPServer:
                     # Format the result as JSON for consistent output
                     import json
                     result = json.dumps(result_dict, indent=2)
+                elif name == "guru_spec_management":
+                    result = await self.spec_management_tool.execute(args)
+                elif name == "guru_prompt_execution":
+                    result = await self.prompt_execution_tool.execute(args)
+                elif name == "guru_wasm_sandbox":
+                    result = await self.wasm_sandbox.execute(args)
                 else:
                     raise ValueError(f"Unknown tool: {name}")
                 

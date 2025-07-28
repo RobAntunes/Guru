@@ -535,6 +535,68 @@ async fn get_suggestions() -> Result<Value, String> {
     execute_guru_command("getSuggestions".to_string(), vec![]).await
 }
 
+#[tauri::command]
+async fn execute_mcp_tool(tool: String, args: Value) -> Result<Value, String> {
+    use std::io::{Write, Read};
+    use std::net::TcpStream;
+    
+    // Connect to the MCP server
+    let mut stream = TcpStream::connect("127.0.0.1:3457")
+        .map_err(|e| format!("Failed to connect to MCP server: {}. Make sure the Guru MCP service is running.", e))?;
+    
+    // Send MCP tool request
+    let request = serde_json::json!({
+        "jsonrpc": "2.0",
+        "method": "tools/call",
+        "params": {
+            "name": tool,
+            "arguments": args
+        },
+        "id": 1
+    });
+    
+    let request_str = serde_json::to_string(&request)
+        .map_err(|e| format!("Failed to serialize request: {}", e))?;
+    
+    stream.write_all(request_str.as_bytes())
+        .map_err(|e| format!("Failed to send request: {}", e))?;
+    
+    stream.write_all(b"\n")
+        .map_err(|e| format!("Failed to send newline: {}", e))?;
+    
+    // Read the response
+    let mut response = String::new();
+    let mut buffer = [0; 1024];
+    
+    loop {
+        match stream.read(&mut buffer) {
+            Ok(0) => break, // Connection closed
+            Ok(n) => {
+                response.push_str(&String::from_utf8_lossy(&buffer[..n]));
+                if response.contains('\n') {
+                    break;
+                }
+            }
+            Err(e) => return Err(format!("Failed to read response: {}", e)),
+        }
+    }
+    
+    // Parse the response
+    let result: Value = serde_json::from_str(&response)
+        .map_err(|e| format!("Failed to parse response: {}", e))?;
+    
+    // Extract the result from JSON-RPC response
+    if let Some(error) = result.get("error") {
+        return Err(format!("MCP error: {}", error));
+    }
+    
+    if let Some(result_value) = result.get("result") {
+        Ok(result_value.clone())
+    } else {
+        Err("Invalid MCP response format".to_string())
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -583,6 +645,7 @@ pub fn run() {
             get_evolving_tasks,
             get_quantum_memories,
             get_suggestions,
+            execute_mcp_tool,
             open_file_dialog,
             open_folder_dialog,
             scan_directory,

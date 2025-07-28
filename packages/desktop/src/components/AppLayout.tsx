@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Sidebar,
   SidebarContent,
@@ -30,6 +30,8 @@ import {
   Bot,
   Activity
 } from 'lucide-react';
+import { ProjectSelector } from './ProjectSelector';
+import { Project } from '../services/project-storage';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -38,6 +40,8 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children, activeView, onViewChange }: AppLayoutProps) {
+  const [currentProject, setCurrentProject] = useState<Project | null>(null);
+
   const menuItems = [
     {
       group: "Overview",
@@ -49,6 +53,7 @@ export function AppLayout({ children, activeView, onViewChange }: AppLayoutProps
       group: "Core Features",
       items: [
         { id: 'home', label: 'Knowledge', icon: BookOpen, description: 'Central knowledge repository' },
+        { id: 'thinking', label: 'Thinking', icon: Brain, description: 'Multi-stage reasoning & ideas' },
         { id: 'learning', label: 'Adaptive Learning', icon: FlaskConical, description: 'AI experimentation & strategies' },
         { id: 'tasks', label: 'Living Tasks', icon: Dna, description: 'Evolving task optimization' },
         { id: 'memories', label: 'Memory', icon: Atom, description: 'Memory synthesis' },
@@ -68,10 +73,11 @@ export function AppLayout({ children, activeView, onViewChange }: AppLayoutProps
       <div className="flex h-screen w-full bg-background">
         <Sidebar>
           <SidebarHeader>
-            <div className="flex items-center gap-3 px-2 pt-1 pb-2">
+            <div className="flex flex-col gap-3 px-2 pt-1 pb-2">
               <div className="flex flex-col">
                 <h1 className="text-lg font-light">Guru</h1>
               </div>
+              <ProjectSelector onProjectChange={setCurrentProject} />
             </div>
           </SidebarHeader>
 
@@ -107,17 +113,16 @@ export function AppLayout({ children, activeView, onViewChange }: AppLayoutProps
         <SidebarInset>
           <header className="flex h-14 items-center gap-4 border-b px-6">
             <SidebarTrigger className="-ml-1" />
-            <div className="flex-1">
-              <h2 className="text-lg font-light">
-                {menuItems
-                  .flatMap(s => s.items)
-                  .find(item => item.id === activeView)?.label || 'Guru'}
-              </h2>
-            </div>
+            <h2 className="text-lg font-light">
+              {menuItems
+                .flatMap(s => s.items)
+                .find(item => item.id === activeView)?.label || 'Guru'}
+            </h2>
+            <div className="flex-1" />
           </header>
 
           <main className="flex-1 overflow-auto mx-6 h-full">
-            <div className="pt-16 pb-6 mx-auto h-full">
+            <div className="pt-16  mx-auto h-full">
               {children}
             </div>
           </main>

@@ -439,6 +439,34 @@ class SynthesisTool:
                 })
         
         return opportunities
+    
+    def _get_available_types(self, session: SynthesisSession) -> List[str]:
+        """Get available synthesis types based on preferences"""
+        prefs = session.context.get('synthesis_preferences', {})
+        
+        # Map preferences to synthesis types
+        type_mapping = {
+            'patterns': 'features',
+            'features': 'features', 
+            'architecture': 'architecture',
+            'roadmap': 'roadmap',
+            'gaps': 'gaps',
+            'opportunities': 'opportunities'
+        }
+        
+        # Get enabled types
+        enabled_types = []
+        for pref, enabled in prefs.items():
+            if enabled and pref in type_mapping:
+                synthesis_type = type_mapping[pref]
+                if synthesis_type not in enabled_types:
+                    enabled_types.append(synthesis_type)
+        
+        # Default to all types if none specified
+        if not enabled_types:
+            enabled_types = ["features", "architecture", "roadmap", "gaps", "opportunities"]
+            
+        return enabled_types
 
 # Initialize the tool
 synthesis_tool = SynthesisTool()
