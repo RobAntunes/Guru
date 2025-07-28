@@ -1,5 +1,15 @@
 {
   "mcpServers": {
+    "guru-cognitive-server": {
+      "command": "python",
+      "args": ["-m", "guru_mcp.server"],
+      "cwd": "/Users/boss/Documents/projects/guru/packages/mcp-server",
+      "env": {
+        "PYTHONPATH": "/Users/boss/Documents/projects/guru/packages/mcp-server",
+        "GURU_MODEL_PATH": "/Users/boss/Documents/projects/guru/packages/models/phi4-mini",
+        "GURU_CONFIG": "production"
+      }
+    },
     "qpfm": {
       "command": "node",
       "args": ["./dist/mcp/qpfm-mcp-server.js"],

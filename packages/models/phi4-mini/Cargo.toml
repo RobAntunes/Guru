@@ -1,0 +1,37 @@
+[package]
+name = "phi4-mini"
+version = "1.0.0"
+edition = "2021"
+description = "Phi-4 Mini integration for Guru cognitive systems"
+
+[dependencies]
+# ONNX Runtime for fast inference
+ort = { version = "2.0.0-rc.10", features = ["load-dynamic"] }
+
+# Tokenization
+tokenizers = "0.19"
+hf-hub = "0.3"
+
+# Async runtime
+tokio = { version = "1.0", features = ["full"] }
+
+# JSON handling
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Logging
+log = "0.4"
+
+# Math utilities
+ndarray = "0.15"
+rand = "0.8"
+
+# HTTP client for model download
+reqwest = { version = "0.11", features = ["json"] }
+
+[dev-dependencies]
+tokio-test = "0.4"
